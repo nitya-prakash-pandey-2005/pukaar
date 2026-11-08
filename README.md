@@ -5,7 +5,7 @@
 Built on Gnani AI's sovereign voice stack: **Prisma v3.0** (speech-to-text, trained on noisy 8 kHz calls), **Timbre v3.0** (text-to-speech) and **Evon v3.3** (LLM).
 Part of our entry to Gnani AI's *Great Indian AI Internship Challenge* (#GnaniAI #GreatIndianAIInternshipChallenge).
 
-> Status: under active development (8–10 Nov 2026). Read `docs/02-design.md`, then `docs/03-build-plan.md`. Team rules: `docs/TEAM-PLAYBOOK.md`. Task board: `docs/STATUS.md`.
+> **New here? Read `docs/START-HERE.md` first.** Status: under active development (8–10 Nov 2026). Read `docs/02-design.md`, then `docs/03-build-plan.md`. Team rules: `docs/TEAM-PLAYBOOK.md`. Task board: `docs/STATUS.md`.
 
 ## Quick start
 ```bash
