@@ -50,7 +50,7 @@ export default function ControlRoom({ control, guidance }) {
                   {i.call_ids.some((c) => liveCalls.includes(c)) && <span className="live-dot" title="On a live call" />}
                 </div>
                 <div className="s">
-                  {[HAZARD_LABEL[i.facts.hazard], i.facts.people_count && `${i.facts.people_count} people`,
+                  {[HAZARD_LABEL[i.facts.hazard], i.facts.people_count && `${i.facts.people_count} ${i.facts.people_count === 1 ? "person" : "people"}`,
                     i.call_ids.length > 1 && `${i.call_ids.length} callers`, ago(i.updated_at)].filter(Boolean).join(" · ")}
                 </div>
               </div>

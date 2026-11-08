@@ -14,7 +14,8 @@ export default function DrillCard() {
     <Card title="Noise drill: rain on an 8 kHz phone line" icon={CloudRain}>
       <div className="drill-table" role="table">
         <div className="dr head" role="row"><span>Noise</span><span>Transcript errors</span>{COLS.map(([, l]) => <span key={l}>{l}</span>)}</div>
-        {Object.entries(by).map(([snr, g]) => (
+        {/* JS orders number-like keys first, so sort explicitly: clean, then loudest voice to loudest rain */}
+        {Object.entries(by).sort(([a], [b]) => (a === "clean" ? -1 : b === "clean" ? 1 : Number(b) - Number(a))).map(([snr, g]) => (
           <div className="dr" role="row" key={snr}>
             <b>{snr === "clean" ? "Clean" : `${snr} dB`}</b>
             <span className="mono">{g.cer == null ? "n/a" : `${(g.cer * 100).toFixed(1)}%`}</span>
