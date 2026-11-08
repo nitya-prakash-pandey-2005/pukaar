@@ -26,7 +26,7 @@ from voice_core.session import VoiceAgentSession
 from .agent import PukaarAgent, deliver_dispatch
 from .domain import Facts
 from .assets import load_or_make_fillers, rain_noise
-from .data import load_gazetteer, load_guidance
+from .data import DATA, load_gazetteer, load_guidance
 from .fake_mode import FakeTriageLLM, ScriptedStt, tone_tts
 from .sim import replay_surge, run_surge
 from .store import Store
@@ -164,8 +164,10 @@ def create_app(settings: Settings | None = None, *, session_factory=None, intel_
         if st.surge and not st.surge.done():
             raise HTTPException(409, "a surge is already running")
         rec = settings.cache_dir / ("surge_fake.json" if fake else "surge_recording.json")
-        if rec.exists() and not body.fresh:  # replay: no LLM calls, so live calls keep the Groq token budget
-            rows = json.loads(rec.read_text(encoding="utf-8"))[: max(1, min(40, body.n))]
+        demo = DATA / "surge_demo.json"  # committed recording, so a fresh clone can replay without tokens
+        src = rec if rec.exists() else demo if demo.exists() and not fake else None
+        if src and not body.fresh:  # replay: no LLM calls, so live calls keep the Groq token budget
+            rows = json.loads(src.read_text(encoding="utf-8"))[: max(1, min(40, body.n))]
             st.surge = asyncio.create_task(replay_surge(rows, store, places, broadcast))
             return {"started": len(rows), "mode": "replay"}
         n = max(1, min(40, body.n))

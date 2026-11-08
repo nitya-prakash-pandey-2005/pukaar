@@ -1,0 +1,627 @@
+[
+ {
+  "lang": "hi-IN",
+  "gps": [
+   13.031348,
+   80.158124
+  ],
+  "text": "Porur mein paani ghutno tak aa gaya hai, humare saath ek chhota bachha bhi hai jo bahut darr gaya. Humare 7 log hain aur sab theek hain, koi takli mein nahi, bas thoda tension hai.",
+  "facts": {
+   "locality": "Porur",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "flood",
+   "people_count": 7,
+   "trapped": null,
+   "on_roof": null,
+   "water_level": "knee",
+   "vulnerable": [
+    "child"
+   ],
+   "injuries": [],
+   "medical_needs": [],
+   "needs": [],
+   "caller_language": "hi-IN"
+  }
+ },
+ {
+  "lang": "ta-IN",
+  "gps": [
+   13.030783,
+   80.158088
+  ],
+  "text": "Porur la irukku, 4 meye evvai marai kaana chesalam. Chest level la neer, epula mudikkala.",
+  "facts": {
+   "locality": "Porur",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "flood",
+   "people_count": 4,
+   "trapped": false,
+   "on_roof": false,
+   "water_level": "chest",
+   "vulnerable": [],
+   "injuries": [],
+   "medical_needs": [],
+   "needs": [],
+   "caller_language": "ta-IN"
+  }
+ },
+ {
+  "lang": "te-IN",
+  "gps": [
+   13.113553,
+   80.258344
+  ],
+  "text": "Vyasarpadi lo idigaru fire chusukanti, panu door shut ayyindi. Naa melle 3 people unnaru, oka chaitanya child andaru neeno. Panthi madala door thottu thottu cheda.",
+  "facts": {
+   "locality": "Vyasarpadi",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "fire",
+   "people_count": 4,
+   "trapped": true,
+   "on_roof": false,
+   "water_level": null,
+   "vulnerable": [
+    "child"
+   ],
+   "injuries": [],
+   "medical_needs": [],
+   "needs": [],
+   "caller_language": "te-IN"
+  }
+ },
+ {
+  "lang": "ta-IN",
+  "gps": [
+   13.112968,
+   80.258699
+  ],
+  "text": "Vyasarpadi la potti aagiduchu, 7 laukku aaga potrom. Rendhanum naan safe-la irukken, water level illa.",
+  "facts": {
+   "locality": "Vyasarpadi",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "flood",
+   "people_count": 7,
+   "trapped": null,
+   "on_roof": null,
+   "water_level": "none",
+   "vulnerable": [],
+   "injuries": [],
+   "medical_needs": [],
+   "needs": [],
+   "caller_language": "ta-IN"
+  }
+ },
+ {
+  "lang": "en-IN",
+  "gps": [
+   12.979378,
+   80.18455
+  ],
+  "text": "I am alone on the roof in Nanganallur. The flood water is already up to my chest. Please send help.",
+  "facts": {
+   "locality": "Nanganallur",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "flood",
+   "people_count": 1,
+   "trapped": false,
+   "on_roof": true,
+   "water_level": "chest",
+   "vulnerable": [],
+   "injuries": [],
+   "medical_needs": [],
+   "needs": [
+    "evacuation"
+   ],
+   "caller_language": "en-IN"
+  }
+ },
+ {
+  "lang": "ta-IN",
+  "gps": [
+   13.119431,
+   80.092585
+  ],
+  "text": "அவடிஎங்க அடி மாமி... பவுண்டர் தயாராக இருக்கேன். ஐந்து பேர் வயதில் இருக்கேன், ஆனால் நங்க நங்க எட்டு பாதுகாப்பாக இருக்கேன்.",
+  "facts": {
+   "locality": null,
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": null,
+   "people_count": 5,
+   "trapped": null,
+   "on_roof": null,
+   "water_level": null,
+   "vulnerable": [],
+   "injuries": [],
+   "medical_needs": [],
+   "needs": [],
+   "caller_language": "ta-IN"
+  }
+ },
+ {
+  "lang": "en-IN",
+  "gps": [
+   12.894314,
+   80.231067
+  ],
+  "text": "Sholinganallu maadham, water waist height aa irukku. Meen child ku paathittu idha thadava.",
+  "facts": {
+   "locality": "Sholinganallur",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "flood",
+   "people_count": 1,
+   "trapped": null,
+   "on_roof": null,
+   "water_level": "waist",
+   "vulnerable": [
+    "child"
+   ],
+   "injuries": [],
+   "medical_needs": [],
+   "needs": [],
+   "caller_language": "ta-IN"
+  }
+ },
+ {
+  "lang": "hi-IN",
+  "gps": [
+   12.977635,
+   80.220722
+  ],
+  "text": "Velachery mein paani waist tak aa gaya hai, hum teen log bahar se upar chala gaye hain, koi phansa nahi hai.",
+  "facts": {
+   "locality": "Velachery",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "flood",
+   "people_count": 3,
+   "trapped": false,
+   "on_roof": null,
+   "water_level": "waist",
+   "vulnerable": [],
+   "injuries": [],
+   "medical_needs": [],
+   "needs": [],
+   "caller_language": "hi-IN"
+  }
+ },
+ {
+  "lang": "hi-IN",
+  "gps": [
+   13.039542,
+   80.206232
+  ],
+  "text": "साहब हम KK Nagar में हैं, पानी सीने तक आ चुका है। हम तीनों लोग छत पर बैठे हैं, फिलहाल कोई पकड़ा नहीं है।",
+  "facts": {
+   "locality": "KK Nagar",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "flood",
+   "people_count": 3,
+   "trapped": false,
+   "on_roof": true,
+   "water_level": "chest",
+   "vulnerable": [],
+   "injuries": [],
+   "medical_needs": [],
+   "needs": [],
+   "caller_language": "hi-IN"
+  }
+ },
+ {
+  "lang": "ta-IN",
+  "gps": [
+   13.019007,
+   80.244394
+  ],
+  "text": "கொத்தூர்புரத்தில் இப்போது நாலு பேரு இருக்கோம், மூச்சு மண்டி வாழையாம். எங்க அடுக்குமாடி கட்டடத்தை நெருங்கி தீ விபத்து நடந்துகிட்டிருக்கு. எங்க என்னை அம்மா இப்போ ஓரேக்டா, வேகம் வேகம் வேகம், உதவி வேணும்.",
+  "facts": {
+   "locality": "Kotturpuram",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "fire",
+   "people_count": 4,
+   "trapped": null,
+   "on_roof": null,
+   "water_level": null,
+   "vulnerable": [],
+   "injuries": [
+    "other"
+   ],
+   "medical_needs": [],
+   "needs": [],
+   "caller_language": null
+  }
+ },
+ {
+  "lang": "en-IN",
+  "gps": [
+   13.071983,
+   80.199941
+  ],
+  "text": "Me and my wife stuck in Koyambedu, heavy rain bahirai but water level zero. One is pregnant, other has fever, doctor gaanum urgent come. Please send ambulance, we are safe here.",
+  "facts": {
+   "locality": "Koyambedu",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "flood",
+   "people_count": 2,
+   "trapped": true,
+   "on_roof": null,
+   "water_level": "none",
+   "vulnerable": [
+    "pregnant",
+    "sick"
+   ],
+   "injuries": [],
+   "medical_needs": [],
+   "needs": [
+    "ambulance"
+   ],
+   "caller_language": "ta-IN"
+  }
+ },
+ {
+  "lang": "ta-IN",
+  "gps": [
+   13.030725,
+   80.270743
+  ],
+  "text": "மயிலாப்பூரில் மழை நீர் முட்டையை வரை வந்துச்சிட்டு, எங்க வீட்டில 8 பேரு இருக்கோம். இங்க இன்சுலின் வேணும் சிகிச்சைக்கான நோயாளியும், சிறுமியும் இருக்காங்க, வேனகை பார்க்குங்க.",
+  "facts": {
+   "locality": "Mylapore",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "flood",
+   "people_count": 8,
+   "trapped": null,
+   "on_roof": null,
+   "water_level": "waist",
+   "vulnerable": [
+    "child",
+    "sick"
+   ],
+   "injuries": [],
+   "medical_needs": [
+    "insulin"
+   ],
+   "needs": [],
+   "caller_language": "ta-IN"
+  }
+ },
+ {
+  "lang": "en-IN",
+  "gps": [
+   13.038956,
+   80.206032
+  ],
+  "text": "Water chest-deep already in KK Nagar and eight of us trying to keep our heads up. Please send help fast, we are scared!",
+  "facts": {
+   "locality": "KK Nagar",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "flood",
+   "people_count": 8,
+   "trapped": null,
+   "on_roof": null,
+   "water_level": "chest",
+   "vulnerable": [],
+   "injuries": [],
+   "medical_needs": [],
+   "needs": [
+    "evacuation"
+   ],
+   "caller_language": "en-IN"
+  }
+ },
+ {
+  "lang": "hi-IN",
+  "gps": [
+   13.032624,
+   80.270696
+  ],
+  "text": "Mylapore mein flood aa gayi hai, paani chest level tak hai. Hamare paas 5 log hain, koi roof par nahi hai aur sab safe hain, lekin ek disabled wala hai jise help chahiye.",
+  "facts": {
+   "locality": "Mylapore",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "flood",
+   "people_count": 5,
+   "trapped": false,
+   "on_roof": false,
+   "water_level": "chest",
+   "vulnerable": [
+    "disabled"
+   ],
+   "injuries": [],
+   "medical_needs": [],
+   "needs": [],
+   "caller_language": "hi-IN"
+  }
+ },
+ {
+  "lang": "ta-IN",
+  "gps": [
+   12.979555,
+   80.18551
+  ],
+  "text": "நங்குணல்லூரில் விசாலம் செஸ்ட் லெவல் வரை வந்துவிட்டது, கொஞ்சம் English mix ஆகிடுச்சு. ஐந்து பேர் கூட மொத்தம் 8 பேர் ரூஃப்ரில் உட்கார்ந்திருக்கோம், ப்ளாஸ் ஸ்டு ஸ்டெப்ஸ் ஆனாலும் பீதியில்லேன். ஆனால் எங்க கிட்டும் ஒருத்தருக்கு டயலிசிஸ் வேணும், இது உடனடியாக ஆகணும்.",
+  "facts": {
+   "locality": "Nanganallur",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "flood",
+   "people_count": 8,
+   "trapped": false,
+   "on_roof": true,
+   "water_level": "chest",
+   "vulnerable": [],
+   "injuries": [],
+   "medical_needs": [
+    "dialysis"
+   ],
+   "needs": [],
+   "caller_language": "ta-IN"
+  }
+ },
+ {
+  "lang": "hi-IN",
+  "gps": [
+   13.020307,
+   80.223068
+  ],
+  "text": "Saidapet mein flood ka paani waist tak aa gaya hai, hum log 5 hain aur abhi safe hain. Ek child hai jo insulin ki zaroorat hai aur ek sick person ka bhi hai, kya aap bahut jaldi rescue bhej sakte hain?",
+  "facts": {
+   "locality": "Saidapet",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "flood",
+   "people_count": 5,
+   "trapped": null,
+   "on_roof": null,
+   "water_level": "waist",
+   "vulnerable": [
+    "child",
+    "sick"
+   ],
+   "injuries": [],
+   "medical_needs": [
+    "insulin"
+   ],
+   "needs": [
+    "evacuation"
+   ],
+   "caller_language": "hi-IN"
+  }
+ },
+ {
+  "lang": "ta-IN",
+  "gps": [
+   13.039293,
+   80.206335
+  ],
+  "text": "KK Nagar-la 8 people trapped irukrom, thanni anklu level-la varudhu. Help pannunga please.",
+  "facts": {
+   "locality": "KK Nagar",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "flood",
+   "people_count": 8,
+   "trapped": true,
+   "on_roof": null,
+   "water_level": "ankle",
+   "vulnerable": [],
+   "injuries": [],
+   "medical_needs": [],
+   "needs": [],
+   "caller_language": "ta-IN"
+  }
+ },
+ {
+  "lang": "ta-IN",
+  "gps": [
+   13.029215,
+   80.205663
+  ],
+  "text": "Jafferkhanpet-la vandhalanki namba maadhiri paadi rakshannam paakuthu, eppadi vandhalangaladhu? Unnam 7 naadu neer thodduthu, ethanaithu payingaram-kkaan irukayathu.",
+  "facts": {
+   "locality": "Jafferkhanpet",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "flood",
+   "people_count": 7,
+   "trapped": false,
+   "on_roof": false,
+   "water_level": "waist",
+   "vulnerable": [],
+   "injuries": [],
+   "medical_needs": [],
+   "needs": [],
+   "caller_language": "te-IN"
+  }
+ },
+ {
+  "lang": "hi-IN",
+  "gps": [
+   13.052215,
+   80.191957
+  ],
+  "text": "हम विरुगांबक्कम में छत पर बने हैं, सैमने पानी आ गया है और हम तीन लोग हैं। हम फंसे नहीं हैं लेकिन बाहर जल प्रवाह बहुत तेज़ है, कृपया हमारी मदद करें।",
+  "facts": {
+   "locality": "Virugambakkam",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "flood",
+   "people_count": 3,
+   "trapped": false,
+   "on_roof": true,
+   "water_level": "none",
+   "vulnerable": [],
+   "injuries": [],
+   "medical_needs": [],
+   "needs": [],
+   "caller_language": "hi-IN"
+  }
+ },
+ {
+  "lang": "ta-IN",
+  "gps": [
+   13.073169,
+   80.207502
+  ],
+  "text": "அரம்பக்கத்தைல நான் ஒருத்தன் மட்டும் தப்பம் அடிபட்டுக்கிட்டு இருக்கேன், நீர் இடுப்பு வரை வந்துட்ட மாதிரி. எனக்கு dialysis வேணும், தயவு பண்ணுங்க விரைவா rescue பண்ணுங்க.",
+  "facts": {
+   "locality": "Arambakkathalai",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "flood",
+   "people_count": 1,
+   "trapped": null,
+   "on_roof": null,
+   "water_level": "waist",
+   "vulnerable": [],
+   "injuries": [],
+   "medical_needs": [
+    "dialysis"
+   ],
+   "needs": [
+    "evacuation"
+   ],
+   "caller_language": "ta-IN"
+  }
+ },
+ {
+  "lang": "ta-IN",
+  "gps": [
+   13.019247,
+   80.244995
+  ],
+  "text": "கோத்தூர்புரம்-ல எங்க பகுதியில தீப்டுது, ஐந்து பேர் இருக்கோம், எல்லோராலும் வெளியேற முடிஞ்சுச்சு. ஒரு சிறுமி உள்ளே இருக்காங்க, சீக்கிரம் வத்துக்கோம் ப்ளீஸ்!",
+  "facts": {
+   "locality": "Kotturpuram",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "fire",
+   "people_count": 5,
+   "trapped": true,
+   "on_roof": null,
+   "water_level": null,
+   "vulnerable": [
+    "child"
+   ],
+   "injuries": [],
+   "medical_needs": [],
+   "needs": [
+    "evacuation"
+   ],
+   "caller_language": "ta-IN"
+  }
+ },
+ {
+  "lang": "te-IN",
+  "gps": [
+   12.977066,
+   80.220303
+  ],
+  "text": "వెలACHERI అక్కడ నా ఫ్లాట్ రూఫ్ పై మేము నాలుగు మంది కూతురు, అమ్మమ్మతో కలిసి కూర్చుని ఉన్నాము. నీరు కుండీ వరకు వచ్చింది, నా దగ్గర బబులు బిడ్డ ఉంది, దయచేసి కాదండి రక్షణ కరతలు పంపండి.",
+  "facts": {
+   "locality": "Velachery",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "flood",
+   "people_count": 4,
+   "trapped": false,
+   "on_roof": true,
+   "water_level": "waist",
+   "vulnerable": [
+    "child",
+    "elderly"
+   ],
+   "injuries": [],
+   "medical_needs": [],
+   "needs": [
+    "boat"
+   ],
+   "caller_language": "te-IN"
+  }
+ },
+ {
+  "lang": "hi-IN",
+  "gps": [
+   13.019252,
+   80.244389
+  ],
+  "text": "Kotturpuram mein atal fire ho gaya hai, three logon mein se ek elderly aur ek disabled hain. Hum sab safe nikal gaye hain, koi trunk ya roof pe nahi hai, bas chhota sa ghar jalta raha.",
+  "facts": {
+   "locality": "Kotturpuram",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "fire",
+   "people_count": 3,
+   "trapped": false,
+   "on_roof": false,
+   "water_level": null,
+   "vulnerable": [
+    "elderly",
+    "disabled"
+   ],
+   "injuries": [],
+   "medical_needs": [],
+   "needs": [],
+   "caller_language": "hi-IN"
+  }
+ },
+ {
+  "lang": "ta-IN",
+  "gps": [
+   13.014469,
+   80.174337
+  ],
+  "text": "மனப்பக்கம்-ல நானும் மூணு பேரு மொத்தம் நாலோரு மூடிய மேல இருக்கோம். தண்ணி இப்படி வயிறு வரை வந்துடச்சு, எங்க செஸ்கேட் ஆகுதுனு நென்குதுறோம்.",
+  "facts": {
+   "locality": "Manapakkam",
+   "landmark": null,
+   "lat": null,
+   "lon": null,
+   "hazard": "flood",
+   "people_count": 4,
+   "trapped": null,
+   "on_roof": true,
+   "water_level": "waist",
+   "vulnerable": [],
+   "injuries": [],
+   "medical_needs": [],
+   "needs": [],
+   "caller_language": "ta-IN"
+  }
+ }
+]
