@@ -30,6 +30,15 @@ async def test_extract_facts_bad_json_keeps_previous():
     assert await extract_facts(Boom(), HIST, prev) == prev
 
 
+async def test_one_malformed_field_keeps_the_other_new_facts():
+    # "trapped": "unknown" used to fail validation of the whole object, so chest-deep water was lost for that turn
+    llm = FakeLLM([json.dumps({"locality": "Velachery", "water_level": "chest", "trapped": "unknown", "on_roof": "yes",
+                               "landmark": ["temple"], "people_count": -3, "caller_language": None})])
+    f = await extract_facts(llm, HIST, Facts(people_count=2))
+    assert f.locality == "Velachery" and f.water_level == "chest" and f.on_roof is True
+    assert f.trapped is None and f.landmark is None and f.people_count == 2
+
+
 def test_pick_guidance_specific_first():
     kb = load_guidance()
     f = Facts(hazard="flood", water_level="chest", medical_needs=["insulin"])

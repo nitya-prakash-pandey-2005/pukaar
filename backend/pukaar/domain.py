@@ -61,8 +61,17 @@ class Facts(BaseModel):
         if "people_count" in d:
             try:
                 d["people_count"] = int(d["people_count"])
+                if d["people_count"] < 0:
+                    d.pop("people_count")
             except (TypeError, ValueError):
                 d.pop("people_count")
+        # one malformed field ("trapped": "unknown") must not fail the whole object and lose the other facts
+        for k in ("trapped", "on_roof"):
+            if k in d and str(d[k]).strip().lower() not in {"true", "false", "yes", "no", "1", "0"}:
+                d.pop(k)
+        for k in ("locality", "landmark", "caller_language"):
+            if k in d and not isinstance(d[k], str):
+                d.pop(k)
         return d
 
 
