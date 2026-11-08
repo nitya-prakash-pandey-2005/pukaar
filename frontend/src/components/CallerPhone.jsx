@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Headphones, MapPin, PhoneCall, PhoneIncoming, PhoneOff, ShieldAlert } from "lucide-react";
+import { Headphones, MapPin, PhoneCall, PhoneIncoming, PhoneMissed, PhoneOff, ShieldAlert } from "lucide-react";
 import { Badge, Card, Hud, Seg, hueOf } from "../ui";
 import { DISCLAIMER, LEVEL_TONE, jitter, mmss } from "../lib/labels";
 import { useNow } from "../state/useCall";
@@ -44,10 +44,11 @@ export default function CallerPhone({ call, places, placeName, setPlaceName, noi
     return () => cancelAnimationFrame(raf);
   }, [live, call.playerLevel]);
 
-  const startCall = () => {
+  const gps = () => {
     const p = places.find((x) => x.name === placeName);
-    call.start(p ? jitter([p.lat, p.lon]) : null, noiseToDb(noise));
+    return p ? jitter([p.lat, p.lon]) : null;
   };
+  const startCall = () => call.start(gps(), noiseToDb(noise));
   const changeNoise = (v) => {
     setNoise(v);
     if (live) call.setNoise(noiseToDb(v));
@@ -71,6 +72,8 @@ export default function CallerPhone({ call, places, placeName, setPlaceName, noi
         <div className="small muted">Language: {call.language || "Auto"} · Tamil, Tanglish, Hindi, Telugu, English</div>
         <div className="call-timer">
           {call.phase === "idle" && "Ready"}
+          {call.phase === "missed" && "Missed call sent · no balance used"}
+          {call.phase === "incoming" && "Pukaar is calling you back…"}
           {call.phase === "connecting" && "Connecting…"}
           {(call.phase === "live" || call.phase === "ending") && <>{call.speaking ? "Pukaar speaking · " : "On call · "}{mmss(elapsed)}</>}
           {call.phase === "ended" && <>Call ended · {mmss(call.seconds)}</>}
@@ -93,19 +96,31 @@ export default function CallerPhone({ call, places, placeName, setPlaceName, noi
         </div>
       )}
 
-      {live ? (
+      {call.phase === "incoming" ? (
+        <div className="row" style={{ gap: 10 }}>
+          <button className="btn primary lg grow ringing" onClick={() => call.answer(noiseToDb(noise))}><PhoneIncoming size={18} /> Answer</button>
+          <button className="btn danger lg" onClick={call.decline} aria-label="Decline"><PhoneOff size={18} /></button>
+        </div>
+      ) : call.phase === "missed" ? (
+        <button className="btn lg block" disabled><PhoneMissed size={18} /> Missed call sent…</button>
+      ) : live ? (
         <button className="btn danger lg block" onClick={call.hangup} disabled={call.phase === "ending"}>
           <PhoneOff size={18} /> {call.phase === "ending" ? "Hanging up…" : "Hang up"}
         </button>
       ) : (
-        <button className="btn primary lg block" onClick={startCall}>
-          <PhoneCall size={18} /> Call Pukaar
-        </button>
+        <div className="stack" style={{ gap: 8 }}>
+          <button className="btn primary lg block" onClick={startCall}>
+            <PhoneCall size={18} /> Call Pukaar
+          </button>
+          <button className="btn ghost block" onClick={() => call.missedCall(gps())}>
+            <PhoneMissed size={16} /> No balance? Give a missed call
+          </button>
+        </div>
       )}
 
       <label className="field">
         <span><MapPin size={13} /> Simulated phone location</span>
-        <select className="select" value={placeName} onChange={(e) => setPlaceName(e.target.value)} disabled={live}>
+        <select className="select" value={placeName} onChange={(e) => setPlaceName(e.target.value)} disabled={live || call.phase === "incoming"}>
           <option value="">No location shared</option>
           {places.map((p) => <option key={p.name} value={p.name}>{p.name}</option>)}
         </select>

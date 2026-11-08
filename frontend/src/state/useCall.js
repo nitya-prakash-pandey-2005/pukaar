@@ -2,13 +2,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPcmPlayer, startMic } from "@voice/index.js";
 import { openCall } from "../net/callSocket";
-import { getJSON } from "../lib/api";
+import { getJSON, postJSON } from "../lib/api";
 import { toast } from "../ui";
 
 const RATE = 8000; // phone-quality audio both ways (Prisma is trained on 8 kHz calls)
 
 export function useCall() {
-  const [phase, setPhase] = useState("idle"); // idle | connecting | live | ending | ended
+  const [phase, setPhase] = useState("idle"); // idle | missed | incoming | connecting | live | ending | ended
+  const [pending, setPending] = useState(null); // { callId, gps } while a missed call waits for the callback
   const [callId, setCallId] = useState(null);
   const [turns, setTurns] = useState([]);
   const [incident, setIncident] = useState(null);
@@ -63,7 +64,7 @@ export function useCall() {
     }
   }, []);
 
-  const start = useCallback(async (gps, noiseDb = null) => {
+  const start = useCallback(async (gps, noiseDb = null, callbackFor = null) => {
     if (refs.current.call) return;
     setTurns([]);
     setIncident(null);
@@ -81,6 +82,7 @@ export function useCall() {
     refs.current.call = openCall({
       gps,
       noiseSnrDb: noiseDb,
+      callbackFor,
       onEvent,
       onAudio: (ab) => player.play(ab),
       onClose: () => {
@@ -100,6 +102,34 @@ export function useCall() {
       toast(`Microphone unavailable: ${e?.message || e}`, "warn");
     }
   }, [onEvent]);
+
+  // missed-call jugaad: the caller spends nothing, the pin appears now, and Pukaar rings back
+  const missedCall = useCallback(async (gps) => {
+    setTurns([]);
+    setIncident(null);
+    setCallbacks([]);
+    setPhase("missed");
+    try {
+      const r = await postJSON("/api/missed-call", { gps });
+      setCallId(r.call_id);
+      setIncident(r.incident);
+      setPending({ callId: r.call_id, gps });
+      setTimeout(() => setPhase((p) => (p === "missed" ? "incoming" : p)), 2500);
+    } catch (e) {
+      toast(`Missed call failed: ${e.message}`, "warn");
+      setPhase("idle");
+    }
+  }, []);
+
+  const answer = useCallback((noiseDb = null) => {
+    if (pending) start(pending.gps, noiseDb, pending.callId);
+    setPending(null);
+  }, [pending, start]);
+
+  const decline = useCallback(() => {
+    setPending(null);
+    setPhase("ended");
+  }, []);
 
   const hangup = useCallback(() => {
     stopMic();
@@ -128,7 +158,7 @@ export function useCall() {
   }, []);
 
   return { phase, callId, turns, incident, language, stt, speaking, startedAt, seconds, callbacks,
-           start, hangup, setNoise, playerLevel };
+           start, hangup, setNoise, playerLevel, missedCall, answer, decline };
 }
 
 export function useNow(active, every = 250) {

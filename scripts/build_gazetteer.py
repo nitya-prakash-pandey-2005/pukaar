@@ -35,7 +35,7 @@ PLACES = {
     "Virugambakkam": ["விருகம்பாக்கம்"],
     "Ekkattuthangal": ["ஈக்காட்டுத்தாங்கல்", "Ekkaduthangal"],
     "Jafferkhanpet": ["ஜாபர்கான்பேட்டை", "Jafferkhanpettai"],
-    "T Nagar": ["தி. நகர்", "Thyagaraya Nagar", "T. Nagar", "Tnagar"],
+    "T Nagar": ["தி. நகர்", "Thyagaraya Nagar", "T. Nagar"],
     "Mylapore": ["மயிலாப்பூர்", "Mylapur"],
     "Royapuram": ["ராயபுரம்"],
     "Vyasarpadi": ["வியாசர்பாடி"],

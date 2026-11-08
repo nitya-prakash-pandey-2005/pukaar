@@ -18,9 +18,9 @@ FACTS = json.dumps({"hazard": "flood", "locality": "Velachery", "water_level": "
 def client(tmp_path):
     settings = Settings(sample_rate=8000, cache_dir=tmp_path / "cache")
 
-    def factory(store, send_json, send_audio, gps):
+    def factory(store, send_json, send_audio, gps, call_id=None):
         agent = PukaarAgent(llm=FakeLLM(["பயப்படாதீங்க."]), intel_llm=FakeLLM([FACTS]), store=store,
-                            places=load_gazetteer(), kb=load_guidance(), gps=gps)
+                            places=load_gazetteer(), kb=load_guidance(), gps=gps, call_id=call_id)
         stt = FakeStt([ev("connected"), ev("transcript", "Velachery la irukom, thanni chest varaikkum", "ta-IN")])
         sess = VoiceAgentSession(agent, send_json=send_json, send_audio=send_audio, settings=settings,
                                  stt_factory=lambda: stt, tts_fn=fake_tts, rng=random.Random(0))
@@ -93,3 +93,31 @@ def test_guidance_and_callback_audio_fake(tmp_path, monkeypatch):
         r = c.get(f"/api/calls/{cid}/callbacks/{cb}/audio")
         assert r.status_code == 200 and r.headers["content-type"] == "audio/wav" and r.content[:4] == b"RIFF"
         assert c.get(f"/api/calls/{cid}/callbacks/nope/audio").status_code == 404
+
+
+def test_surge_fake_mode(tmp_path, monkeypatch):
+    import time
+    monkeypatch.setenv("PUKAAR_FAKE", "1")
+    with TestClient(create_app(Settings(sample_rate=8000, cache_dir=tmp_path / "c"))) as c:
+        assert c.post("/api/surge", json={"n": 2}).json() == {"started": 2, "mode": "generate"}
+        assert c.post("/api/surge", json={"n": 2}).status_code == 409
+        for _ in range(100):
+            if c.get("/api/incidents").json():
+                break
+            time.sleep(0.05)
+        assert c.get("/api/incidents").json()[0]["facts"]["locality"] == "Velachery"
+
+
+def test_missed_call_then_callback_reuses_call_and_incident(client):
+    r = client.post("/api/missed-call", json={"gps": [12.98, 80.22]}).json()
+    cid, inc = r["call_id"], r["incident"]
+    assert inc["channel"] == "missed_call" and inc["lat"] == 12.98 and inc["call_ids"] == [cid]
+    with client.websocket_connect("/ws/call") as call:
+        call.send_json({"type": "start", "gps": [12.98, 80.22], "callback_for": cid})
+        assert call.receive_json()["call_id"] == cid
+        seen = [_until(call, "turn") for _ in range(2)]
+        assert any(m["speaker"] == "pukaar" and "missed call" in m["text"] for m in seen)
+        assert _until(call, "incident")["incident"]["id"] == inc["id"]
+        call.send_json({"type": "hangup"})
+        _until(call, "call_ended")
+    assert len(client.get("/api/incidents").json()) == 1

@@ -132,9 +132,22 @@ def _match(text: str, places: list[Place]) -> tuple[Place, float] | None:
             else:
                 r = max((SequenceMatcher(None, n, " ".join(toks[i:i + len(nt)])).ratio()
                          for i in range(len(toks) - len(nt) + 1)), default=0.0)
+                # split spellings ("vayasar padi" ~ "vyasarpadi"): strict, or "X Nagar" areas match "T Nagar"
+                nj, k = n.replace(" ", ""), len(nt) + 1
+                split = max((SequenceMatcher(None, nj, "".join(toks[i:i + k])).ratio()
+                             for i in range(len(toks) - k + 1)), default=0.0)
+                r = max(r, split if split >= 0.85 else 0.0)
             if r >= (0.9 if len(n) < 6 else 0.75) and (best is None or r > best[1]):  # short names: one typo is a lot
                 best = (p, r)
     return best
+
+
+def canonical_locality(f: Facts, places: list[Place], gps: tuple[float, float] | None = None) -> Facts:
+    """Replaces an LLM spelling ("Vayasar Padi") with the gazetteer name; with GPS, only if that place is within 3 km."""
+    m = _match(f.locality, places) if f.locality else None
+    if not m or (gps and haversine_m(gps, (m[0].lat, m[0].lon)) > 3000):
+        return f
+    return f.model_copy(update={"locality": m[0].name})
 
 
 def locate(f: Facts, places: list[Place], gps: tuple[float, float] | None) -> tuple[float, float, str, float] | None:
@@ -167,6 +180,7 @@ class Incident(BaseModel):
     status: str = "new"  # new | dispatched | resolved
     dispatch: dict | None = None  # {team, note, eta}
     guidance_given: list[str] = []
+    channel: str = "voice"  # voice | missed_call | text (synthetic surge)
     created_at: float
     updated_at: float
 

@@ -93,3 +93,17 @@ def test_next_slot_order():
 
 def test_keyterms():
     assert 10 <= len(KEYTERMS) <= 40 and "flood" in KEYTERMS
+
+
+def test_canonical_locality(places):
+    from pukaar.domain import canonical_locality
+    assert canonical_locality(Facts(locality="Vayasar Padi"), places).locality == "Vyasarpadi"
+    assert canonical_locality(Facts(locality="Unknown Nagar 9"), places).locality == "Unknown Nagar 9"
+    assert canonical_locality(Facts(), places).locality is None
+
+
+def test_canonical_locality_ignores_far_match_when_gps_known(places):
+    from pukaar.domain import canonical_locality
+    ekkattuthangal = (13.0243, 80.2066)
+    assert canonical_locality(Facts(locality="Keelkattalai"), places, ekkattuthangal).locality == "Keelkattalai"
+    assert canonical_locality(Facts(locality="Ekkaduthangal"), places, ekkattuthangal).locality == "Ekkattuthangal"

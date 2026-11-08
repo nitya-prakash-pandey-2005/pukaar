@@ -1,14 +1,14 @@
 // WebSocket client for /ws/call (protocol: backend/pukaar/app.py).
-// openCall({ gps, noiseSnrDb, onEvent, onAudio, onClose }) -> { sendAudio, setNoise, hangup, close }
+// openCall({ gps, noiseSnrDb, callbackFor, onEvent, onAudio, onClose }) -> { sendAudio, setNoise, hangup, close }
 
 export const wsUrl = (path) => `${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}${path}`;
 
-export function openCall({ gps = null, noiseSnrDb = null, onEvent, onAudio, onClose } = {}) {
+export function openCall({ gps = null, noiseSnrDb = null, callbackFor = null, onEvent, onAudio, onClose } = {}) {
   const ws = new WebSocket(wsUrl("/ws/call"));
   ws.binaryType = "arraybuffer";
   let closed = false;
 
-  ws.onopen = () => ws.send(JSON.stringify({ type: "start", gps, noise_snr_db: noiseSnrDb }));
+  ws.onopen = () => ws.send(JSON.stringify({ type: "start", gps, noise_snr_db: noiseSnrDb, callback_for: callbackFor }));
   ws.onmessage = (e) => {
     if (typeof e.data === "string") {
       try { onEvent?.(JSON.parse(e.data)); } catch { /* ignore malformed */ }

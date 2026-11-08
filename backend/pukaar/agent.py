@@ -10,7 +10,7 @@ from voice_core.turns import split_sentences
 from voice_core.types import Turn
 
 from .data import Guidance, Place
-from .domain import KEYTERMS, Facts, Incident, locate, next_slot
+from .domain import KEYTERMS, Facts, Incident, canonical_locality, locate, next_slot
 from .guard import fallback, guard_reply
 from .store import Store
 from .triage import LANG_NAMES, build_reply_messages, extract_facts, pick_guidance
@@ -18,6 +18,7 @@ from .triage import LANG_NAMES, build_reply_messages, extract_facts, pick_guidan
 STT_HINT = "ta-IN,hi-IN,en-IN,te-IN"
 TTS_LANGS = {"hi-IN", "en-IN", "ta-IN", "te-IN", "kn-IN", "ml-IN", "mr-IN", "pa-IN", "bn-IN", "gu-IN"}
 GREETING = "பதட்டப்படாதீங்க, நான் உதவறேன். Pukaar helpline. Aap kahan hain?"
+CALLBACK_GREETING = "வணக்கம், Pukaar helpline. நீங்க missed call கொடுத்தீங்க, நாங்க திரும்ப கூப்பிடறோம். நீங்க எங்க இருக்கீங்க?"
 FILLERS = {
     "ta": ["சரி, கேக்கறேன்.", "ம்ம், சொல்லுங்க."],
     "hi": ["हाँ, मैं सुन रही हूँ।", "जी, बताइए।"],
@@ -35,11 +36,12 @@ class PukaarAgent:
     keyterms = KEYTERMS
 
     def __init__(self, *, llm, intel_llm, store: Store, places: list[Place], kb: list[Guidance],
-                 gps: tuple[float, float] | None = None):
+                 gps: tuple[float, float] | None = None, call_id: str | None = None):
         self.llm, self.intel_llm, self.store = llm, intel_llm, store
         self.places, self.kb, self.gps = places, kb, gps
         self.tts_language = "ta-IN"
-        self.call_id = store.create_call(self.tts_language)
+        self.callback = call_id is not None  # calling back a missed call: continue that call and its incident
+        self.call_id = call_id or store.create_call(self.tts_language)
         self.facts = Facts()
         self.asked: set[str] = set()
         self.given: set[str] = set()
@@ -51,7 +53,7 @@ class PukaarAgent:
         return {"call_id": self.call_id, "gps": self.gps}
 
     def greeting(self) -> str:
-        return GREETING
+        return CALLBACK_GREETING if self.callback else GREETING
 
     def filler_texts(self) -> list[str]:
         return FILLERS.get(self.tts_language.split("-")[0], FILLERS["en"])
@@ -97,7 +99,7 @@ class PukaarAgent:
             yield s.strip()
 
     async def on_user_turn(self, history: list[Turn]) -> dict | None:
-        f = await self._facts_for(history)
+        f = canonical_locality(await self._facts_for(history), self.places, self.gps)
         inc = self.store.upsert_incident(self.call_id, f, locate(f, self.places, self.gps))
         return {"type": "incident", "call_id": self.call_id, "incident": inc.model_dump()}
 

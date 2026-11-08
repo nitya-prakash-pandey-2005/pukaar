@@ -16,6 +16,7 @@ function HealthPill({ health }) {
   if (!health) return <Badge tone="muted" dot>Server offline</Badge>;
   if (health.fake) return <Badge tone="amber" dot>Fake mode: no API keys</Badge>;
   if (!health.gnani_key || !health.llm_key) return <Badge tone="rose" dot>API keys missing</Badge>;
+  if (!health.fillers_ready) return <Badge tone="cyan" dot>Warming up voices…</Badge>;
   return <Badge tone="green" dot>Gnani live · {health.llm_provider}</Badge>;
 }
 

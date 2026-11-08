@@ -47,6 +47,8 @@ class FakeTriageLLM:
             return json.dumps(next(self._facts, {}))
         if system.startswith("Translate"):
             return messages[-1]["content"]
+        if system.startswith("You write"):
+            return SCRIPT[0]
         return next(self._replies)
 
 

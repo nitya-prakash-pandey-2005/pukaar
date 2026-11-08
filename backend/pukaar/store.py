@@ -92,7 +92,7 @@ class Store:
     def _link(self, call_id: str, incident_id: str) -> None:
         self._exec("UPDATE calls SET incident_id=? WHERE id=?", (incident_id, call_id))
 
-    def upsert_incident(self, call_id: str, facts: Facts, loc: tuple | None) -> Incident:
+    def upsert_incident(self, call_id: str, facts: Facts, loc: tuple | None, channel: str = "voice") -> Incident:
         """loc = locate() output (lat, lon, source, confidence) or None. Merges duplicates (design §7)."""
         now = time.time()
         row = self.db.execute("SELECT incident_id FROM calls WHERE id=?", (call_id,)).fetchone()
@@ -116,7 +116,8 @@ class Store:
             target = own or find_other()
 
         if target is None:
-            inc = Incident(id=_id(), call_ids=[call_id], facts=facts, severity=score(facts), created_at=now, updated_at=now)
+            inc = Incident(id=_id(), call_ids=[call_id], facts=facts, severity=score(facts), channel=channel,
+                           created_at=now, updated_at=now)
             if loc:
                 inc.lat, inc.lon, inc.loc_source, inc.loc_confidence = loc
             self._link(call_id, inc.id)

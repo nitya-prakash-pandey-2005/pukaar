@@ -30,7 +30,7 @@ SLOT_QUESTIONS = {
 
 
 def _transcript(history: list[Turn]) -> str:
-    return "\n".join(f"{t.speaker}: {t.text}" for t in history[-12:])
+    return "\n".join(f"{t.speaker}: {t.text}" for t in history[-6:])  # known facts carry the rest; Groq free tier is 8k tokens/min
 
 
 async def extract_facts(llm, history: list[Turn], previous: Facts) -> Facts:
@@ -84,5 +84,5 @@ def build_reply_messages(f: Facts, slot: str | None, guidance: list[Guidance], l
         f"Known facts: {json.dumps(f.model_dump(exclude_none=True), ensure_ascii=False)}"
     )
     msgs = [{"role": "system", "content": system}]
-    msgs += [{"role": "assistant" if t.speaker == "pukaar" else "user", "content": t.text} for t in history[-10:]]
+    msgs += [{"role": "assistant" if t.speaker == "pukaar" else "user", "content": t.text} for t in history[-6:]]
     return msgs

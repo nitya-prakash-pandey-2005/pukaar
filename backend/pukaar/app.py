@@ -10,6 +10,9 @@ import asyncio
 import json
 import logging
 import os
+import random
+from contextlib import asynccontextmanager
+from types import SimpleNamespace
 
 from fastapi import FastAPI, HTTPException, Response, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
@@ -21,13 +24,25 @@ from voice_core.llm import LLM
 from voice_core.session import VoiceAgentSession
 
 from .agent import PukaarAgent, deliver_dispatch
+from .domain import Facts
+from .assets import load_or_make_fillers, rain_noise
 from .data import load_gazetteer, load_guidance
 from .fake_mode import FakeTriageLLM, ScriptedStt, tone_tts
+from .sim import replay_surge, run_surge
 from .store import Store
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 log = logging.getLogger("pukaar")
 TO_CONTROL = {"incident", "turn", "language"}
+
+
+class MissedCallIn(BaseModel):
+    gps: tuple[float, float] | None = None
+
+
+class SurgeIn(BaseModel):
+    n: int = 20
+    fresh: bool = False  # True = generate new callers with the LLM (and re-record); else replay the recording
 
 
 class DispatchIn(BaseModel):
@@ -46,19 +61,34 @@ def create_app(settings: Settings | None = None, *, session_factory=None, intel_
     tts_cache = TtsCache(settings.cache_dir)
     control: set[WebSocket] = set()
     live: dict[str, tuple[VoiceAgentSession, PukaarAgent]] = {}
+    st = SimpleNamespace(fillers={}, rain=rain_noise(10.0, settings.sample_rate), ready=False, surge=None)
 
-    def default_factory(store, send_json, send_audio, gps):
+    def default_factory(store, send_json, send_audio, gps, call_id=None):
         if fake:
             llm = FakeTriageLLM()
-            agent = PukaarAgent(llm=llm, intel_llm=llm, store=store, places=places, kb=kb, gps=gps)
+            agent = PukaarAgent(llm=llm, intel_llm=llm, store=store, places=places, kb=kb, gps=gps, call_id=call_id)
             return VoiceAgentSession(agent, send_json=send_json, send_audio=send_audio, settings=settings,
-                                     stt_factory=ScriptedStt, tts_fn=tone_tts), agent
+                                     stt_factory=ScriptedStt, tts_fn=tone_tts, noise=st.rain), agent
         agent = PukaarAgent(llm=LLM(settings), intel_llm=LLM(settings, purpose="intel"), store=store,
-                            places=places, kb=kb, gps=gps)
-        return VoiceAgentSession(agent, send_json=send_json, send_audio=send_audio, settings=settings), agent
+                            places=places, kb=kb, gps=gps, call_id=call_id)
+        return VoiceAgentSession(agent, send_json=send_json, send_audio=send_audio, settings=settings,
+                                 filler_audio=st.fillers, noise=st.rain), agent
 
     factory = session_factory or default_factory
-    app = FastAPI(title="Pukaar")
+    @asynccontextmanager
+    async def lifespan(app: FastAPI):
+        async def warm():  # greeting + fillers rendered once (cached), so replies never start with silence
+            st.fillers.update(await load_or_make_fillers(settings))
+            st.ready = True
+            log.info("assets ready: %d filler clips", len(st.fillers))
+
+        task = None if (fake or session_factory) else asyncio.create_task(warm())
+        st.ready = task is None
+        yield
+        if task and not task.done():
+            task.cancel()
+
+    app = FastAPI(title="Pukaar", lifespan=lifespan)
     app.state.store = store
 
     async def broadcast(m: dict) -> None:
@@ -85,7 +115,7 @@ def create_app(settings: Settings | None = None, *, session_factory=None, intel_
     async def health():
         return {"gnani_key": bool(settings.gnani_api_key), "llm_key": bool(settings.groq_api_key or settings.evon_base_url),
                 "llm_provider": settings.llm_provider, "intel_llm_provider": settings.intel_llm_provider,
-                "stt_mode": settings.stt_mode, "fake": fake}
+                "stt_mode": settings.stt_mode, "fake": fake, "fillers_ready": st.ready}
 
     @app.get("/api/places")
     async def get_places():
@@ -117,6 +147,30 @@ def create_app(settings: Settings | None = None, *, session_factory=None, intel_
         await broadcast({"type": "incident", "incident": inc.model_dump()})
         await broadcast({"type": "kpis", **store.kpis()})
         return inc.model_dump()
+
+    @app.post("/api/missed-call")
+    async def missed_call(body: MissedCallIn):
+        """Missed-call jugaad: the caller spends nothing; the pin appears now and Pukaar calls back."""
+        cid = store.create_call("ta-IN")
+        loc = (body.gps[0], body.gps[1], "gps", 0.7) if body.gps else None
+        inc = store.upsert_incident(cid, Facts(), loc, channel="missed_call")
+        await broadcast({"type": "incident", "incident": inc.model_dump()})
+        await broadcast({"type": "kpis", **store.kpis()})
+        return {"call_id": cid, "incident": inc.model_dump()}
+
+    @app.post("/api/surge")
+    async def surge(body: SurgeIn):
+        """Flood-night replay: synthetic text callers through the real triage (LLM only, no Gnani credits)."""
+        if st.surge and not st.surge.done():
+            raise HTTPException(409, "a surge is already running")
+        rec = settings.cache_dir / ("surge_fake.json" if fake else "surge_recording.json")
+        if rec.exists() and not body.fresh:  # replay: no LLM calls, so live calls keep the Groq token budget
+            rows = json.loads(rec.read_text(encoding="utf-8"))[: max(1, min(40, body.n))]
+            st.surge = asyncio.create_task(replay_surge(rows, store, places, broadcast))
+            return {"started": len(rows), "mode": "replay"}
+        n = max(1, min(40, body.n))
+        st.surge = asyncio.create_task(run_surge(n, intel_llm, store, places, broadcast, random.Random(), record=rec))
+        return {"started": n, "mode": "generate"}
 
     @app.get("/api/kpis")
     async def kpis():
@@ -196,7 +250,10 @@ def create_app(settings: Settings | None = None, *, session_factory=None, intel_
             await ws.close(code=1008)
             return
         gps = tuple(first["gps"]) if first.get("gps") else None
-        sess, agent = factory(store, send_json, send_audio, gps)
+        callback_for = first.get("callback_for")
+        if callback_for and (store.get_call(callback_for) is None or callback_for in live):
+            callback_for = None
+        sess, agent = factory(store, send_json, send_audio, gps, callback_for)
         holder["agent"] = agent
         live[agent.call_id] = (sess, agent)
         await broadcast({"type": "call_started", "call_id": agent.call_id, "gps": gps})
