@@ -122,7 +122,25 @@ async def main(args) -> int:
         except Exception as e:
             report("llm", False, repr(e))
 
-    # 7. voices
+    # 7. voice cloning (is it inside the key's TTS scope?)
+    if args.clone:
+        from voice_core.gnani import create_voice_embedding, tts_clone_rest
+
+        try:
+            sample = await tts_rest(
+                key,
+                "नमस्ते, मेरा नाम सुनीता है। मैं कानपुर में रहती हूँ और मुझे सुबह की चाय और पुराने गाने बहुत पसंद हैं। "
+                "आज मौसम बहुत अच्छा है, इसलिए मैं पार्क में टहलने जाऊँगी।",
+                voice="Kalpana", language="hi-IN", sample_rate=16000)
+            emb = await create_voice_embedding(key, wav_bytes(sample, 16000))
+            report("voice_clone_embedding", bool(emb.get("embedding")), f"shape={emb.get('shape')}")
+            out = await tts_clone_rest(key, "ये मेरी आवाज़ है, अब तमिल में भी।", emb, language="hi-IN", sample_rate=16000)
+            (s.cache_dir / "smoke_clone.wav").write_bytes(wav_bytes(out, 16000))
+            report("voice_clone_tts", len(out) > 16000, f"{len(out) / 32000:.2f}s -> cache/smoke_clone.wav")
+        except Exception as e:
+            report("voice_clone", False, f"{e!r} (403 SCOPE_NOT_ALLOWED means cloning is not enabled for this key)")
+
+    # 8. voices
     if args.voices:
         out = s.cache_dir / "voices"
         out.mkdir(parents=True, exist_ok=True)
@@ -144,4 +162,5 @@ if __name__ == "__main__":
     p = argparse.ArgumentParser()
     p.add_argument("--llm", action="store_true")
     p.add_argument("--voices", action="store_true")
+    p.add_argument("--clone", action="store_true", help="test Gnani voice cloning (needed by apni-awaaz)")
     sys.exit(asyncio.run(main(p.parse_args())))
