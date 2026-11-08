@@ -32,6 +32,27 @@ function SeverityDrivers({ drivers }) {
   );
 }
 
+// Dispatcher types English; each caller hears it in their own language (live, or as a callback)
+function MessageForm({ inc }) {
+  const [text, setText] = useState("");
+  const [busy, setBusy] = useState(false);
+  const send = async () => {
+    setBusy(true);
+    try {
+      const r = await postJSON(`/api/incidents/${inc.id}/message`, { text });
+      toast(`Sent to ${r.sent.length} caller${r.sent.length > 1 ? "s" : ""} in ${[...new Set(r.sent.map((s) => s.lang))].join(", ")}`, "ok");
+      setText("");
+    } catch (e) { toast(e.message, "warn"); }
+    setBusy(false);
+  };
+  return (
+    <div className="stack" style={{ gap: 8 }}>
+      <input className="input" value={text} onChange={(e) => setText(e.target.value)} placeholder="e.g. The boat is at the temple gate. Wave a cloth." />
+      <button className="btn block" onClick={send} disabled={busy || !text.trim()}><Send size={16} /> {busy ? "Translating…" : "Send in their language"}</button>
+    </div>
+  );
+}
+
 function DispatchForm({ inc }) {
   const [team, setTeam] = useState(TEAMS[0]);
   const [note, setNote] = useState("");
@@ -124,6 +145,13 @@ export default function IncidentSheet({ inc, guidance, onClose }) {
             ) : <DispatchForm inc={inc} />}
             {inc.status !== "resolved" && <button className="btn ghost block" style={{ marginTop: 8 }} onClick={resolve}>Mark resolved</button>}
           </section>
+
+          {inc.status !== "resolved" && (
+            <section>
+              <h4>Message the caller{inc.call_ids.length > 1 ? "s" : ""}</h4>
+              <MessageForm inc={inc} />
+            </section>
+          )}
 
           <section>
             <h4>Transcript{calls.length > 1 ? "s" : ""}</h4>

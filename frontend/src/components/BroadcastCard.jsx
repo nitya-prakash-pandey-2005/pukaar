@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Megaphone } from "lucide-react";
+import { FileCode2, Megaphone } from "lucide-react";
 import { Card, toast } from "../ui";
 import { postJSON } from "../lib/api";
 
@@ -22,6 +22,15 @@ export default function BroadcastCard() {
     }
     setBusy(false);
   };
+  const downloadCap = async () => {
+    try {
+      const r = await fetch("/api/broadcast/cap", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text_en: text, items: items.map(({ lang, text: t }) => ({ lang, text: t })) }) });
+      const url = URL.createObjectURL(await r.blob());
+      Object.assign(document.createElement("a"), { href: url, download: "pukaar-alert-cap.xml" }).click();
+      URL.revokeObjectURL(url);
+    } catch (e) { toast(`CAP export failed: ${e.message}`, "warn"); }
+  };
   return (
     <Card title="Broadcast alert in every language" icon={Megaphone}>
       <div className="stack" style={{ gap: 10 }}>
@@ -34,6 +43,9 @@ export default function BroadcastCard() {
         <button className="btn primary" onClick={send} disabled={busy || !text.trim() || !langs.length}>
           <Megaphone size={16} /> {busy ? "Translating and speaking…" : `Speak in ${langs.length} language${langs.length === 1 ? "" : "s"}`}
         </button>
+        {items.length > 0 && (
+          <button className="btn ghost" onClick={downloadCap}><FileCode2 size={16} /> Download CAP 1.2 XML (for SACHET-style alert systems)</button>
+        )}
         {items.map((i) => (
           <div key={i.lang} className="bcast">
             <b>{i.language}</b>

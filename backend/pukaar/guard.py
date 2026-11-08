@@ -10,7 +10,9 @@ FALLBACK = {
 }
 _ID_RE = re.compile(r"\[\[\s*([A-Z]{3}-\d{2})\s*\]\]")
 _ANY_TAG_RE = re.compile(r"\[\[.*?\]\]")
-_TIME_RE = re.compile(r"\d+\s*(min|minute|मिनट|நிமிட)|jaldi pahunch|reaching soon|வந்துவிடும்", re.IGNORECASE)
+_TIME_RE = re.compile(  # any minutes/hours, in any script, or a "soon" promise
+    r"\b(minutes?|mins?|hours?|hrs?|ghante|ghanta|minat)\b|मिनट|घंट|நிமிட|நிமிஷ|மணி நேர|నిమిష|గంట|ನಿಮಿಷ|ಗಂಟೆ|মিনিট|ঘণ্টা"
+    r"|മിനിറ്റ|മണിക്കൂ|jaldi pahunch|reaching soon|coming soon|जल्दी पहुँच|जल्दी आ|வந்துவிடும்", re.IGNORECASE)
 
 
 def fallback(lang: str | None) -> str:

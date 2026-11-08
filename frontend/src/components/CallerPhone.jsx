@@ -1,8 +1,9 @@
-import { useEffect, useRef } from "react";
-import { Headphones, MapPin, PhoneCall, PhoneIncoming, PhoneMissed, PhoneOff, ShieldAlert } from "lucide-react";
-import { Badge, Card, Hud, Seg, hueOf } from "../ui";
+import { useEffect, useRef, useState } from "react";
+import { Headphones, MapPin, MessageSquare, PhoneCall, PhoneIncoming, PhoneMissed, PhoneOff, ShieldAlert } from "lucide-react";
+import { Badge, Card, Hud, Seg, hueOf, toast } from "../ui";
 import { DISCLAIMER, LEVEL_TONE, jitter, mmss } from "../lib/labels";
 import { useNow } from "../state/useCall";
+import { postJSON } from "../lib/api";
 
 const NOISE_OPTIONS = [
   { value: "off", label: "Off" },
@@ -115,6 +116,7 @@ export default function CallerPhone({ call, places, placeName, setPlaceName, noi
           <button className="btn ghost block" onClick={() => call.missedCall(gps())}>
             <PhoneMissed size={16} /> No balance? Give a missed call
           </button>
+          <SmsBox gps={gps} />
         </div>
       )}
 
@@ -151,5 +153,31 @@ export default function CallerPhone({ call, places, placeName, setPlaceName, noi
         <span>{DISCLAIMER}</span>
       </div>
     </Card>
+  );
+}
+
+// Weak network or can't speak? Send an SMS / WhatsApp; it goes through the same triage and onto the map
+function SmsBox({ gps }) {
+  const [open, setOpen] = useState(false);
+  const [text, setText] = useState("");
+  const [reply, setReply] = useState("");
+  const [busy, setBusy] = useState(false);
+  const send = async () => {
+    setBusy(true);
+    try {
+      const r = await postJSON("/api/sms", { text, gps: gps() });
+      setReply(r.reply);
+      setText("");
+    } catch (e) { toast(`SMS failed: ${e.message}`, "warn"); }
+    setBusy(false);
+  };
+  if (!open) return <button className="btn ghost block" onClick={() => setOpen(true)}><MessageSquare size={16} /> Can't call? Send an SMS</button>;
+  return (
+    <div className="stack" style={{ gap: 6 }}>
+      <textarea className="textarea" rows={3} value={text} onChange={(e) => setText(e.target.value)}
+        placeholder="வேளச்சேரி ல மாடி மேல நாலு பேர் இருக்கோம்… / Velachery, 4 people on the roof…" />
+      <button className="btn block" onClick={send} disabled={busy || !text.trim()}><MessageSquare size={16} /> {busy ? "Sending…" : "Send SMS"}</button>
+      {reply && <div className="callout small"><b>Pukaar:</b> {reply}</div>}
+    </div>
   );
 }

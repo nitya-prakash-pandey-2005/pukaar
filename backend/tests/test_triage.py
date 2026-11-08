@@ -59,3 +59,9 @@ def test_guard_reply():
     assert guard_reply("The boat will reach in 10 minutes.", set(), "20 min") == ("The boat will reach in 10 minutes.", [])
     assert guard_reply("படகு 10 நிமிடத்தில் வரும்", set(), None, "ta-IN") == (FALLBACK["ta"], [])
     assert guard_reply("Boat jaldi pahunch jayegi", set(), None, "hi-IN")[0] == FALLBACK["hi"]
+    for promise, lang in (("10 நிமிஷத்துல வருவோம்.", "ta-IN"), ("ஒரு மணி நேரத்தில் படகு வரும்.", "ta-IN"),
+                          ("दो घंटे में टीम आएगी।", "hi-IN"), ("పది నిమిషాల్లో వస్తారు.", "te-IN"),
+                          ("Help in half an hour.", "en-IN"), ("ಹತ್ತು ನಿಮಿಷದಲ್ಲಿ ಬರುತ್ತಾರೆ.", "kn-IN"),
+                          ("দশ মিনিটে আসবে।", "bn-IN"), ("Help is coming soon.", "en-IN")):
+        assert guard_reply(promise, set(), None, lang)[0] == FALLBACK.get(lang[:2], FALLBACK["en"]), promise
+    assert guard_reply("Stay on the roof and keep your phone on.", set(), None)[0] == "Stay on the roof and keep your phone on."

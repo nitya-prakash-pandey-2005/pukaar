@@ -12,6 +12,7 @@ import logging
 import os
 import random
 import re
+import time
 from contextlib import asynccontextmanager
 from types import SimpleNamespace
 
@@ -25,6 +26,7 @@ from voice_core.llm import LLM
 from voice_core.session import VoiceAgentSession
 
 from .agent import PukaarAgent, deliver_dispatch
+from .channels import cap_xml, relay_line, sms_intake
 from .domain import Facts
 from .assets import load_or_make_fillers, rain_noise
 from .data import DATA, load_gazetteer, load_guidance
@@ -36,6 +38,21 @@ from .store import Store
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 log = logging.getLogger("pukaar")
 TO_CONTROL = {"incident", "turn", "language"}
+
+
+class MessageIn(BaseModel):
+    text: str
+
+
+class SmsIn(BaseModel):
+    text: str
+    gps: list[float] | None = None
+
+
+class CapIn(BaseModel):
+    text_en: str
+    items: list[dict]
+    area: str = "Chennai"
 
 
 class BroadcastIn(BaseModel):
@@ -147,6 +164,41 @@ def create_app(settings: Settings | None = None, *, session_factory=None, intel_
         await broadcast({"type": "incident", "incident": inc.model_dump()})
         await broadcast({"type": "kpis", **store.kpis()})
         return inc.model_dump()
+
+    @app.post("/api/incidents/{incident_id}/message")
+    async def message_callers(incident_id: str, body: MessageIn):
+        """Dispatcher types English; every caller of the incident hears it in their own language (or by callback)."""
+        inc = get_or_404(store.get_incident(incident_id), "incident")
+        if not body.text.strip():
+            raise HTTPException(400, "message is empty")
+        sent = []
+        for cid in inc.call_ids:
+            lang = store.call_lang(cid)
+            line = await relay_line(intel_llm, lang, body.text.strip())
+            if cid in live:
+                await say(live[cid][0], line)
+            else:
+                store.queue_callback(cid, line, lang)
+            sent.append({"call_id": cid, "lang": lang, "text": line, "live": cid in live})
+        return {"sent": sent}
+
+    @app.post("/api/sms")
+    async def sms(body: SmsIn):
+        """SMS / WhatsApp intake: no voice call needed (weak network, speech-impaired, or a jammed line)."""
+        if not body.text.strip():
+            raise HTTPException(400, "message is empty")
+        inc, reply = await sms_intake(body.text.strip()[:1000], tuple(body.gps) if body.gps else None, intel_llm, store,
+                                      places, kb)
+        await broadcast({"type": "incident", "incident": inc.model_dump()})
+        await broadcast({"type": "kpis", **store.kpis()})
+        return {"incident": inc.model_dump(), "reply": reply}
+
+    @app.post("/api/broadcast/cap")
+    async def broadcast_cap(body: CapIn):
+        xml = cap_xml(body.text_en, [i for i in body.items if i.get("lang") and i.get("text")], area=body.area,
+                      identifier=f"pukaar-{int(time.time())}")
+        return Response(xml, media_type="application/xml",
+                        headers={"Content-Disposition": "attachment; filename=pukaar-alert-cap.xml"})
 
     @app.post("/api/incidents/{incident_id}/resolve")
     async def resolve(incident_id: str):

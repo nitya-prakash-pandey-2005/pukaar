@@ -133,3 +133,14 @@ def test_broadcast_fake_mode(tmp_path, monkeypatch):
         assert c.get("/api/broadcast/audio/../../etc/passwd").status_code == 404
         assert c.get("/api/broadcast/audio/" + "0" * 40).status_code == 404
         assert c.post("/api/broadcast", json={"text_en": " ", "langs": ["en-IN"]}).status_code == 400
+
+
+def test_sms_message_and_cap_routes(client):
+    assert client.post("/api/sms", json={"text": " "}).status_code == 400
+    r = client.post("/api/sms", json={"text": "water entering house in Velachery", "gps": [12.98, 80.22]}).json()
+    assert r["incident"]["channel"] == "text" and r["reply"]  # LLM down -> safe fallback reply, incident still made
+    m = client.post(f"/api/incidents/{r['incident']['id']}/message", json={"text": "Boat is at the temple gate."}).json()
+    assert m["sent"][0]["text"] == "Boat is at the temple gate." and m["sent"][0]["live"] is False
+    assert client.get(f"/api/calls/{m['sent'][0]['call_id']}/callbacks").json()[0]["text"] == "Boat is at the temple gate."
+    cap = client.post("/api/broadcast/cap", json={"text_en": "Flood", "items": [{"lang": "en-IN", "text": "Flood"}]})
+    assert cap.status_code == 200 and "urn:oasis:names:tc:emergency:cap:1.2" in cap.text

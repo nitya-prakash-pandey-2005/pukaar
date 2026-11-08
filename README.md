@@ -17,6 +17,9 @@ Prior art exists (Bengaluru's multilingual "Namma 112" assistant, Corti, Prepare
 - **Human dispatch + callback:** the dispatcher confirms team and ETA; the caller hears it in their language, live or as a "missed callback".
 - **Jugaads:** *missed-call mode* (no balance? give a missed call, Pukaar calls back); *flood-night surge* (24 synthetic callers replayed from a recording, so the demo costs no tokens or credits); *pre-rendered fillers* so replies never start with silence.
 - **Broadcast alerts:** the district officer types one English alert; Pukaar translates it in a single LLM call and Timbre speaks it in Tamil, Hindi, Telugu, Malayalam, Kannada, Bengali and English (MP3, cached). Place names are masked as `{P1}` before translation and restored from the gazetteer, so "Adyar" stays அடையாறு (the model otherwise wrote "Aadhaar river").
+- **SMS / WhatsApp intake:** no voice call needed (weak network, speech-impaired, jammed line): one text message goes through the same triage and onto the map.
+- **Dispatcher → caller in their language:** the dispatcher types English ("the boat is at the temple gate"); each caller hears it in Tamil, Hindi or Telugu, live or by callback.
+- **CAP 1.2 export:** broadcast alerts download as CAP XML, the standard India's SACHET alert platform consumes.
 - **Noise drill:** synthetic calls spoken by Timbre, band-limited to 8 kHz, buried in rain at 0–20 dB, transcribed by Prisma, then triaged. Results: [`docs/drill-results.md`](docs/drill-results.md).
 
 ## Architecture
