@@ -95,17 +95,22 @@ def test_guidance_and_callback_audio_fake(tmp_path, monkeypatch):
         assert c.get(f"/api/calls/{cid}/callbacks/nope/audio").status_code == 404
 
 
-def test_surge_fake_mode(tmp_path, monkeypatch):
+def test_surge_fake_mode_replays_the_committed_recording(tmp_path, monkeypatch):
+    # the fake LLM only knows the 4 facts of the scripted call, so generating gave empty pins and minutes of retries
     import time
+    from pukaar.data import DATA
     monkeypatch.setenv("PUKAAR_FAKE", "1")
+    first = json.loads((DATA / "surge_demo.json").read_text(encoding="utf-8"))[0]
+    (tmp_path / "c").mkdir()
+    (tmp_path / "c" / "surge_fake.json").write_text("[]", encoding="utf-8")  # an old junk recording is ignored
     with TestClient(create_app(Settings(sample_rate=8000, cache_dir=tmp_path / "c"))) as c:
-        assert c.post("/api/surge", json={"n": 2}).json() == {"started": 2, "mode": "generate"}
+        assert c.post("/api/surge", json={"n": 2}).json() == {"started": 2, "mode": "replay"}
         assert c.post("/api/surge", json={"n": 2}).status_code == 409
         for _ in range(100):
             if c.get("/api/incidents").json():
                 break
             time.sleep(0.05)
-        assert c.get("/api/incidents").json()[0]["facts"]["locality"] == "Velachery"
+        assert c.get("/api/incidents").json()[0]["facts"]["locality"] == first["facts"]["locality"]
 
 
 def test_missed_call_then_callback_reuses_call_and_incident(client):
