@@ -87,8 +87,10 @@ class PukaarAgent:
         except Exception:
             raw = ""
         text, ids = guard_reply(raw, {g.id for g in cands}, self.eta, self.tts_language)
-        text = text or fallback(self.tts_language)
-        if slot:
+        spoken = bool(text) and text != fallback(self.tts_language)  # the LLM's own reply survived the guard
+        if not spoken:  # LLM error, empty, only a tag, or blocked: the safe line, which asks and gives nothing
+            text, ids = fallback(self.tts_language), []
+        if slot and spoken:
             self.asked.add(slot)
         if ids:
             self.given.update(ids)

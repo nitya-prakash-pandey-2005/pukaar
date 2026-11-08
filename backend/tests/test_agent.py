@@ -39,7 +39,25 @@ async def test_reply_asks_next_slot_and_falls_back_on_empty_llm(store):
     a = make_agent(store, ['{"locality": "Tambaram"}'], [""])
     said = [s async for s in a.reply_sentences(HIST)]
     assert said and "how many people" in a.llm.calls[0][0]["content"]
-    assert "people" in a.asked
+    assert "people" not in a.asked  # the fallback line asked nothing, so the question is still due
+
+
+async def test_question_is_marked_asked_only_once_spoken(store):
+    # Groq error (empty), then a guard-blocked reply: the caller heard the safe line twice, never "where are you?"
+    a = make_agent(store, ["{}", "{}", "{}"], ["", "The boat reaches you in 10 minutes. Where are you?",
+                                               "Stay calm. Which area are you in?"])
+    for i in range(3):
+        h = HIST + [Turn("caller", f"help {i}", 2.0 + i)]
+        said = [s async for s in a.reply_sentences(h)]
+        assert said and "where they are" in a.llm.calls[i][0]["content"], f"turn {i} skipped the location question"
+    assert a.asked == {"location"}
+
+
+async def test_tag_without_words_is_not_logged_as_given(store):
+    a = make_agent(store, [json.dumps(FACTS)], ["[[FLD-01]]"])
+    inc = (await a.on_user_turn(HIST))["incident"]
+    said = [s async for s in a.reply_sentences(HIST)]
+    assert said and a.given == set() and store.get_incident(inc["id"]).guidance_given == []
 
 
 async def test_two_callers_same_roof_merge(store):
