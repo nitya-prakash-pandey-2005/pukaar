@@ -1,7 +1,7 @@
 {
-  "name": "My App",
-  "short_name": "App",
-  "description": "Replace with your app's description.",
+  "name": "Pukaar: AI disaster helpline",
+  "short_name": "Pukaar",
+  "description": "AI disaster helpline with triage and a live rescue map. Built on Gnani AI.",
   "start_url": "/#/app",
   "scope": "/",
   "display": "standalone",

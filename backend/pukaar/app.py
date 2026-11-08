@@ -11,10 +11,12 @@ import json
 import logging
 import os
 
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, Response, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+from voice_core.audio import wav_bytes
 from voice_core.config import Settings, get_settings, repo_root
+from voice_core.gnani import TtsCache
 from voice_core.llm import LLM
 from voice_core.session import VoiceAgentSession
 
@@ -41,6 +43,7 @@ def create_app(settings: Settings | None = None, *, session_factory=None, intel_
     store = Store(settings.cache_dir / ("pukaar_fake.db" if fake else "pukaar.db"))
     places, kb = load_gazetteer(), load_guidance()
     intel_llm = intel_llm or (FakeTriageLLM() if fake else LLM(settings, purpose="intel"))
+    tts_cache = TtsCache(settings.cache_dir)
     control: set[WebSocket] = set()
     live: dict[str, tuple[VoiceAgentSession, PukaarAgent]] = {}
 
@@ -56,6 +59,7 @@ def create_app(settings: Settings | None = None, *, session_factory=None, intel_
 
     factory = session_factory or default_factory
     app = FastAPI(title="Pukaar")
+    app.state.store = store
 
     async def broadcast(m: dict) -> None:
         for ws in list(control):
@@ -126,6 +130,20 @@ def create_app(settings: Settings | None = None, *, session_factory=None, intel_
     async def callbacks(call_id: str):
         get_or_404(store.get_call(call_id), "call")
         return store.pending_callbacks(call_id)
+
+    @app.get("/api/calls/{call_id}/callbacks/{cb_id}/audio")
+    async def callback_audio(call_id: str, cb_id: str):
+        cb = get_or_404(next((c for c in store.pending_callbacks(call_id) if c["id"] == cb_id), None), "callback")
+        kw = dict(voice=PukaarAgent.voice, language=cb["lang"], speed=PukaarAgent.speed, sample_rate=settings.sample_rate)
+        if fake:
+            pcm = b"".join([c async for c in tone_tts(None, cb["text"], sample_rate=settings.sample_rate)])
+        else:
+            pcm = await tts_cache.get_or_make(settings.gnani_api_key, cb["text"], **kw)
+        return Response(wav_bytes(pcm, settings.sample_rate), media_type="audio/wav")
+
+    @app.get("/api/guidance")
+    async def guidance():
+        return [g.__dict__ for g in kb]
 
     # ------------------------------------------------------------------ control room
     @app.websocket("/ws/control")

@@ -12,7 +12,7 @@ Plan: `docs/03-build-plan.md`. Engine contract: `voice-core/README.md` (the engi
 | 3 | Triage extraction + reply guardrails | TM | feat/tm-pukaar-domain | done |
 | 4 | PukaarAgent + store | TM | feat/tm-pukaar-domain | done |
 | 5 | FastAPI app + fake mode | TM | feat/tm-pukaar-domain | done |
-| 6 | see plan | | | todo |
+| 6 | Frontend: caller phone + control room | TM | feat/tm-pukaar-domain | done |
 | 7 | see plan (Pukaar only) | | | todo |
 | 8 | see plan (Pukaar only) | | | todo |
 | 9 | see plan (Pukaar only) | | | todo |
@@ -22,3 +22,4 @@ Plan: `docs/03-build-plan.md`. Engine contract: `voice-core/README.md` (the engi
 - Sun 8 Nov 12:00: TM claims Tasks 1–3 (branch feat/tm-pukaar-domain).
 - Sun 8 Nov: TM done Tasks 1–3 (41 tests); claims Tasks 4–5.
 - Sun 8 Nov: TM done Tasks 4–5 (51 tests). `FAKE=1 bash run_backend.sh` runs a scripted Tanglish call with no keys.
+- Sun 8 Nov: TM done Task 6. Checked in a browser in fake mode (desktop + 390 px). Map tiles moved from CARTO (now needs an API key) to OSM with a dark CSS filter. sw.js now loads pages network-first (the old cache-first `/` served stale builds). package-lock synced (was missing leaflet and 2 fonts, so `npm ci` failed).

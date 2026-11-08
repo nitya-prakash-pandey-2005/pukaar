@@ -1,0 +1,83 @@
+/* Pukaar: app-specific layout on top of the ui-kit. Colours come only from tokens. */
+
+:root {
+  --font-ui: "Inter Variable", "Noto Sans Tamil", "Noto Sans Devanagari", "Noto Sans Bengali", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.flex-none { flex: none; }
+.stack { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.mono { font-family: var(--font-mono); }
+h4 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+
+/* ---------- layout: caller phone (left) + control room ---------- */
+.callroom { display: grid; grid-template-columns: 380px minmax(0, 1fr); gap: 16px; align-items: start; }
+.callroom .phone-col { position: sticky; top: calc(var(--topbar) + 16px); min-width: 0; }
+.callroom .war-col { min-width: 0; }
+.callroom-tabs { display: none; margin-bottom: 14px; }
+@media (max-width: 1100px) { .callroom { grid-template-columns: 340px minmax(0, 1fr); } }
+@media (max-width: 900px) {
+  .callroom { grid-template-columns: minmax(0, 1fr); }
+  .callroom .phone-col { position: static; }
+  .callroom-tabs { display: flex; }
+  .callroom [data-hidden="true"] { display: none; }
+}
+
+/* ---------- caller phone ---------- */
+.phone { display: flex; flex-direction: column; gap: 14px; }
+.phone .avatar-wrap { display: grid; place-items: center; padding: 10px 0 2px; }
+.ring {
+  width: 132px; height: 132px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--grad-soft); border: 1px solid var(--line-2); transition: transform 0.08s linear;
+}
+.ring.live { box-shadow: var(--glow-pink); }
+.ring .face {
+  width: 108px; height: 108px; border-radius: 50%; display: grid; place-items: center;
+  font-family: var(--font-display); font-size: 40px; font-weight: 700; color: var(--text);
+}
+.phone .who { text-align: center; }
+.phone .who b { font-family: var(--font-display); font-size: 22px; letter-spacing: -0.02em; }
+.call-timer { margin-top: 6px; font-family: var(--font-mono); font-size: 13px; color: var(--text-2); }
+.disclaimer { display: flex; gap: 8px; align-items: flex-start; font-size: 12px; color: var(--amber); line-height: 1.4; }
+.callout.missed { border-color: var(--green); background: var(--green-a); }
+.callout.missed audio { width: 100%; height: 32px; }
+
+.captions { display: flex; flex-direction: column; gap: 6px; font-size: 13.5px; }
+.cap { padding: 6px 10px; border-radius: 10px; background: var(--surface-2); overflow-wrap: anywhere; }
+.cap.pukaar { border-left: 2px solid var(--cyan); }
+.cap.caller { border-left: 2px solid var(--pink); }
+
+/* ---------- control room ---------- */
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 700px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.map { height: 420px; border-radius: 12px; overflow: hidden; background: var(--surface-solid); }
+@media (max-width: 700px) { .map { height: 320px; } }
+.map .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9); } /* dark map from OSM tiles */
+
+.pin-wrap { background: none; border: 0; }
+.pin {
+  width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--c); border: 2px solid rgba(255, 255, 255, 0.85); color: #0b0b12;
+  font: 700 12px var(--font-mono); box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 30%, transparent);
+}
+.pin.critical.new { animation: pin-pulse 1.4s ease-out infinite; }
+.pin.dispatched { border-style: dashed; }
+.pin.resolved { opacity: 0.35; }
+.pin.sel { outline: 3px solid var(--text); outline-offset: 2px; }
+@keyframes pin-pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--c) 70%, transparent); }
+  100% { box-shadow: 0 0 0 16px transparent; }
+}
+@media (prefers-reduced-motion: reduce) { .pin.critical.new { animation: none; } }
+
+.list > .li.resolved { opacity: 0.5; }
+.live-dot { display: inline-block; width: 8px; height: 8px; margin-left: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); }
+
+/* ---------- incident sheet ---------- */
+.facts { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px 14px; font-size: 14px; margin: 0; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.sev-drivers { display: flex; flex-direction: column; gap: 6px; }
+.sev-driver { display: grid; grid-template-columns: minmax(0, 1fr) 90px 36px; gap: 10px; align-items: center; font-size: 13px; }
+.sev-driver .bar { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; }
+.sev-driver .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--amber), var(--rose)); }
+.sev-driver .val { font-family: var(--font-mono); text-align: right; color: var(--text-2); }

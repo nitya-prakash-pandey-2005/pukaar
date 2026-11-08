@@ -80,3 +80,16 @@ def test_fake_mode_boots(tmp_path, monkeypatch):
     monkeypatch.setenv("PUKAAR_FAKE", "1")
     with TestClient(create_app(Settings(sample_rate=8000, cache_dir=tmp_path / "c"))) as c:
         assert c.get("/api/health").json()["fake"] is True
+
+
+def test_guidance_and_callback_audio_fake(tmp_path, monkeypatch):
+    monkeypatch.setenv("PUKAAR_FAKE", "1")
+    app = create_app(Settings(sample_rate=8000, cache_dir=tmp_path / "c"))
+    store = app.state.store
+    cid = store.create_call("ta-IN")
+    cb = store.queue_callback(cid, "படகு வருகிறது.", "ta-IN")
+    with TestClient(app) as c:
+        assert any(g["id"] == "FLD-01" for g in c.get("/api/guidance").json())
+        r = c.get(f"/api/calls/{cid}/callbacks/{cb}/audio")
+        assert r.status_code == 200 and r.headers["content-type"] == "audio/wav" and r.content[:4] == b"RIFF"
+        assert c.get(f"/api/calls/{cid}/callbacks/nope/audio").status_code == 404
