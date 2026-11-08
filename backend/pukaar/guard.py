@@ -10,7 +10,17 @@ FALLBACK = {
 }
 _ID_RE = re.compile(r"\[\[\s*([A-Z]{3}-\d{2})\s*\]\]")
 _ANY_TAG_RE = re.compile(r"\[\[.*?\]\]")
-_TIME_RE = re.compile(r"\d+\s*(min|minute|मिनट|நிமிட)|jaldi pahunch|reaching soon|வந்துவிடும்", re.IGNORECASE)
+_TIME_RE = re.compile(
+    r"\d+\s*(min|minute|मिनट|நிமிட)|jaldi pahunch|reaching soon|வந்துவிடும்"
+    # any time span, also in words ("ten minutes", "an hour"), Hinglish, Hindi, Tamil and Telugu
+    r"|\b(minutes?|mins?|hours?|hrs?|ghant[ae]?|ghanton|minat)\b|मिनट|मिनिट|घंट|நிமிட|மணி\s*நேர|నిమిష|గంట",
+    re.IGNORECASE)
+# false reassurance (design §4): nobody on the line can know the caller is safe, ETA or not
+_SAFE_RE = re.compile(
+    r"\byou(?:'re| are|'ll be| will be)(?: now| completely)? (?:safe|fine|out of danger)\b"
+    r"|\baap (?:ab )?(?:safe|surakshit) (?:hain|ho)\b|आप (?:अब )?सुरक्षित (?:हैं|हो)"
+    r"|பாதுகாப்பா(?:க)? இருக்கீங்க|பாதுகாப்பாக இருக்கிறீர்கள்|సురక్షితంగా ఉన్నారు",
+    re.IGNORECASE)
 
 
 def fallback(lang: str | None) -> str:
@@ -21,6 +31,7 @@ def guard_reply(text: str, allowed_ids: set[str], eta: str | None, lang: str | N
     """Returns (speakable text with [[ID]] tags removed, ids used), or the safe fallback line."""
     ids = _ID_RE.findall(text)
     bad_tag = len(ids) != len(_ANY_TAG_RE.findall(text))
-    if bad_tag or any(i not in allowed_ids for i in ids) or (eta is None and _TIME_RE.search(text)):
+    if (bad_tag or any(i not in allowed_ids for i in ids) or (eta is None and _TIME_RE.search(text))
+            or _SAFE_RE.search(text)):
         return fallback(lang), []
     return re.sub(r"\s{2,}", " ", _ANY_TAG_RE.sub("", text)).strip(), ids

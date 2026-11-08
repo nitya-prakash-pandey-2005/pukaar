@@ -59,3 +59,35 @@ def test_guard_reply():
     assert guard_reply("The boat will reach in 10 minutes.", set(), "20 min") == ("The boat will reach in 10 minutes.", [])
     assert guard_reply("படகு 10 நிமிடத்தில் வரும்", set(), None, "ta-IN") == (FALLBACK["ta"], [])
     assert guard_reply("Boat jaldi pahunch jayegi", set(), None, "hi-IN")[0] == FALLBACK["hi"]
+
+
+def test_guard_blocks_time_promises_in_words_hours_and_telugu():
+    for text, lang in [
+        ("The boat will reach you in ten minutes.", "en"),
+        ("Rescuers will be there within an hour.", "en"),
+        ("Help will come in 2 hours.", "en"),
+        ("Boat aadhe ghante mein aa jayegi.", "hi"),
+        ("नाव आधे घंटे में पहुंचेगी।", "hi"),
+        ("படகு ஒரு மணி நேரத்தில் வரும்.", "ta"),
+        ("పడవ 10 నిమిషాల్లో వస్తుంది.", "te"),
+        ("పడవ ఒక గంటలో వస్తుంది.", "te"),
+    ]:
+        assert guard_reply(text, set(), None, lang)[0] == FALLBACK[lang], text
+    assert guard_reply("The boat will reach you in ten minutes.", set(), "10 min")[0].startswith("The boat")
+
+
+def test_guard_blocks_false_reassurance():
+    for text, lang in [("Don't worry, you are safe now.", "en"), ("You'll be fine, stay there.", "en"),
+                       ("घबराइए मत, आप सुरक्षित हैं।", "hi"), ("Aap safe hain, ghabraiye mat.", "hi"),
+                       ("பயப்படாதீங்க, நீங்க பாதுகாப்பா இருக்கீங்க.", "ta"), ("మీరు సురక్షితంగా ఉన్నారు.", "te")]:
+        assert guard_reply(text, set(), "20 min", lang)[0] == FALLBACK[lang], text
+
+
+def test_guard_keeps_every_approved_line_and_plain_questions():
+    for g in load_guidance():
+        assert guard_reply(f"Stay calm. {g.text_en} [[{g.id}]]", {g.id}, None)[1] == [g.id], g.id
+    for line in FALLBACK.values():
+        assert guard_reply(line, set(), None)[0] == line
+    for ok in ["I am with you. How high is the water on your body?", "Stay calm. How many people are with you?",
+               "Stay safe and keep this phone with you.", "Tell me the area name and a nearby landmark."]:
+        assert guard_reply(ok, set(), None)[0] == ok
