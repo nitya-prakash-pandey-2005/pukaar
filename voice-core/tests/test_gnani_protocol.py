@@ -21,8 +21,15 @@ def test_stt_headers_contain_required_fields():
     assert h["x-api-key-id"] == "KEY" and h["model"] == "prisma-v3.0"
     assert h["x-sample-rate"] == "8000" and h["format"] == "codemix"
     assert json.loads(h["keyterms"]) == ["CBI", "UPI"] and h["x-min-silence-ms"] == "500"
-    assert h["language_code"] == "hi-IN,en-IN"
+    assert h["language_code"] == "indic-auto"  # streaming takes exactly one locale (or indic-auto on v3.0)
     assert all(isinstance(v, str) for v in h.values())
+
+
+def test_stt_headers_single_locale_and_ascii():
+    assert build_stt_headers("K", language_code="ta-IN")["language_code"] == "ta-IN"
+    assert build_stt_headers("K", language_code="ta-IN,hi-IN", model="prisma-v2.5")["language_code"] == "ta-IN"
+    h = build_stt_headers("K", language_code="ta-IN", keyterms=["வெள்ளம்", "बाढ़"])
+    assert json.loads(h["keyterms"]) == ["வெள்ளம்", "बाढ़"] and all(v.isascii() for v in h.values())
 
 
 def test_parse_transcript_message():

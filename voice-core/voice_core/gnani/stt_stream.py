@@ -41,6 +41,8 @@ def build_stt_headers(
     vad: dict[str, str] | None = None,
     idle_timeout_sec: int = 120,
 ) -> dict[str, str]:
+    if "," in language_code:  # streaming rejects locale lists (checked 8 Nov 2026); REST still accepts them
+        language_code = "indic-auto" if model == "prisma-v3.0" else language_code.split(",")[0].strip()
     h = {
         "x-api-key-id": api_key,
         "model": model,
@@ -50,7 +52,7 @@ def build_stt_headers(
         "x-idle-timeout-sec": str(int(idle_timeout_sec)),
     }
     if keyterms:
-        h["keyterms"] = json.dumps(list(keyterms), ensure_ascii=False)
+        h["keyterms"] = json.dumps(list(keyterms))  # \u-escaped: HTTP headers must be ASCII
     for k, v in (vad or {}).items():
         h[k] = str(v)
     return h

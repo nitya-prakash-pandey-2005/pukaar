@@ -20,7 +20,7 @@ All audio inside the engine is **PCM16 little-endian mono**. Default sample rate
 
 ## `voice_core.gnani` (Gnani AI APIs; host `https://api.vachana.ai`)
 - `SttEvent`: `type` in {"connected","speech_start","processing","transcript","error","closed"}, `text`, `language`, `latency_ms`, `raw`
-- `build_stt_headers(api_key, *, language_code, model="prisma-v3.0", sample_rate=8000, fmt="codemix", keyterms=None, vad=None) -> dict`
+- `build_stt_headers(api_key, *, language_code, model="prisma-v3.0", sample_rate=8000, fmt="codemix", keyterms=None, vad=None) -> dict` (streaming takes exactly one locale: a list such as `"ta-IN,hi-IN"` becomes `indic-auto` on v3.0, or its first locale on v2.5; keyterms are sent as ASCII-escaped JSON)
 - `parse_stt_message(msg: str) -> SttEvent`
 - `PrismaStream(api_key, **header_kwargs)`: `connect()`, `send_audio(pcm16)`, `send_pcm_realtime(pcm16, sample_rate)`, `commit()`, `events()` (async iterator; ends with "closed"), `close()`, `.connected`
 - `transcribe_rest(api_key, wav, *, language_code="hi-IN,en-IN", model="prisma-v3.0", fmt="codemix", keyterms=None) -> SttEvent`

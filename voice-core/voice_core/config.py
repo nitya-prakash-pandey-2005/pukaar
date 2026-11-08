@@ -25,7 +25,7 @@ def repo_root() -> Path:
 class Settings:
     gnani_api_key: str = ""
     groq_api_key: str = ""
-    groq_model: str = "llama-3.3-70b-versatile"
+    groq_model: str = "qwen/qwen3.8-27b"
     llm_provider: str = "groq"
     intel_llm_provider: str = "groq"
     evon_base_url: str = ""
