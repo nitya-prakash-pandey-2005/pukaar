@@ -205,9 +205,10 @@ MERGE_WINDOW_S = 3 * 3600
 def should_merge(a: Incident, b_facts: Facts, b_latlon: tuple[float, float] | None, now: float) -> bool:
     if a.status == "resolved" or now - a.updated_at > MERGE_WINDOW_S:
         return False
-    if a.facts.hazard and b_facts.hazard and a.facts.hazard != b_facts.hazard:
-        return False
-    if b_latlon and a.lat is not None and haversine_m((a.lat, a.lon), b_latlon) < 300:
+    if not (a.facts.hazard and b_facts.hazard) or a.facts.hazard != b_facts.hazard:
+        return False  # design §7 "hazard matches": an unknown hazard joins nothing yet (it re-checks every turn)
+    # distance only between real positions: a gazetteer centre ("landmark") is shared by the whole locality
+    if b_latlon and a.lat is not None and a.loc_source != "landmark" and haversine_m((a.lat, a.lon), b_latlon) < 300:
         return True
     fa, fb = a.facts, b_facts
     return bool(fa.locality and fb.locality and fa.landmark and fb.landmark

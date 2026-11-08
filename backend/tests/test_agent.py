@@ -62,6 +62,28 @@ async def test_incident_merges_when_hazard_arrives_later(store):
     assert len(store.list_incidents()) == 1
 
 
+async def test_no_gps_callers_in_one_locality_stay_separate(store):
+    # both are pinned on the Velachery centre; different landmarks = different families (design §7)
+    a = make_agent(store, ['{"hazard": "flood", "locality": "Velachery", "landmark": "Vijayanagar bus stand", "people_count": 4}'])
+    b = make_agent(store, ['{"hazard": "flood", "locality": "Velachery", "landmark": "Phoenix mall", "people_count": 2}'])
+    await a.on_user_turn(HIST)
+    await b.on_user_turn(HIST)
+    assert len(store.list_incidents()) == 2 and store.kpis()["people_affected"] == 6
+    c = make_agent(store, ['{"hazard": "flood", "locality": "Velachery", "landmark": "Phoenix mall", "people_count": 2}'])
+    await c.on_user_turn(HIST)  # same landmark: the same family calling again merges
+    assert len(store.list_incidents()) == 2
+
+
+async def test_caller_with_no_hazard_yet_does_not_relabel_a_fire_nearby(store):
+    fire = make_agent(store, ['{"hazard": "fire", "people_count": 3}'], gps=(12.9800, 80.2200))
+    await fire.on_user_turn(HIST)
+    b = make_agent(store, ['{}', '{"hazard": "flood"}'], gps=(12.9809, 80.2200))  # ~100 m away
+    await b.on_user_turn(HIST)
+    await b.on_user_turn(HIST + [Turn("caller", "water is entering the house", 2.0)])
+    fire_inc = store.get_incident(store.get_call(fire.call_id)["incident_id"])
+    assert fire_inc.facts.hazard == "fire" and fire_inc.call_ids == [fire.call_id]
+
+
 async def test_dispatch_after_hangup_queues_callback(store):
     a = make_agent(store, [json.dumps(FACTS)])
     inc = (await a.on_user_turn(HIST))["incident"]
