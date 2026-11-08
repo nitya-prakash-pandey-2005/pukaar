@@ -1,0 +1,1106 @@
+{
+ "rows": [
+  {
+   "case": 0,
+   "lang": "en-IN",
+   "voice": "Vasudha",
+   "snr": null,
+   "ref": "Ambattur-oda water chest height-katta iruku, meeda verumai 4 mudalukku roof-la irukom.",
+   "hyp": "அம்பட்டு road-ஆ water test height கட்டை இருக்கும். மீரா வெறும் my four முதலுக்கு roof-இல் இருக்கும்.",
+   "cer": null,
+   "locality": true,
+   "people": true,
+   "water_level": false,
+   "vulnerable_f1": 1.0,
+   "severity_level": true,
+   "ref_facts": {
+    "locality": "Ambattur",
+    "hazard": "flood",
+    "people_count": 4,
+    "trapped": false,
+    "on_roof": true,
+    "water_level": "chest",
+    "caller_language": "ta-IN"
+   },
+   "got_facts": {
+    "locality": "Ambattur",
+    "hazard": "flood",
+    "people_count": 4,
+    "trapped": false,
+    "on_roof": true,
+    "water_level": "waist",
+    "caller_language": "ta-IN"
+   }
+  },
+  {
+   "case": 0,
+   "lang": "en-IN",
+   "voice": "Vasudha",
+   "snr": 20,
+   "ref": "Ambattur-oda water chest height-katta iruku, meeda verumai 4 mudalukku roof-la irukom.",
+   "hyp": "அம்பத்தூர் oda water test height கட்டாயிருக்கு. மீரா வெறும் four முதல் roof-இல் இருக்கும்.",
+   "cer": null,
+   "locality": true,
+   "people": false,
+   "water_level": false,
+   "vulnerable_f1": 1.0,
+   "severity_level": true,
+   "ref_facts": {
+    "locality": "Ambattur",
+    "hazard": "flood",
+    "people_count": 4,
+    "trapped": false,
+    "on_roof": true,
+    "water_level": "chest",
+    "caller_language": "ta-IN"
+   },
+   "got_facts": {
+    "locality": "Ambattur",
+    "hazard": "flood",
+    "people_count": 1,
+    "trapped": false,
+    "on_roof": true,
+    "water_level": "waist",
+    "caller_language": "ta-IN"
+   }
+  },
+  {
+   "case": 0,
+   "lang": "en-IN",
+   "voice": "Vasudha",
+   "snr": 10,
+   "ref": "Ambattur-oda water chest height-katta iruku, meeda verumai 4 mudalukku roof-la irukom.",
+   "hyp": "அம்பத்தூர் road-ஆ water chest height கண்டா இருக்கும். மீடா வெறும் four முதலுக்கு roof-இல் இருக்கும்.",
+   "cer": null,
+   "locality": true,
+   "people": true,
+   "water_level": true,
+   "vulnerable_f1": 1.0,
+   "severity_level": true,
+   "ref_facts": {
+    "locality": "Ambattur",
+    "hazard": "flood",
+    "people_count": 4,
+    "trapped": false,
+    "on_roof": true,
+    "water_level": "chest",
+    "caller_language": "ta-IN"
+   },
+   "got_facts": {
+    "locality": "Ambattur",
+    "hazard": "flood",
+    "people_count": 4,
+    "trapped": false,
+    "on_roof": true,
+    "water_level": "chest",
+    "caller_language": "ta-IN"
+   }
+  },
+  {
+   "case": 0,
+   "lang": "en-IN",
+   "voice": "Vasudha",
+   "snr": 5,
+   "ref": "Ambattur-oda water chest height-katta iruku, meeda verumai 4 mudalukku roof-la irukom.",
+   "hyp": "அம்பட்டு road-ஆ water test height கட்ட இருக்கும். மேடா வெறும் four முதல் கு roof-இல் இருக்கும்.",
+   "cer": null,
+   "locality": true,
+   "people": true,
+   "water_level": true,
+   "vulnerable_f1": 1.0,
+   "severity_level": true,
+   "ref_facts": {
+    "locality": "Ambattur",
+    "hazard": "flood",
+    "people_count": 4,
+    "trapped": false,
+    "on_roof": true,
+    "water_level": "chest",
+    "caller_language": "ta-IN"
+   },
+   "got_facts": {
+    "locality": "Ambattur",
+    "hazard": "flood",
+    "people_count": 4,
+    "trapped": false,
+    "on_roof": true,
+    "water_level": "chest",
+    "caller_language": "ta-IN"
+   }
+  },
+  {
+   "case": 0,
+   "lang": "en-IN",
+   "voice": "Vasudha",
+   "snr": 0,
+   "ref": "Ambattur-oda water chest height-katta iruku, meeda verumai 4 mudalukku roof-la irukom.",
+   "hyp": "அம்பட்டு road-ஆ water tank height கண்டை இருக்கும். மீடா வேர் மாதிரி four முதல் roof line.",
+   "cer": null,
+   "locality": true,
+   "people": false,
+   "water_level": true,
+   "vulnerable_f1": 1.0,
+   "severity_level": true,
+   "ref_facts": {
+    "locality": "Ambattur",
+    "hazard": "flood",
+    "people_count": 4,
+    "trapped": false,
+    "on_roof": true,
+    "water_level": "chest",
+    "caller_language": "ta-IN"
+   },
+   "got_facts": {
+    "locality": "Ambattur",
+    "hazard": "flood",
+    "trapped": false,
+    "on_roof": true,
+    "water_level": "chest",
+    "caller_language": "ta-IN"
+   }
+  },
+  {
+   "case": 1,
+   "lang": "ta-IN",
+   "voice": "Chetana",
+   "snr": null,
+   "ref": "சோலினல்லூரில் நான்கு பேர் வீட்டை மட்டும் தீ அடித்து விட்டது. எங்களுக்கு உதவி வேண்டும்.",
+   "hyp": "சோழிநல்லூரில் நான்கு பேர் வீட்டை மட்டும் தீ அடித்துவிட்டது. எங்களுக்கு உதவி வேண்டும்.",
+   "cer": 0.027,
+   "locality": true,
+   "people": true,
+   "water_level": true,
+   "vulnerable_f1": 1.0,
+   "severity_level": true,
+   "ref_facts": {
+    "locality": "Sholinganallur",
+    "hazard": "fire",
+    "people_count": 4,
+    "needs": [
+     "ambulance"
+    ],
+    "caller_language": "ta-IN"
+   },
+   "got_facts": {
+    "locality": "Sholinganallur",
+    "hazard": "fire",
+    "people_count": 4,
+    "needs": [
+     "evacuation"
+    ],
+    "caller_language": "ta-IN"
+   }
+  },
+  {
+   "case": 1,
+   "lang": "ta-IN",
+   "voice": "Chetana",
+   "snr": 20,
+   "ref": "சோலினல்லூரில் நான்கு பேர் வீட்டை மட்டும் தீ அடித்து விட்டது. எங்களுக்கு உதவி வேண்டும்.",
+   "hyp": "சோழிநல்லூரில் நான்கு பேர் வீட்டை மட்டும் தீ அடித்துவிட்டது. எங்களுக்கு உதவி வேண்டும்.",
+   "cer": 0.027,
+   "locality": true,
+   "people": true,
+   "water_level": true,
+   "vulnerable_f1": 1.0,
+   "severity_level": true,
+   "ref_facts": {
+    "locality": "Sholinganallur",
+    "hazard": "fire",
+    "people_count": 4,
+    "needs": [
+     "ambulance"
+    ],
+    "caller_language": "ta-IN"
+   },
+   "got_facts": {
+    "locality": "Sholinganallur",
+    "hazard": "fire",
+    "people_count": 4,
+    "needs": [
+     "evacuation"
+    ],
+    "caller_language": "ta-IN"
+   }
+  },
+  {
+   "case": 1,
+   "lang": "ta-IN",
+   "voice": "Chetana",
+   "snr": 10,
+   "ref": "சோலினல்லூரில் நான்கு பேர் வீட்டை மட்டும் தீ அடித்து விட்டது. எங்களுக்கு உதவி வேண்டும்.",
+   "hyp": "சோழிநல்லூரில் நான்கு பேர் வீட்டை மட்டும் தீ அடித்துவிட்டது. எங்களுக்கு உதவி வேண்டும்.",
+   "cer": 0.027,
+   "locality": true,
+   "people": true,
+   "water_level": true,
+   "vulnerable_f1": 1.0,
+   "severity_level": true,
+   "ref_facts": {
+    "locality": "Sholinganallur",
+    "hazard": "fire",
+    "people_count": 4,
+    "needs": [
+     "ambulance"
+    ],
+    "caller_language": "ta-IN"
+   },
+   "got_facts": {
+    "locality": "Sholinganallur",
+    "hazard": "fire",
+    "people_count": 4,
+    "needs": [
+     "evacuation"
+    ],
+    "caller_language": "ta-IN"
+   }
+  },
+  {
+   "case": 1,
+   "lang": "ta-IN",
+   "voice": "Chetana",
+   "snr": 5,
+   "ref": "சோலினல்லூரில் நான்கு பேர் வீட்டை மட்டும் தீ அடித்து விட்டது. எங்களுக்கு உதவி வேண்டும்.",
+   "hyp": "சோழிநல்லூரில் நான்கு பேர் வீட்டை மட்டும் தீ அடித்துவிட்டது. எங்களுக்கு உதவி வேண்டும்.",
+   "cer": 0.027,
+   "locality": true,
+   "people": true,
+   "water_level": true,
+   "vulnerable_f1": 1.0,
+   "severity_level": true,
+   "ref_facts": {
+    "locality": "Sholinganallur",
+    "hazard": "fire",
+    "people_count": 4,
+    "needs": [
+     "ambulance"
+    ],
+    "caller_language": "ta-IN"
+   },
+   "got_facts": {
+    "locality": "Sholinganallur",
+    "hazard": "fire",
+    "people_count": 4,
+    "needs": [
+     "evacuation"
+    ],
+    "caller_language": "ta-IN"
+   }
+  },
+  {
+   "case": 1,
+   "lang": "ta-IN",
+   "voice": "Chetana",
+   "snr": 0,
+   "ref": "சோலினல்லூரில் நான்கு பேர் வீட்டை மட்டும் தீ அடித்து விட்டது. எங்களுக்கு உதவி வேண்டும்.",
+   "hyp": "சோழிநல்லூரில் நான்கு பேர் வீட்டை மட்டும் தீ அடித்து விட்டனர். எங்களுக்கு உதவி வேண்டும்.",
+   "cer": 0.0676,
+   "locality": true,
+   "people": true,
+   "water_level": true,
+   "vulnerable_f1": 1.0,
+   "severity_level": true,
+   "ref_facts": {
+    "locality": "Sholinganallur",
+    "hazard": "fire",
+    "people_count": 4,
+    "needs": [
+     "ambulance"
+    ],
+    "caller_language": "ta-IN"
+   },
+   "got_facts": {
+    "locality": "Sholinganallur",
+    "hazard": "fire",
+    "people_count": 4,
+    "needs": [
+     "evacuation"
+    ],
+    "caller_language": "ta-IN"
+   }
+  },
+  {
+   "case": 2,
+   "lang": "en-IN",
+   "voice": "Prakash",
+   "snr": null,
+   "ref": "We are five in Avadi, water is knee deep now. One of us needs urgent dialysis, please help.",
+   "hyp": "We are five in our way. Water is needeep now. One of us needs urgent dialysis. Please help.",
+   "cer": 0.1,
+   "locality": false,
+   "people": true,
+   "water_level": false,
+   "vulnerable_f1": 1.0,
+   "severity_level": false,
+   "ref_facts": {
+    "locality": "Avadi",
+    "hazard": "flood",
+    "people_count": 5,
+    "water_level": "knee",
+    "medical_needs": [
+     "dialysis"
+    ],
+    "caller_language": "en-IN"
+   },
+   "got_facts": {
+    "hazard": "flood",
+    "people_count": 5,
+    "medical_needs": [
+     "dialysis"
+    ],
+    "needs": [
+     "water"
+    ]
+   }
+  },
+  {
+   "case": 2,
+   "lang": "en-IN",
+   "voice": "Prakash",
+   "snr": 20,
+   "ref": "We are five in Avadi, water is knee deep now. One of us needs urgent dialysis, please help.",
+   "hyp": "We are five in our way. Water is need now. One of us needs urgent dialysis. Please help.",
+   "cer": 0.1429,
+   "locality": false,
+   "people": true,
+   "water_level": false,
+   "vulnerable_f1": 1.0,
+   "severity_level": false,
+   "ref_facts": {
+    "locality": "Avadi",
+    "hazard": "flood",
+    "people_count": 5,
+    "water_level": "knee",
+    "medical_needs": [
+     "dialysis"
+    ],
+    "caller_language": "en-IN"
+   },
+   "got_facts": {
+    "hazard": "flood",
+    "people_count": 5,
+    "medical_needs": [
+     "dialysis"
+    ],
+    "needs": [
+     "water"
+    ]
+   }
+  },
+  {
+   "case": 2,
+   "lang": "en-IN",
+   "voice": "Prakash",
+   "snr": 10,
+   "ref": "We are five in Avadi, water is knee deep now. One of us needs urgent dialysis, please help.",
+   "hyp": "We are five in our way. Water is needed now. One of us needs urgent dialysis. Please help.",
+   "cer": 0.1286,
+   "locality": false,
+   "people": true,
+   "water_level": false,
+   "vulnerable_f1": 1.0,
+   "severity_level": false,
+   "ref_facts": {
+    "locality": "Avadi",
+    "hazard": "flood",
+    "people_count": 5,
+    "water_level": "knee",
+    "medical_needs": [
+     "dialysis"
+    ],
+    "caller_language": "en-IN"
+   },
+   "got_facts": {
+    "people_count": 5,
+    "medical_needs": [
+     "dialysis"
+    ],
+    "needs": [
+     "water"
+    ]
+   }
+  },
+  {
+   "case": 2,
+   "lang": "en-IN",
+   "voice": "Prakash",
+   "snr": 5,
+   "ref": "We are five in Avadi, water is knee deep now. One of us needs urgent dialysis, please help.",
+   "hyp": "We are five in our water. It's neating now. One of us needs urgent dialysis. Please help us.",
+   "cer": 0.2,
+   "locality": false,
+   "people": true,
+   "water_level": false,
+   "vulnerable_f1": 1.0,
+   "severity_level": false,
+   "ref_facts": {
+    "locality": "Avadi",
+    "hazard": "flood",
+    "people_count": 5,
+    "water_level": "knee",
+    "medical_needs": [
+     "dialysis"
+    ],
+    "caller_language": "en-IN"
+   },
+   "got_facts": {
+    "hazard": "flood",
+    "people_count": 5,
+    "medical_needs": [
+     "dialysis"
+    ]
+   }
+  },
+  {
+   "case": 2,
+   "lang": "en-IN",
+   "voice": "Prakash",
+   "snr": 0,
+   "ref": "We are five in Avadi, water is knee deep now. One of us needs urgent dialysis, please help.",
+   "hyp": "We are five in ambulance. Water is needy now. One of us needs urgent dialysis. Please help.",
+   "cer": 0.1571,
+   "locality": false,
+   "people": true,
+   "water_level": false,
+   "vulnerable_f1": 1.0,
+   "severity_level": false,
+   "ref_facts": {
+    "locality": "Avadi",
+    "hazard": "flood",
+    "people_count": 5,
+    "water_level": "knee",
+    "medical_needs": [
+     "dialysis"
+    ],
+    "caller_language": "en-IN"
+   },
+   "got_facts": {
+    "hazard": "flood",
+    "people_count": 5,
+    "medical_needs": [
+     "dialysis"
+    ],
+    "needs": [
+     "water"
+    ]
+   }
+  },
+  {
+   "case": 3,
+   "lang": "ta-IN",
+   "voice": "Devansh",
+   "snr": null,
+   "ref": "எக்டாத் தங்கலில் தற்போது அணு மேற்பரவை மட்டும் தள்ளிவிட்டது, ஆனால் அங்கு 7 பேர் தப்புவதற்கு வழி இல்லை.\nநான் கர்ப்பிணியாக இருப்பதால் என்னை யாராவது உடனடியாகக் காப்பாற்ற வேண்டும்.",
+   "hyp": "Ektad தங்களில் தற்போது அணு மேற்பரவை மட்டும் தள்ளிவிட்டது, ஆனால் அங்கு ஏழு பேர் தப்புவதற்கு வழியில்லை. நான் கர்ப்பிணியாக இருப்பதால், என்னை யாராவது உடனடியாக காப்பாற்ற வேண்டும்.",
+   "cer": 0.0993,
+   "locality": false,
+   "people": true,
+   "water_level": false,
+   "vulnerable_f1": 1.0,
+   "severity_level": false,
+   "ref_facts": {
+    "locality": "Ektaad Thangal",
+    "hazard": "flood",
+    "people_count": 7,
+    "trapped": true,
+    "on_roof": false,
+    "water_level": "chest",
+    "vulnerable": [
+     "pregnant"
+    ],
+    "needs": [
+     "evacuation"
+    ],
+    "caller_language": "ta-IN"
+   },
+   "got_facts": {
+    "hazard": "flood",
+    "people_count": 7,
+    "trapped": true,
+    "on_roof": false,
+    "vulnerable": [
+     "pregnant"
+    ],
+    "needs": [
+     "evacuation"
+    ],
+    "caller_language": "ta-IN"
+   }
+  },
+  {
+   "case": 3,
+   "lang": "ta-IN",
+   "voice": "Devansh",
+   "snr": 20,
+   "ref": "எக்டாத் தங்கலில் தற்போது அணு மேற்பரவை மட்டும் தள்ளிவிட்டது, ஆனால் அங்கு 7 பேர் தப்புவதற்கு வழி இல்லை.\nநான் கர்ப்பிணியாக இருப்பதால் என்னை யாராவது உடனடியாகக் காப்பாற்ற வேண்டும்.",
+   "hyp": "அனுராத தங்களில் தற்போது அணு மேற்பரவை மட்டும் தள்ளிவிட்டது, ஆனால் அங்கு ஏழு பேர் தப்புவதற்கு வழியில்லை. நான் கர்ப்பிணியாக இருப்பதால், என்னை யாராவது உடனடியாக காப்பாற்ற வேண்டும்.",
+   "cer": 0.0861,
+   "locality": false,
+   "people": true,
+   "water_level": false,
+   "vulnerable_f1": 1.0,
+   "severity_level": false,
+   "ref_facts": {
+    "locality": "Ektaad Thangal",
+    "hazard": "flood",
+    "people_count": 7,
+    "trapped": true,
+    "on_roof": false,
+    "water_level": "chest",
+    "vulnerable": [
+     "pregnant"
+    ],
+    "needs": [
+     "evacuation"
+    ],
+    "caller_language": "ta-IN"
+   },
+   "got_facts": {
+    "hazard": "flood",
+    "people_count": 7,
+    "trapped": true,
+    "on_roof": false,
+    "water_level": "none",
+    "vulnerable": [
+     "pregnant"
+    ],
+    "needs": [
+     "evacuation"
+    ],
+    "caller_language": "ta-IN"
+   }
+  },
+  {
+   "case": 3,
+   "lang": "ta-IN",
+   "voice": "Devansh",
+   "snr": 10,
+   "ref": "எக்டாத் தங்கலில் தற்போது அணு மேற்பரவை மட்டும் தள்ளிவிட்டது, ஆனால் அங்கு 7 பேர் தப்புவதற்கு வழி இல்லை.\nநான் கர்ப்பிணியாக இருப்பதால் என்னை யாராவது உடனடியாகக் காப்பாற்ற வேண்டும்.",
+   "hyp": "Velachery தங்களில் தற்போது அணு மேற்பரவை மட்டும் தள்ளிவிட்டது, ஆனால் அங்கு ஏழு பேர் தப்புவதற்கு வழியில்லை. நான் கர்ப்பிணியாக இருப்பதால், என்னை யாராவது உடனடியாக காப்பாற்ற வேண்டும்.",
+   "cer": 0.1126,
+   "locality": false,
+   "people": true,
+   "water_level": false,
+   "vulnerable_f1": 1.0,
+   "severity_level": false,
+   "ref_facts": {
+    "locality": "Ektaad Thangal",
+    "hazard": "flood",
+    "people_count": 7,
+    "trapped": true,
+    "on_roof": false,
+    "water_level": "chest",
+    "vulnerable": [
+     "pregnant"
+    ],
+    "needs": [
+     "evacuation"
+    ],
+    "caller_language": "ta-IN"
+   },
+   "got_facts": {
+    "locality": "Velachery",
+    "hazard": "flood",
+    "people_count": 7,
+    "trapped": true,
+    "on_roof": false,
+    "water_level": "none",
+    "vulnerable": [
+     "pregnant"
+    ],
+    "needs": [
+     "evacuation"
+    ],
+    "caller_language": "ta-IN"
+   }
+  },
+  {
+   "case": 3,
+   "lang": "ta-IN",
+   "voice": "Devansh",
+   "snr": 5,
+   "ref": "எக்டாத் தங்கலில் தற்போது அணு மேற்பரவை மட்டும் தள்ளிவிட்டது, ஆனால் அங்கு 7 பேர் தப்புவதற்கு வழி இல்லை.\nநான் கர்ப்பிணியாக இருப்பதால் என்னை யாராவது உடனடியாகக் காப்பாற்ற வேண்டும்.",
+   "hyp": "Velachery தங்களில் தற்போது அணு மேற்பரவை மட்டும் தள்ளிவிட்டது, ஆனால் அங்கு ஏழு பேர் தப்புவதற்கு வழியில்லை. நான் கர்ப்பிணியாக இருப்பதால், என்னை யாராவது உடனடியாக காப்பாற்ற வேண்டும்.",
+   "cer": 0.1126,
+   "locality": false,
+   "people": true,
+   "water_level": false,
+   "vulnerable_f1": 1.0,
+   "severity_level": false,
+   "ref_facts": {
+    "locality": "Ektaad Thangal",
+    "hazard": "flood",
+    "people_count": 7,
+    "trapped": true,
+    "on_roof": false,
+    "water_level": "chest",
+    "vulnerable": [
+     "pregnant"
+    ],
+    "needs": [
+     "evacuation"
+    ],
+    "caller_language": "ta-IN"
+   },
+   "got_facts": {
+    "locality": "Velachery",
+    "hazard": "flood",
+    "people_count": 7,
+    "trapped": true,
+    "on_roof": false,
+    "water_level": "none",
+    "vulnerable": [
+     "pregnant"
+    ],
+    "needs": [
+     "evacuation"
+    ],
+    "caller_language": "ta-IN"
+   }
+  },
+  {
+   "case": 3,
+   "lang": "ta-IN",
+   "voice": "Devansh",
+   "snr": 0,
+   "ref": "எக்டாத் தங்கலில் தற்போது அணு மேற்பரவை மட்டும் தள்ளிவிட்டது, ஆனால் அங்கு 7 பேர் தப்புவதற்கு வழி இல்லை.\nநான் கர்ப்பிணியாக இருப்பதால் என்னை யாராவது உடனடியாகக் காப்பாற்ற வேண்டும்.",
+   "hyp": "Velachery தங்களில் தற்போது அணு மேற்பரவை மட்டும் தள்ளிவிட்டது, ஆனால் அங்கு ஏழு பேர் தப்புவதற்கு வழி இல்லை. நான் கர்ப்பிணியாக இருப்பதால், என்னை யாராவது உடனடியாக காப்பாற்ற வேண்டும்.",
+   "cer": 0.0993,
+   "locality": false,
+   "people": true,
+   "water_level": false,
+   "vulnerable_f1": 1.0,
+   "severity_level": false,
+   "ref_facts": {
+    "locality": "Ektaad Thangal",
+    "hazard": "flood",
+    "people_count": 7,
+    "trapped": true,
+    "on_roof": false,
+    "water_level": "chest",
+    "vulnerable": [
+     "pregnant"
+    ],
+    "needs": [
+     "evacuation"
+    ],
+    "caller_language": "ta-IN"
+   },
+   "got_facts": {
+    "locality": "Velachery",
+    "hazard": "flood",
+    "people_count": 7,
+    "trapped": true,
+    "on_roof": false,
+    "water_level": "none",
+    "vulnerable": [
+     "pregnant"
+    ],
+    "needs": [
+     "evacuation"
+    ],
+    "caller_language": "ta-IN"
+   }
+  },
+  {
+   "case": 4,
+   "lang": "hi-IN",
+   "voice": "Riyaa",
+   "snr": null,
+   "ref": "Pallikaranai mein paani ankle tak aa chuka hai, koi flooded nahi hai par 4 log hain jismein ek buzurg bhi hai. Situation thoda serious lag raha hai, koi help kar sakte hain?",
+   "hyp": "पालीकरणाई में पानी ankle तक आ चुका है। कोई flooded नहीं है, पर चार लोग हैं जिसमें एक बुजुर्ग भी है। situation थोड़ा serious लग रहा है, कोई help कर सकते हैं?",
+   "cer": null,
+   "locality": true,
+   "people": true,
+   "water_level": true,
+   "vulnerable_f1": 1.0,
+   "severity_level": true,
+   "ref_facts": {
+    "locality": "Pallikaranai",
+    "hazard": "flood",
+    "people_count": 4,
+    "water_level": "ankle",
+    "vulnerable": [
+     "elderly"
+    ],
+    "caller_language": "hi-IN"
+   },
+   "got_facts": {
+    "locality": "Pallikaranai",
+    "hazard": "flood",
+    "people_count": 4,
+    "water_level": "ankle",
+    "vulnerable": [
+     "elderly"
+    ],
+    "caller_language": "hi-IN"
+   }
+  },
+  {
+   "case": 4,
+   "lang": "hi-IN",
+   "voice": "Riyaa",
+   "snr": 20,
+   "ref": "Pallikaranai mein paani ankle tak aa chuka hai, koi flooded nahi hai par 4 log hain jismein ek buzurg bhi hai. Situation thoda serious lag raha hai, koi help kar sakte hain?",
+   "hyp": "पालीकरणाई में पानी ankle तक आ चुका है। कोई flooded नहीं है, पर चार लोग हैं जिसमें एक बुजुर्ग भी है। situation थोड़ा serious लग रहा है, कोई help कर सकते हैं?",
+   "cer": null,
+   "locality": true,
+   "people": true,
+   "water_level": true,
+   "vulnerable_f1": 1.0,
+   "severity_level": true,
+   "ref_facts": {
+    "locality": "Pallikaranai",
+    "hazard": "flood",
+    "people_count": 4,
+    "water_level": "ankle",
+    "vulnerable": [
+     "elderly"
+    ],
+    "caller_language": "hi-IN"
+   },
+   "got_facts": {
+    "locality": "Pallikaranai",
+    "hazard": "flood",
+    "people_count": 4,
+    "water_level": "ankle",
+    "vulnerable": [
+     "elderly"
+    ],
+    "caller_language": "hi-IN"
+   }
+  },
+  {
+   "case": 4,
+   "lang": "hi-IN",
+   "voice": "Riyaa",
+   "snr": 10,
+   "ref": "Pallikaranai mein paani ankle tak aa chuka hai, koi flooded nahi hai par 4 log hain jismein ek buzurg bhi hai. Situation thoda serious lag raha hai, koi help kar sakte hain?",
+   "hyp": "पालीकरणाई में पानी ankle तक आ चुका है। कोई flooded नहीं है, पर चार लोग हैं जिसमें एक बुजुर्ग भी है। situation थोड़ा serious लग रहा है, कोई help कर सकते हैं?",
+   "cer": null,
+   "locality": true,
+   "people": true,
+   "water_level": true,
+   "vulnerable_f1": 1.0,
+   "severity_level": true,
+   "ref_facts": {
+    "locality": "Pallikaranai",
+    "hazard": "flood",
+    "people_count": 4,
+    "water_level": "ankle",
+    "vulnerable": [
+     "elderly"
+    ],
+    "caller_language": "hi-IN"
+   },
+   "got_facts": {
+    "locality": "Pallikaranai",
+    "hazard": "flood",
+    "people_count": 4,
+    "water_level": "ankle",
+    "vulnerable": [
+     "elderly"
+    ],
+    "caller_language": "hi-IN"
+   }
+  },
+  {
+   "case": 4,
+   "lang": "hi-IN",
+   "voice": "Riyaa",
+   "snr": 5,
+   "ref": "Pallikaranai mein paani ankle tak aa chuka hai, koi flooded nahi hai par 4 log hain jismein ek buzurg bhi hai. Situation thoda serious lag raha hai, koi help kar sakte hain?",
+   "hyp": "पालीकरणाई में पानी ankle तक आ चुका है। कोई flooded नहीं है, पर चार लोग हैं जिसमें एक बुजुर्ग भी है। थोड़ा serious लग रहा है, कोई help कर सकते हैं?",
+   "cer": null,
+   "locality": true,
+   "people": true,
+   "water_level": true,
+   "vulnerable_f1": 1.0,
+   "severity_level": true,
+   "ref_facts": {
+    "locality": "Pallikaranai",
+    "hazard": "flood",
+    "people_count": 4,
+    "water_level": "ankle",
+    "vulnerable": [
+     "elderly"
+    ],
+    "caller_language": "hi-IN"
+   },
+   "got_facts": {
+    "locality": "Pallikaranai",
+    "hazard": "flood",
+    "people_count": 4,
+    "water_level": "ankle",
+    "vulnerable": [
+     "elderly"
+    ],
+    "caller_language": "hi-IN"
+   }
+  },
+  {
+   "case": 4,
+   "lang": "hi-IN",
+   "voice": "Riyaa",
+   "snr": 0,
+   "ref": "Pallikaranai mein paani ankle tak aa chuka hai, koi flooded nahi hai par 4 log hain jismein ek buzurg bhi hai. Situation thoda serious lag raha hai, koi help kar sakte hain?",
+   "hyp": "मालीकरनई में पानी ankle तक आ चुका है। कोई flooded नहीं है, पर चार लोग हैं जिसमें एक बुजुर्ग भी है। patient थोड़ा serious लग रहा है, कोई help कर सकते हैं?",
+   "cer": null,
+   "locality": true,
+   "people": true,
+   "water_level": true,
+   "vulnerable_f1": 1.0,
+   "severity_level": true,
+   "ref_facts": {
+    "locality": "Pallikaranai",
+    "hazard": "flood",
+    "people_count": 4,
+    "water_level": "ankle",
+    "vulnerable": [
+     "elderly"
+    ],
+    "caller_language": "hi-IN"
+   },
+   "got_facts": {
+    "locality": "Pallikaranai",
+    "hazard": "flood",
+    "people_count": 4,
+    "water_level": "ankle",
+    "vulnerable": [
+     "elderly"
+    ],
+    "needs": [
+     "ambulance"
+    ],
+    "caller_language": "hi-IN"
+   }
+  },
+  {
+   "case": 5,
+   "lang": "en-IN",
+   "voice": "Devansh",
+   "snr": null,
+   "ref": "ARVU, KK Nagar la 3 varuman oru pudichirukrom, water chest level kettu kidaippodrom, anna help pannunga please.",
+   "hyp": "கருவு KK நகரில் three வருமான் ஒரு புதுச்சிரு chrome water chest level கெட்டு கிடாய் போட்ரும் அண்ணா help பண்ணுங்க, please.",
+   "cer": null,
+   "locality": true,
+   "people": true,
+   "water_level": true,
+   "vulnerable_f1": 1.0,
+   "severity_level": true,
+   "ref_facts": {
+    "locality": "KK Nagar",
+    "hazard": "flood",
+    "people_count": 3,
+    "water_level": "chest",
+    "caller_language": "ta-IN"
+   },
+   "got_facts": {
+    "locality": "KK Nagar",
+    "hazard": "flood",
+    "people_count": 3,
+    "water_level": "chest",
+    "caller_language": "ta-IN"
+   }
+  },
+  {
+   "case": 5,
+   "lang": "en-IN",
+   "voice": "Devansh",
+   "snr": 20,
+   "ref": "ARVU, KK Nagar la 3 varuman oru pudichirukrom, water chest level kettu kidaippodrom, anna help pannunga please.",
+   "hyp": "அருவு KK நகரில், three வருமான், ஒரு Puducherry chrome water chest level கெட்டு, kidai portrom அண்ணா help பண்ணுங்க please.",
+   "cer": 0.6044,
+   "locality": true,
+   "people": true,
+   "water_level": true,
+   "vulnerable_f1": 1.0,
+   "severity_level": true,
+   "ref_facts": {
+    "locality": "KK Nagar",
+    "hazard": "flood",
+    "people_count": 3,
+    "water_level": "chest",
+    "caller_language": "ta-IN"
+   },
+   "got_facts": {
+    "locality": "KK Nagar",
+    "landmark": "Kidai Portrom",
+    "hazard": "flood",
+    "people_count": 3,
+    "water_level": "chest",
+    "caller_language": "ta-IN"
+   }
+  },
+  {
+   "case": 5,
+   "lang": "en-IN",
+   "voice": "Devansh",
+   "snr": 10,
+   "ref": "ARVU, KK Nagar la 3 varuman oru pudichirukrom, water chest level kettu kidaippodrom, anna help pannunga please.",
+   "hyp": "அருவு KK நகரில், three வருமான், ஒரு புதுச்சிரு chrome water chest level கெட்டு, kidai portrom அண்ணா help பண்ணுங்க please.",
+   "cer": 0.6593,
+   "locality": true,
+   "people": true,
+   "water_level": true,
+   "vulnerable_f1": 1.0,
+   "severity_level": true,
+   "ref_facts": {
+    "locality": "KK Nagar",
+    "hazard": "flood",
+    "people_count": 3,
+    "water_level": "chest",
+    "caller_language": "ta-IN"
+   },
+   "got_facts": {
+    "locality": "KK Nagar",
+    "hazard": "flood",
+    "people_count": 3,
+    "water_level": "chest",
+    "caller_language": "ta-IN"
+   }
+  },
+  {
+   "case": 5,
+   "lang": "en-IN",
+   "voice": "Devansh",
+   "snr": 5,
+   "ref": "ARVU, KK Nagar la 3 varuman oru pudichirukrom, water chest level kettu kidaippodrom, anna help pannunga please.",
+   "hyp": "அருபூ KK நகரில் ஸ்ரீவருமான் ஒரு புதுச்சிரு chrome water chest level கிட்டு கிடை போட்ரும். அண்ணா, help பண்ணுங்க please.",
+   "cer": null,
+   "locality": true,
+   "people": false,
+   "water_level": true,
+   "vulnerable_f1": 1.0,
+   "severity_level": true,
+   "ref_facts": {
+    "locality": "KK Nagar",
+    "hazard": "flood",
+    "people_count": 3,
+    "water_level": "chest",
+    "caller_language": "ta-IN"
+   },
+   "got_facts": {
+    "locality": "KK Nagar",
+    "landmark": "Sri Varuman",
+    "hazard": "flood",
+    "water_level": "chest",
+    "caller_language": "ta-IN"
+   }
+  },
+  {
+   "case": 5,
+   "lang": "en-IN",
+   "voice": "Devansh",
+   "snr": 0,
+   "ref": "ARVU, KK Nagar la 3 varuman oru pudichirukrom, water chest level kettu kidaippodrom, anna help pannunga please.",
+   "hyp": "அருபூ KK நகரில் three வருமான் பூரு பூதிச்சிருப்பு water test level கிட்டு கிடை போடுறோம், அண்ணா help பண்ணுங்க.",
+   "cer": null,
+   "locality": true,
+   "people": true,
+   "water_level": true,
+   "vulnerable_f1": 1.0,
+   "severity_level": true,
+   "ref_facts": {
+    "locality": "KK Nagar",
+    "hazard": "flood",
+    "people_count": 3,
+    "water_level": "chest",
+    "caller_language": "ta-IN"
+   },
+   "got_facts": {
+    "locality": "KK Nagar",
+    "hazard": "flood",
+    "people_count": 3,
+    "water_level": "chest",
+    "caller_language": "ta-IN"
+   }
+  }
+ ],
+ "summary": {
+  "by_snr": {
+   "clean": {
+    "n": 6,
+    "n_cer": 3,
+    "cer": 0.075,
+    "locality": 0.667,
+    "people": 1.0,
+    "water_level": 0.5,
+    "vulnerable_f1": 1.0,
+    "severity_level": 0.667
+   },
+   "20": {
+    "n": 6,
+    "n_cer": 4,
+    "cer": 0.215,
+    "locality": 0.667,
+    "people": 0.833,
+    "water_level": 0.5,
+    "vulnerable_f1": 1.0,
+    "severity_level": 0.667
+   },
+   "10": {
+    "n": 6,
+    "n_cer": 4,
+    "cer": 0.232,
+    "locality": 0.667,
+    "people": 1.0,
+    "water_level": 0.667,
+    "vulnerable_f1": 1.0,
+    "severity_level": 0.667
+   },
+   "5": {
+    "n": 6,
+    "n_cer": 3,
+    "cer": 0.113,
+    "locality": 0.667,
+    "people": 0.833,
+    "water_level": 0.667,
+    "vulnerable_f1": 1.0,
+    "severity_level": 0.667
+   },
+   "0": {
+    "n": 6,
+    "n_cer": 3,
+    "cer": 0.108,
+    "locality": 0.667,
+    "people": 0.833,
+    "water_level": 0.667,
+    "vulnerable_f1": 1.0,
+    "severity_level": 0.667
+   }
+  },
+  "by_lang": {
+   "en-IN": {
+    "n": 15,
+    "n_cer": 7,
+    "cer": 0.285,
+    "locality": 0.667,
+    "people": 0.8,
+    "water_level": 0.533,
+    "vulnerable_f1": 1.0,
+    "severity_level": 0.667
+   },
+   "ta-IN": {
+    "n": 10,
+    "n_cer": 10,
+    "cer": 0.069,
+    "locality": 0.5,
+    "people": 1.0,
+    "water_level": 0.5,
+    "vulnerable_f1": 1.0,
+    "severity_level": 0.5
+   },
+   "hi-IN": {
+    "n": 5,
+    "n_cer": 0,
+    "cer": null,
+    "locality": 1.0,
+    "people": 1.0,
+    "water_level": 1.0,
+    "vulnerable_f1": 1.0,
+    "severity_level": 1.0
+   }
+  }
+ }
+}
