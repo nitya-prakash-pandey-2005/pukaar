@@ -1,0 +1,23 @@
+[project]
+name = "pukaar"
+version = "0.1.0"
+description = "AI disaster helpline: answers every flood call in the caller's language, triages and maps it. Built on Gnani AI Prisma, Timbre and Evon."
+requires-python = ">=3.12,<3.13"
+dependencies = ["voice-core", "pukaar"]
+
+[dependency-groups]
+dev = ["pytest>=8.3", "pytest-asyncio>=0.24"]
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["voice-core", "backend"]
+
+[tool.uv.sources]
+voice-core = { workspace = true }
+pukaar = { workspace = true }
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["voice-core/tests", "backend/tests"]

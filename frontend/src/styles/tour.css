@@ -1,0 +1,21 @@
+.tour-root { position: fixed; inset: 0; z-index: 100; pointer-events: none; }
+.tour-dim { position: fixed; inset: 0; background: rgba(2, 3, 10, 0.55); }
+.tour-spot {
+  position: fixed; border-radius: 20px; pointer-events: none;
+  box-shadow: 0 0 0 9999px rgba(2, 3, 10, 0.62), 0 0 0 2px rgba(255, 77, 157, 0.9), 0 0 40px rgba(255, 77, 157, 0.45);
+}
+.tour-spot::after { content: ""; position: absolute; inset: -6px; border-radius: 24px; border: 1px solid rgba(34, 211, 238, 0.5); animation: tourPulse 1.8s ease-out infinite; }
+@keyframes tourPulse { from { opacity: 0.9; transform: scale(1); } to { opacity: 0; transform: scale(1.04); } }
+.tour-card {
+  position: fixed; left: 24px; bottom: 24px; width: min(420px, calc(100vw - 48px)); pointer-events: auto; z-index: 101;
+  background: rgba(13, 16, 36, 0.96); border: 1px solid var(--line-2); border-radius: 20px; padding: 16px 18px; box-shadow: var(--shadow), 0 0 0 1px rgba(255,77,157,0.2);
+  backdrop-filter: blur(20px);
+}
+.tour-dots { display: flex; gap: 3px; margin-top: 10px; flex-wrap: wrap; }
+.tour-dots i { width: 10px; height: 3px; border-radius: 3px; background: rgba(255,255,255,0.12); }
+.tour-dots i.done { background: rgba(255, 77, 157, 0.5); }
+.tour-dots i.on { background: var(--grad); width: 18px; }
+@media (max-width: 900px) {
+  .tour-card { left: 10px; right: 10px; width: auto; bottom: calc(var(--bottomnav) + 10px + env(safe-area-inset-bottom)); padding: 12px 14px; }
+  .tour-card p { font-size: 13px !important; }
+}

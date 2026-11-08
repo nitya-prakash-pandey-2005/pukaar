@@ -1,0 +1,11 @@
+{
+  "name": "My App",
+  "short_name": "App",
+  "description": "Replace with your app's description.",
+  "start_url": "/#/app",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#05060f",
+  "theme_color": "#05060f",
+  "icons": [{ "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}
