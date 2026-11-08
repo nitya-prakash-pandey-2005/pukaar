@@ -57,6 +57,11 @@ class Facts(BaseModel):
             if k in d:
                 v = d[k] if isinstance(d[k], list) else [d[k]]
                 d[k] = list(dict.fromkeys(x for x in v if x in allowed))
+        if "people_count" in d:
+            try:
+                d["people_count"] = int(d["people_count"])
+            except (TypeError, ValueError):
+                d.pop("people_count")
         return d
 
 
