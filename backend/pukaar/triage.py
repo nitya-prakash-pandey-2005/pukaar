@@ -16,13 +16,15 @@ locality (area name, string), landmark (string), hazard (one of {sorted(HAZARDS)
 trapped (bool), on_roof (bool), water_level (one of {sorted(WATER_LEVELS)}), vulnerable (list from {sorted(VULNERABLE)}),
 injuries (list from {sorted(INJURIES)}), medical_needs (list from {sorted(MEDICAL)}), needs (list from {sorted(NEEDS)}),
 caller_language (BCP-47 code such as ta-IN).
-Use null or [] when the caller has not said it. Never guess. Write place names in English letters."""
+Only include a key when the caller clearly said it; otherwise use null or []. Never guess or fill defaults:
+water_level "none" only if the caller says there is no water; trapped and on_roof only if the caller says so.
+Write place names in English letters."""
 
 SLOT_QUESTIONS = {
     "location": "where they are: the area name and a nearby landmark",
     "people": "how many people are with them, and whether they are trapped",
     "injuries": "whether anyone is injured or needs medicine, oxygen or dialysis",
-    "water_level": "how high the water is (ankle, knee, waist or chest)",
+    "water_level": "how high the water has reached on their body",
     "vulnerable": "whether there are babies, children, elderly, pregnant, disabled or sick people with them",
 }
 
@@ -72,9 +74,12 @@ def build_reply_messages(f: Facts, slot: str | None, guidance: list[Guidance], l
     options = "\n".join(f"- {g.text_en} [[{g.id}]]" for g in guidance) or "- (none)"
     system = (
         f"You are Pukaar, a calm disaster helpline. Reply in {language}, in the caller's script (code-mixing is fine), "
-        f"1-2 short sentences. First reassure in 3-6 words. {ask}\n"
-        f"You may add at most one instruction from this list, translated, ending with its id in double brackets "
-        f"like [[FLD-03]]:\n{options}\n"
+        f"2-3 short sentences, in this order:\n"
+        f"1. Reassure in 3-6 words, such as 'I am with you' or 'stay calm'. Do NOT say they are safe, and do NOT say "
+        f"help is coming or on the way unless the ETA below is given.\n"
+        f"2. Optionally, at most one instruction from this list: say it translated, then end that sentence with its id "
+        f"in double brackets like [[FLD-03]]. Never write an id without saying the instruction.\n{options}\n"
+        f"3. {ask}\n"
         f"Never invent advice. Never promise an arrival time unless the ETA is given: {dispatcher_eta or 'none'}.\n"
         f"Known facts: {json.dumps(f.model_dump(exclude_none=True), ensure_ascii=False)}"
     )

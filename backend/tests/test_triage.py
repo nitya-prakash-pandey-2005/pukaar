@@ -44,6 +44,12 @@ def test_build_reply_messages():
     sys = msgs[0]["content"]
     assert msgs[0]["role"] == "system" and "Tamil" in sys and "[[FLD-01]]" in sys and "none" in sys
     assert "how many people" in sys and msgs[-1] == {"role": "user", "content": HIST[0].text}
+    assert "Do NOT say they are safe" in sys and "Never write an id without saying the instruction" in sys
+
+
+def test_extract_prompt_forbids_default_facts():
+    from pukaar.triage import EXTRACT_PROMPT
+    assert "Never guess or fill defaults" in EXTRACT_PROMPT and 'water_level "none" only if' in EXTRACT_PROMPT
 
 
 def test_guard_reply():
