@@ -36,7 +36,7 @@ Shared engine `voice-core/` is synced from `dadi-vs-scammers` (contract: `voice-
 bash ../dadi-vs-scammers/scripts/sync-core.sh   # latest shared engine (optional)
 uv sync --all-packages
 cp .env.example .env                              # GNANI_API_KEY, GROQ_API_KEY (GROQ_MODEL=qwen/qwen3.8-27b)
-uv run pytest -q
+uv run python -m pytest -q                        # python -m: Smart App Control blocks pytest.exe
 cd frontend && npm ci && npm run build && cd ..
 bash run_backend.sh                               # http://127.0.0.1:8766 (serves the built UI)
 FAKE=1 bash run_backend.sh                        # no keys: scripted Tanglish caller
