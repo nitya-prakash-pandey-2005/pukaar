@@ -121,3 +121,15 @@ def test_missed_call_then_callback_reuses_call_and_incident(client):
         call.send_json({"type": "hangup"})
         _until(call, "call_ended")
     assert len(client.get("/api/incidents").json()) == 1
+
+
+def test_broadcast_fake_mode(tmp_path, monkeypatch):
+    monkeypatch.setenv("PUKAAR_FAKE", "1")
+    with TestClient(create_app(Settings(sample_rate=8000, cache_dir=tmp_path / "c"))) as c:
+        items = c.post("/api/broadcast", json={"text_en": "Move to the relief camp.", "langs": ["en-IN", "ta-IN"]}).json()
+        assert [i["lang"] for i in items] == ["en-IN", "ta-IN"]
+        r = c.get(items[1]["audio_url"])
+        assert r.status_code == 200 and r.content[:4] == b"RIFF"
+        assert c.get("/api/broadcast/audio/../../etc/passwd").status_code == 404
+        assert c.get("/api/broadcast/audio/" + "0" * 40).status_code == 404
+        assert c.post("/api/broadcast", json={"text_en": " ", "langs": ["en-IN"]}).status_code == 400

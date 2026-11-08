@@ -14,7 +14,7 @@ Plan: `docs/03-build-plan.md`. Engine contract: `voice-core/README.md` (the engi
 | 5 | FastAPI app + fake mode | TM | feat/tm-pukaar-domain | done |
 | 6 | Frontend: caller phone + control room | TM | feat/tm-pukaar-domain | done |
 | 7 | Noise drill (script + results card) | TM | feat/tm-pukaar-domain | done |
-| 8 | see plan (Pukaar only) | | | todo |
+| 8 | Broadcast alerts (7 languages) | TM | feat/tm-pukaar-domain | done |
 | 9 | see plan (Pukaar only) | | | todo |
 
 ## Log
@@ -23,4 +23,4 @@ Plan: `docs/03-build-plan.md`. Engine contract: `voice-core/README.md` (the engi
 - Sun 8 Nov: TM done Tasks 1–3 (41 tests); claims Tasks 4–5.
 - Sun 8 Nov: TM done Tasks 4–5 (51 tests). `FAKE=1 bash run_backend.sh` runs a scripted Tanglish call with no keys.
 - Sun 8 Nov: TM done Task 6. Checked in a browser in fake mode (desktop + 390 px). Map tiles moved from CARTO (now needs an API key) to OSM with a dark CSS filter. sw.js now loads pages network-first (the old cache-first `/` served stale builds). package-lock synced (was missing leaflet and 2 fonts, so `npm ci` failed).
-- Sun 8 Nov: TM extras: pre-rendered fillers + rain noise (slider now works); missed-call → callback jugaad; flood-night surge (synthetic text callers through the real triage, recorded once and replayed with no tokens; 24-caller demo recording committed); canonical gazetteer names; drill (`scripts/run_drill.py`, `--rescore` uses the LLM only). Groq free tier = 8k tokens/min: prompts trimmed to 6 turns. README + `docs/06-demo-and-post.md` written. Task 8 (broadcast) skipped for now.
+- Sun 8 Nov: TM extras: pre-rendered fillers + rain noise (slider now works); missed-call → callback jugaad; flood-night surge (synthetic text callers through the real triage, recorded once and replayed with no tokens; 24-caller demo recording committed); canonical gazetteer names; drill (`scripts/run_drill.py`, `--rescore` uses the LLM only). Groq free tier = 8k tokens/min: prompts trimmed to 6 turns. README + `docs/06-demo-and-post.md` written. Task 8 (broadcast) done later the same day.

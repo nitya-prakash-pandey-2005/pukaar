@@ -45,6 +45,9 @@ class FakeTriageLLM:
         system = messages[0]["content"]
         if system.startswith("You extract facts"):
             return json.dumps(next(self._facts, {}))
+        if system.startswith("Translate this official"):
+            text = messages[-1]["content"]
+            return json.dumps({c: f"{text} ({c})" for c in ("ta-IN", "hi-IN", "te-IN", "ml-IN", "kn-IN", "bn-IN")})
         if system.startswith("Translate"):
             return messages[-1]["content"]
         if system.startswith("You write"):

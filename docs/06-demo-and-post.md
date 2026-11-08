@@ -21,6 +21,8 @@ Replace every `[…]` with **real numbers from your recording**. The rules forbi
 | 46–54 s | Noise drill card | Caption: "Rain as loud as the voice (0 dB): still [X]% of locations right" |
 | 54–60 s | End card: "Pukaar: every call answered, in your language." · "Built on Gnani AI Prisma + Timbre" · #GnaniAI #GreatIndianAIInternshipChallenge | — |
 
+Optional shot (Main Character): "Broadcast alert" card → one English flood alert → play it in Tamil, Hindi and Telugu.
+
 Optional jugaad shot (Jugaad Genius): "No balance? Give a missed call" → the pin appears → the phone rings → Pukaar calls back in Tamil.
 
 ## 3. LinkedIn post (native video; tag `@Gnani AI`)

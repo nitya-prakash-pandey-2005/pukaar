@@ -6,6 +6,7 @@ import { HAZARD_LABEL, LEVEL_TONE, ago } from "../lib/labels";
 import MapView from "./MapView";
 import IncidentSheet from "./IncidentSheet";
 import DrillCard from "./DrillCard";
+import BroadcastCard from "./BroadcastCard";
 
 function Kpis({ k }) {
   return (
@@ -61,6 +62,7 @@ export default function ControlRoom({ control, guidance }) {
           ))}
         </div>
       </Card>
+      <BroadcastCard />
       <DrillCard />
       <IncidentSheet inc={selected} guidance={guidance} onClose={() => setSelectedId(null)} />
     </div>

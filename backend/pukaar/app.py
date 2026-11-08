@@ -11,6 +11,7 @@ import json
 import logging
 import os
 import random
+import re
 from contextlib import asynccontextmanager
 from types import SimpleNamespace
 
@@ -28,12 +29,18 @@ from .domain import Facts
 from .assets import load_or_make_fillers, rain_noise
 from .data import DATA, load_gazetteer, load_guidance
 from .fake_mode import FakeTriageLLM, ScriptedStt, tone_tts
+from .broadcast import BROADCAST_LANGS, make_broadcast
 from .sim import replay_surge, run_surge
 from .store import Store
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 log = logging.getLogger("pukaar")
 TO_CONTROL = {"incident", "turn", "language"}
+
+
+class BroadcastIn(BaseModel):
+    text_en: str
+    langs: list[str] = BROADCAST_LANGS
 
 
 class MissedCallIn(BaseModel):
@@ -178,6 +185,34 @@ def create_app(settings: Settings | None = None, *, session_factory=None, intel_
     async def drill():
         f = DATA / "drill_results.json"  # written by scripts/run_drill.py
         return json.loads(f.read_text(encoding="utf-8")) if f.exists() else {"rows": [], "summary": None}
+
+    @app.post("/api/broadcast")
+    async def broadcast_alert(body: BroadcastIn):
+        """District officer's alert, spoken in every chosen language (Timbre MP3, cached by text)."""
+        if not body.text_en.strip():
+            raise HTTPException(400, "alert text is empty")
+        langs = [l for l in dict.fromkeys(body.langs) if l in BROADCAST_LANGS]
+
+        async def tts(text: str, lang: str) -> str:
+            kw = dict(voice=PukaarAgent.voice, language=lang, speed=PukaarAgent.speed, sample_rate=24000, container="mp3")
+            key = tts_cache.key(text, **kw)
+            if tts_cache.get(key) is None:
+                if fake:
+                    pcm = b"".join([c async for c in tone_tts(None, text, sample_rate=8000)])
+                    tts_cache.put(key, wav_bytes(pcm, 8000))
+                else:
+                    await tts_cache.get_or_make(settings.gnani_api_key, text, **kw)
+            return key
+
+        items = await make_broadcast(body.text_en.strip(), langs, intel_llm, tts, places)
+        return [{**{k: v for k, v in i.items() if k != "audio"}, "audio_url": f"/api/broadcast/audio/{i['audio']}"} for i in items]
+
+    @app.get("/api/broadcast/audio/{key}")
+    async def broadcast_audio(key: str):
+        data = tts_cache.get(key) if re.fullmatch(r"[0-9a-f]{40}", key) else None
+        if data is None:
+            raise HTTPException(404, "audio not found")
+        return Response(data, media_type="audio/wav" if data[:4] == b"RIFF" else "audio/mpeg")
 
     @app.get("/api/kpis")
     async def kpis():
