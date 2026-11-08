@@ -79,7 +79,9 @@ class PukaarAgent:
         t0 = time.monotonic()
         f = await self._facts_for(history)
         slot = next_slot(f, self.asked)
-        cands = pick_guidance(f, self.kb, self.given)
+        # GEN-01 says the control room can see the caller on the map: only true once they are located
+        located = locate(f, self.places, self.gps) is not None
+        cands = pick_guidance(f, self.kb, self.given if located else self.given | {"GEN-01"})
         msgs = build_reply_messages(f, slot, cands, self.tts_language, self.eta, history)
         try:
             # not streamed: the guard must see the whole reply before anything is spoken

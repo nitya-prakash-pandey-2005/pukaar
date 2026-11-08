@@ -53,6 +53,17 @@ async def test_question_is_marked_asked_only_once_spoken(store):
     assert a.asked == {"location"}
 
 
+async def test_unlocated_caller_is_not_told_they_are_on_the_map(store):
+    # GEN-01 = "the control room can see you on the map": false with no GPS and no known place
+    fire = [Turn("caller", "fire! help!", 1.0)]
+    a = make_agent(store, ['{"hazard": "fire"}'], ["ok"])
+    [s async for s in a.reply_sentences(fire)]
+    assert "FIR-01" in a.llm.calls[0][0]["content"] and "GEN-01" not in a.llm.calls[0][0]["content"]
+    b = make_agent(store, ['{"hazard": "fire"}'], ["ok"], gps=(12.98, 80.22))
+    [s async for s in b.reply_sentences(fire)]
+    assert "GEN-01" in b.llm.calls[0][0]["content"]
+
+
 async def test_tag_without_words_is_not_logged_as_given(store):
     a = make_agent(store, [json.dumps(FACTS)], ["[[FLD-01]]"])
     inc = (await a.on_user_turn(HIST))["incident"]
