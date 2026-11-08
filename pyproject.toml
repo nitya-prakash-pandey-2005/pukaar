@@ -1,5 +1,5 @@
 [project]
-name = "pukaar"
+name = "pukaar-workspace"
 version = "0.1.0"
 description = "AI disaster helpline: answers every flood call in the caller's language, triages and maps it. Built on Gnani AI Prisma, Timbre and Evon."
 requires-python = ">=3.12,<3.13"
