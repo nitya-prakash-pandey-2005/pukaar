@@ -8,7 +8,7 @@ from difflib import SequenceMatcher
 
 from pydantic import BaseModel, model_validator
 
-from .data import Place
+from .data import Place, load_gazetteer
 
 HAZARDS = {"flood", "cyclone", "landslide", "fire", "building_collapse", "medical", "other"}
 WATER_LEVELS = {"none", "ankle", "knee", "waist", "chest", "neck"}
@@ -22,8 +22,9 @@ _SETS = {"vulnerable": VULNERABLE, "injuries": INJURIES, "medical_needs": MEDICA
 KEYTERMS = [
     "flood", "water", "roof", "boat", "rescue", "ambulance", "current", "landslide", "cyclone", "trapped",
     "oxygen", "insulin", "pregnant", "baby", "elderly", "bleeding", "unconscious", "NDRF", "terrace",
-    "bus depot", "lake", "வெள்ளம்", "बाढ़", "Velachery", "Tambaram", "Mudichur", "Pallikaranai", "Adyar",
-    "Saidapet", "Varadharajapuram", "Madipakkam", "Semmencherry", "Perungudi", "Kotturpuram",
+    "bus depot", "lake", "வெள்ளம்", "बाढ़",
+    # every gazetteer locality: listing only a few made Prisma hear "Velachery" in noise (drill, 8 Nov)
+    *(p.name for p in load_gazetteer()),
 ]
 
 
@@ -148,6 +149,19 @@ def canonical_locality(f: Facts, places: list[Place], gps: tuple[float, float] |
     if not m or (gps and haversine_m(gps, (m[0].lat, m[0].lon)) > 3000):
         return f
     return f.model_copy(update={"locality": m[0].name})
+
+
+def resolve_locality(f: Facts, caller_texts: list[str], places: list[Place],
+                     gps: tuple[float, float] | None = None) -> Facts:
+    """LLM spelling if it maps to the gazetteer; else the caller's own words (Prisma writes Tamil names in Tamil)."""
+    g = canonical_locality(f, places, gps)
+    if g.locality and _match(g.locality, places):
+        return g
+    for text in reversed(caller_texts):
+        m = _match(text, places)
+        if m and not (gps and haversine_m(gps, (m[0].lat, m[0].lon)) > 3000):
+            return g.model_copy(update={"locality": m[0].name})
+    return g
 
 
 def locate(f: Facts, places: list[Place], gps: tuple[float, float] | None) -> tuple[float, float, str, float] | None:

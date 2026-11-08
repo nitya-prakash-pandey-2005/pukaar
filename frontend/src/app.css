@@ -75,6 +75,14 @@ h4 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing
 .list > .li.resolved { opacity: 0.5; }
 .live-dot { display: inline-block; width: 8px; height: 8px; margin-left: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); }
 
+/* ---------- noise drill ---------- */
+.drill-table { display: flex; flex-direction: column; gap: 6px; overflow-x: auto; }
+.dr { display: grid; grid-template-columns: 64px 92px repeat(5, minmax(64px, 1fr)); gap: 8px; align-items: center; font-size: 13px; min-width: 560px; }
+.dr.head { color: var(--muted); font-size: 12px; }
+.cellbar { position: relative; height: 22px; border-radius: 6px; background: var(--surface-2); overflow: hidden; }
+.cellbar i { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, var(--cyan-a), var(--cyan)); opacity: 0.55; }
+.cellbar em { position: relative; font-style: normal; font-family: var(--font-mono); font-size: 12px; padding-left: 6px; line-height: 22px; }
+
 /* ---------- incident sheet ---------- */
 .facts { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px 14px; font-size: 14px; margin: 0; }
 .facts dt { color: var(--muted); }

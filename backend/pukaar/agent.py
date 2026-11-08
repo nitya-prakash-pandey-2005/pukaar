@@ -10,7 +10,7 @@ from voice_core.turns import split_sentences
 from voice_core.types import Turn
 
 from .data import Guidance, Place
-from .domain import KEYTERMS, Facts, Incident, canonical_locality, locate, next_slot
+from .domain import KEYTERMS, Facts, Incident, locate, next_slot, resolve_locality
 from .guard import fallback, guard_reply
 from .store import Store
 from .triage import LANG_NAMES, build_reply_messages, extract_facts, pick_guidance
@@ -99,7 +99,8 @@ class PukaarAgent:
             yield s.strip()
 
     async def on_user_turn(self, history: list[Turn]) -> dict | None:
-        f = canonical_locality(await self._facts_for(history), self.places, self.gps)
+        said = [t.text for t in history if t.speaker == self.user_label]
+        f = resolve_locality(await self._facts_for(history), said, self.places, self.gps)
         inc = self.store.upsert_incident(self.call_id, f, locate(f, self.places, self.gps))
         return {"type": "incident", "call_id": self.call_id, "incident": inc.model_dump()}
 

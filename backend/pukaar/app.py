@@ -174,6 +174,11 @@ def create_app(settings: Settings | None = None, *, session_factory=None, intel_
         st.surge = asyncio.create_task(run_surge(n, intel_llm, store, places, broadcast, random.Random(), record=rec))
         return {"started": n, "mode": "generate"}
 
+    @app.get("/api/drill")
+    async def drill():
+        f = DATA / "drill_results.json"  # written by scripts/run_drill.py
+        return json.loads(f.read_text(encoding="utf-8")) if f.exists() else {"rows": [], "summary": None}
+
     @app.get("/api/kpis")
     async def kpis():
         return store.kpis()

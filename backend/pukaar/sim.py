@@ -12,7 +12,7 @@ from pathlib import Path
 from voice_core.types import Turn
 
 from .data import Place
-from .domain import Facts, canonical_locality, locate
+from .domain import Facts, locate, resolve_locality
 from .store import Store
 from .triage import LANG_NAMES, extract_facts
 
@@ -59,7 +59,8 @@ def utterance_prompt(c: Case) -> list[dict]:
         {"role": "system", "content": f"You write what a frightened flood-night caller in Chennai says to a helpline, in "
                                       f"{lang} as people really speak it (code-mixing with English is fine, use the "
                                       f"native script). 1-3 short sentences, no quotes, no narration. Mention every fact "
-                                      f"given, in your own words. Synthetic data only: no real names or numbers."},
+                                      f"given, in your own words. Synthetic data only: no real names or numbers. Hindi and Telugu in their own script; "
+                                      f"if the language is English, write plain English."},
         {"role": "user", "content": f"Facts: {facts}"},
     ]
 
@@ -93,7 +94,7 @@ async def run_surge(n: int, llm, store: Store, places: list[Place], emit, rng: r
                 break
         if not text or f == Facts():
             continue
-        f = canonical_locality(f, places, c.gps)
+        f = resolve_locality(f, [text], places, c.gps)
         rows.append({"lang": c.lang, "gps": list(c.gps), "text": text, "facts": f.model_dump()})
         await _ingest(store, places, emit, c.lang, c.gps, text, f)
         await asyncio.sleep(delay)

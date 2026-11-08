@@ -92,7 +92,7 @@ def test_next_slot_order():
 
 
 def test_keyterms():
-    assert 10 <= len(KEYTERMS) <= 40 and "flood" in KEYTERMS
+    assert "flood" in KEYTERMS
 
 
 def test_canonical_locality(places):
@@ -107,3 +107,15 @@ def test_canonical_locality_ignores_far_match_when_gps_known(places):
     ekkattuthangal = (13.0243, 80.2066)
     assert canonical_locality(Facts(locality="Keelkattalai"), places, ekkattuthangal).locality == "Keelkattalai"
     assert canonical_locality(Facts(locality="Ekkaduthangal"), places, ekkattuthangal).locality == "Ekkattuthangal"
+
+
+def test_resolve_locality_falls_back_to_caller_words(places):
+    from pukaar.domain import resolve_locality
+    said = ["சோழிநல்லூரில் நான்கு பேர் வீட்டை மட்டும் தீ அடித்து விட்டது"]
+    assert resolve_locality(Facts(locality="Chozhinallur"), said, places).locality == "Sholinganallur"
+    assert resolve_locality(Facts(locality="Velacheri"), said, places).locality == "Velachery"  # LLM spelling wins if it maps
+    assert resolve_locality(Facts(), said, places, gps=(13.11, 80.29)).locality is None  # Royapuram: 25 km away
+
+
+def test_keyterms_cover_every_gazetteer_locality(places):
+    assert {p.name for p in places} <= set(KEYTERMS) and len(KEYTERMS) <= 100
