@@ -7,11 +7,11 @@ Plan: `docs/03-build-plan.md`. Engine contract: `voice-core/README.md` (the engi
 | # | Task | Owner | Branch | Status |
 |---|---|---|---|---|
 | 0 | Bootstrap | CL | main | done (workspace, frontend copy, engine sync) |
-| 1 | Data: gazetteer + guidance KB | TM | feat/tm-pukaar-domain | in progress |
-| 2 | Domain: severity, locate, dedup, slots | TM | feat/tm-pukaar-domain | in progress |
-| 3 | Triage extraction + reply guardrails | TM | feat/tm-pukaar-domain | in progress |
-| 4 | see plan | | | todo |
-| 5 | see plan | | | todo |
+| 1 | Data: gazetteer + guidance KB | TM | feat/tm-pukaar-domain | done |
+| 2 | Domain: severity, locate, dedup, slots | TM | feat/tm-pukaar-domain | done |
+| 3 | Triage extraction + reply guardrails | TM | feat/tm-pukaar-domain | done |
+| 4 | PukaarAgent + store | TM | feat/tm-pukaar-domain | in progress |
+| 5 | FastAPI app | TM | feat/tm-pukaar-domain | in progress |
 | 6 | see plan | | | todo |
 | 7 | see plan (Pukaar only) | | | todo |
 | 8 | see plan (Pukaar only) | | | todo |
@@ -20,3 +20,4 @@ Plan: `docs/03-build-plan.md`. Engine contract: `voice-core/README.md` (the engi
 ## Log
 - Sun 8 Nov 11:30: docs, design, plan and bootstrap (CL).
 - Sun 8 Nov 12:00: TM claims Tasks 1–3 (branch feat/tm-pukaar-domain).
+- Sun 8 Nov: TM done Tasks 1–3 (41 tests); claims Tasks 4–5.
