@@ -1,0 +1,18 @@
+[
+ {"id": "FLD-01", "hazards": ["flood", "cyclone"], "when": ["knee", "waist", "chest", "neck"], "text_en": "Move to the highest floor or the roof. Take drinking water, medicines, your phone and a torch."},
+ {"id": "FLD-02", "hazards": ["flood"], "when": ["ankle", "knee"], "text_en": "If it is safe to reach, switch off the electricity mains."},
+ {"id": "FLD-03", "hazards": ["flood"], "when": ["any"], "text_en": "Do not walk or drive through moving water. Even ankle-deep flowing water can knock you down."},
+ {"id": "FLD-04", "hazards": ["flood", "cyclone"], "when": ["any"], "text_en": "Stay away from electric poles and fallen wires."},
+ {"id": "FLD-05", "hazards": ["flood"], "when": ["on_roof", "trapped"], "text_en": "Signal rescuers from the roof with a bright cloth or a torch."},
+ {"id": "FLD-06", "hazards": ["flood", "cyclone", "landslide"], "when": ["any"], "text_en": "Save your phone battery: close other apps, and send an SMS if calls fail."},
+ {"id": "FLD-07", "hazards": ["flood"], "when": ["any"], "text_en": "Drink only boiled or bottled water."},
+ {"id": "MED-01", "hazards": ["any"], "when": ["bleeding"], "text_en": "Press a clean cloth firmly on any bleeding wound."},
+ {"id": "MED-02", "hazards": ["any"], "when": ["insulin"], "text_en": "Keep insulin dry and as cool as possible. If sugar feels low, eat something sweet."},
+ {"id": "MED-03", "hazards": ["any"], "when": ["unconscious"], "text_en": "Lay an unconscious person on their side and keep their airway clear."},
+ {"id": "CYC-01", "hazards": ["cyclone"], "when": ["any"], "text_en": "Stay indoors, away from windows, until officials announce it is safe."},
+ {"id": "LND-01", "hazards": ["landslide"], "when": ["any"], "text_en": "Move away from the slope and river channels. Listen for cracking trees or rolling stones."},
+ {"id": "FIR-01", "hazards": ["fire"], "when": ["any"], "text_en": "Stay low under the smoke and cover your nose and mouth with a wet cloth."},
+ {"id": "BLD-01", "hazards": ["building_collapse"], "when": ["any"], "text_en": "If you are trapped, tap on a pipe or wall so rescuers can hear you. Do not light a match."},
+ {"id": "GEN-01", "hazards": ["any"], "when": ["any"], "text_en": "Your details are recorded and the control room can see you on the map."},
+ {"id": "GEN-02", "hazards": ["any"], "when": ["any"], "text_en": "Stay calm and stay on a high, dry place. Keep this phone with you."}
+]
