@@ -261,6 +261,19 @@ class VoiceAgentSession:
         await self.send_audio(chunk)
 
     async def _tts(self, sentence: str):
+        # In turn-based STT mode (accounts limited to one active Gnani request) never synthesise while a
+        # transcription request is in flight: TurnBasedStt exposes that as an asyncio.Lock named `busy`.
+        lock = getattr(self._stt, "busy", None)
+        if isinstance(lock, asyncio.Lock):
+            async with lock:
+                chunks = [c async for c in self._tts_unlocked(sentence)]
+            for c in chunks:
+                yield c
+            return
+        async for c in self._tts_unlocked(sentence):
+            yield c
+
+    async def _tts_unlocked(self, sentence: str):
         kw = dict(voice=self.agent.voice, language=self.agent.tts_language, speed=self.agent.speed, sample_rate=self.sr)
         try:
             async for chunk in self.tts_fn(self.settings.gnani_api_key, sentence, **kw):

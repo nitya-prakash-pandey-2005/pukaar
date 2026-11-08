@@ -111,6 +111,19 @@ async def main(args) -> int:
     if args.llm:
         from voice_core.llm import LLM
 
+        if s.groq_api_key:
+            try:
+                import httpx
+
+                async with httpx.AsyncClient(timeout=20) as c:
+                    r = await c.get("https://api.groq.com/openai/v1/models",
+                                    headers={"Authorization": f"Bearer {s.groq_api_key}"})
+                ids = sorted(m["id"] for m in r.json().get("data", []))
+                ok = s.groq_model in ids
+                hint = "" if ok else " | available: " + ", ".join(i for i in ids if any(k in i for k in ("llama", "gpt-oss", "qwen", "kimi")))
+                report("groq model available", ok, f"GROQ_MODEL={s.groq_model}{hint}")
+            except Exception as e:
+                report("groq models list", False, repr(e))
         try:
             llm = LLM(s)
             t0 = time.perf_counter()
