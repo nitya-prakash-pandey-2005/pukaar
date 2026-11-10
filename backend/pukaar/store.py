@@ -73,6 +73,13 @@ class Store:
             "SELECT speaker, text, t, lang, latency_ms FROM turns WHERE call_id=? ORDER BY id", (call_id,))]
         return d
 
+    def recent_caller_call(self, text: str, since: float) -> str | None:
+        """The latest call since `since` in which the caller said exactly `text` (case and spacing ignored)."""
+        norm = " ".join(text.split()).casefold()
+        rows = self.db.execute("SELECT t.call_id, t.text FROM turns t JOIN calls c ON c.id = t.call_id "
+                               "WHERE t.speaker = 'caller' AND c.started_at >= ? ORDER BY t.id DESC", (since,))
+        return next((r["call_id"] for r in rows if " ".join(r["text"].split()).casefold() == norm), None)
+
     # ------------------------------------------------------------------ incidents
     def _save(self, inc: Incident) -> Incident:
         self._exec("INSERT OR REPLACE INTO incidents(id, status, updated_at, data) VALUES (?,?,?,?)",

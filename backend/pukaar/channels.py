@@ -4,13 +4,14 @@ caller's language, and CAP 1.2 XML for broadcast alerts (the format India's SACH
 from __future__ import annotations
 
 import re
+import time
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
 
 from voice_core.types import Turn
 
 from .data import Guidance, Place
-from .domain import Facts, Incident, locate, next_slot, resolve_locality
+from .domain import MERGE_WINDOW_S, Facts, Incident, locate, next_slot, resolve_locality
 from .guard import adds_nothing, fallback, guard_reply
 from .store import Store
 from .triage import LANG_NAMES, build_reply_messages, extract_facts, pick_guidance
@@ -29,6 +30,11 @@ async def sms_intake(text: str, gps: tuple[float, float] | None, llm, store: Sto
                      kb: list[Guidance]) -> tuple[Incident, str]:
     """One text message -> facts -> incident on the map (channel "text") + a guarded reply SMS."""
     lang = detect_lang(text)
+    # the same message again (gateway retry, or the sender resends): same incident, same reply, no new tokens
+    dup = store.recent_caller_call(text, time.time() - MERGE_WINDOW_S)
+    if dup and (old := store.get_incident(store.get_call(dup)["incident_id"])) and old.status != "resolved":
+        said = [t["text"] for t in store.get_call(dup)["turns"] if t["speaker"] == "pukaar"]
+        return old, said[-1] if said else fallback(lang)
     turn = Turn("caller", text, 0.0, lang)
     f = resolve_locality(await extract_facts(llm, [turn], Facts()), [text], places, gps)
     cid = store.create_call(lang)

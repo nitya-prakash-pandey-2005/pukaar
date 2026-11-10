@@ -71,3 +71,15 @@ async def test_unlocated_sms_is_not_told_the_control_room_sees_them(tmp_path):
                      load_guidance())
     assert "GEN-01" in llm.calls[3][0]["content"]
 
+
+async def test_same_sms_twice_is_one_incident_and_no_new_tokens(tmp_path):
+    # SMS gateways retry and people resend: with no GPS nothing else would merge the two pins
+    store = Store(tmp_path / "p.db")
+    llm = FakeLLM([json.dumps({"locality": "Velachery", "people_count": 4, "hazard": "flood"}), "சரி, உதவி ஏற்பாடு."])
+    a, r1 = await sms_intake(SMS, None, llm, store, load_gazetteer(), load_guidance())
+    b, r2 = await sms_intake("  " + SMS.replace(" ", "  ") + " ", None, llm, store, load_gazetteer(), load_guidance())
+    assert b.id == a.id and len(store.list_incidents()) == 1 and r2 == r1 and len(llm.calls) == 2
+    store.resolve(a.id)  # after the incident is closed, the same words are a new emergency
+    llm.replies = [json.dumps({"locality": "Velachery", "hazard": "flood"}), "சரி."]
+    c, _ = await sms_intake(SMS, None, llm, store, load_gazetteer(), load_guidance())
+    assert c.id != a.id
