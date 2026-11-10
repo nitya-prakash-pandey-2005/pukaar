@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 
 from voice_core.testing import FakeLLM
 
-from pukaar.channels import CAP_NS, cap_xml, detect_lang, relay_line, sms_intake
+from pukaar.channels import CAP_NS, cap_xml, detect_lang, relay_line, romanised_lang, sms_intake
 from pukaar.data import load_gazetteer, load_guidance
 from pukaar.store import Store
 
@@ -90,6 +90,22 @@ async def test_romanised_sms_is_answered_in_the_language_the_llm_heard(tmp_path)
     llm = FakeLLM([json.dumps({"hazard": "flood", "locality": "Saidapet", "caller_language": "hi-IN"}), "Ghabraiye mat."])
     inc, _ = await sms_intake("Saidapet mein paani ghar ke andar aa gaya, 3 log hain", None, llm, store,
                               load_gazetteer(), load_guidance())
+    assert store.call_lang(inc.call_ids[0]) == "hi-IN" and "Reply in Hindi" in llm.calls[1][0]["content"]
+
+
+def test_romanised_lang_from_common_words():
+    assert romanised_lang("Saidapet bridge ke paas hum 3 log hain, paani kamar tak aa gaya hai") == "hi-IN"
+    assert romanised_lang("Saidapet bus stand pakkathula 3 peru irukom, thanni waist varaikkum") == "ta-IN"
+    assert romanised_lang("water inside the house, please help") is None
+    assert romanised_lang("hum here") is None  # one word is not enough
+
+
+async def test_romanised_hindi_sms_is_answered_in_hindi_even_if_the_llm_says_tamil(tmp_path):
+    # seen live (10 Nov): a Chennai place name made the LLM tag romanised Hindi as Tamil
+    store = Store(tmp_path / "p.db")
+    llm = FakeLLM([json.dumps({"hazard": "flood", "locality": "Saidapet", "caller_language": "ta-IN"}), "Ghabraiye mat."])
+    inc, _ = await sms_intake("Saidapet bridge ke paas hum 3 log hain, paani kamar tak aa gaya hai, madad bhejo", None,
+                              llm, store, load_gazetteer(), load_guidance())
     assert store.call_lang(inc.call_ids[0]) == "hi-IN" and "Reply in Hindi" in llm.calls[1][0]["content"]
 
 

@@ -33,6 +33,26 @@ def detect_lang(text: str) -> str:
     return next((code for code, rx in _SCRIPTS if re.search(rx, text or "")), "en-IN")
 
 
+# Latin-script SMS has no script to detect. Seen live (10 Nov): the LLM tagged "Saidapet bridge ke paas hum 3 log
+# hain, paani kamar tak…" as Tamil (a Chennai place) and the texter got a Tamil reply. Common words decide first.
+_ROMAN_WORDS = {
+    "hi-IN": {"hai", "hain", "hum", "mein", "paani", "ghar", "madad", "bhejo", "bhejiye", "kamar", "gaya", "gayi",
+              "paas", "nahi", "nahin", "bachche", "bachcha", "bachchi", "jaldi", "kripya", "raha", "rahe", "hamare",
+              "hamara", "mera", "meri", "bukhar", "andar", "upar"},
+    "ta-IN": {"irukom", "irukkom", "thanni", "pakkathula", "pakkathil", "varaikkum", "venum", "vendum",
+              "vandhuduchu", "vanthuduchu", "veedu", "veetla", "maadi", "mela", "kozhandhai", "kuzhandhai", "paati",
+              "thatha", "enga", "romba", "illa", "udhavi", "peru"},
+}
+
+
+def romanised_lang(text: str) -> str | None:
+    """Hindi or Tamil written in Latin script, from at least 2 common words and a clear lead; else None."""
+    words = re.findall(r"[a-z]+", (text or "").casefold())
+    hits = {code: sum(w in vocab for w in words) for code, vocab in _ROMAN_WORDS.items()}
+    (best, n), (_, m) = sorted(hits.items(), key=lambda kv: -kv[1])
+    return best if n >= 2 and n > m else None
+
+
 async def sms_intake(text: str, gps: tuple[float, float] | None, llm, store: Store, places: list[Place],
                      kb: list[Guidance]) -> tuple[Incident, str]:
     """One text message -> facts -> incident on the map (channel "text") + a guarded reply SMS."""
@@ -45,8 +65,8 @@ async def sms_intake(text: str, gps: tuple[float, float] | None, llm, store: Sto
         return old, said[-1] if said else fallback(lang, old.facts.hazard)
     turn = Turn("caller", text, 0.0, lang)
     f = resolve_locality(await extract_facts(llm, [turn], Facts()), [text], places, gps)
-    if lang == "en-IN" and f.caller_language in TTS_LANGS:  # most SMS are romanised Hindi/Tamil ("paani aa gaya")
-        lang = f.caller_language
+    if lang == "en-IN":  # most SMS are romanised Hindi/Tamil ("paani aa gaya")
+        lang = romanised_lang(text) or (f.caller_language if f.caller_language in TTS_LANGS else lang)
     cid = store.create_call(lang)
     store.add_turn(cid, turn)
     loc = locate(f, places, gps)
