@@ -13,7 +13,10 @@ _ANY_TAG_RE = re.compile(r"\[\[.*?\]\]")
 _TIME_RE = re.compile(  # any time span or "soon" promise, in words or digits, in any script we serve
     r"\d+\s*(min|minute|मिनट|நிமிட)|jaldi pahunch|reaching soon|coming soon|जल्दी पहुँच|जल्दी आ|வந்துவிடும்"
     r"|\b(minutes?|mins?|hours?|hrs?|ghant[ae]?|ghanton|minat)\b|मिनट|मिनिट|घंट|நிமிட|நிமிஷ|மணி\s*நேர"
-    r"|నిమిష|గంట|ನಿಮಿಷ|ಗಂಟೆ|মিনিট|ঘণ্টা|മിനിറ്റ|മണിക്കൂ",
+    r"|నిమిష|గంట|ನಿಮಿಷ|ಗಂಟೆ|মিনিট|ঘণ্টা|മിനിറ്റ|മണിക്കൂ"
+    # "soon" promises with no number ("as soon as you can" and "சீக்கிரம் மாடிக்கு போங்க" are urgency, and pass)
+    r"|\b(?:arriv\w*|be there|be here|reach\w*|com(?:e|es|ing)) (?:very )?(?:soon|shortly)\b|\bshortly\b"
+    r"|जल्द ही|\bjald hi\b|விரைவில்|சீக்கிரம் வ|త్వరలో",
     re.IGNORECASE)
 # false reassurance (design §4): nobody on the line can know the caller is safe, ETA or not
 _SAFE_RE = re.compile(

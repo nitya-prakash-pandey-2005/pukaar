@@ -117,3 +117,20 @@ def test_fallback_gives_high_ground_advice_only_for_water_hazards():
         assert ids == [] and line == fallback("ta-IN", hz) and line and "உயரமான" not in line
         assert "high" not in fallback("en-IN", hz)
         assert "GEN-02" not in {g.id for g in pick_guidance(Facts(hazard=hz), load_guidance(), {"GEN-01", "FLD-06"})}
+
+
+def test_guard_blocks_soon_promises_in_every_language():
+    # "help will come soon" is an arrival promise with no number: it slipped past in Tamil, Telugu and formal Hindi
+    for text, lang in [
+        ("உதவி விரைவில் வரும்.", "ta"),
+        ("பயப்படாதீங்க, படகு சீக்கிரம் வந்துடும்.", "ta"),
+        ("సహాయం త్వరలో వస్తుంది.", "te"),
+        ("मदद जल्द ही पहुँचेगी।", "hi"),
+        ("Madad jald hi aayegi.", "hi"),
+        ("Rescuers will be there shortly.", "en"),
+        ("The boat is arriving soon.", "en"),
+    ]:
+        assert guard_reply(text, set(), None, lang)[0] == FALLBACK[lang], text
+        assert guard_reply(text, set(), "20 min", lang)[0] != FALLBACK[lang], text  # the dispatcher gave an ETA
+    for ok in ["As soon as you can, move to the roof.", "சீக்கிரம் மாடிக்கு போங்க."]:  # urgency, not a promise
+        assert guard_reply(ok, set(), None)[0] == ok
