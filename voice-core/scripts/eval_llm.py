@@ -77,7 +77,11 @@ SUGGEST_PROMPT = ("You help a person who cannot speak reply quickly. Give exactl
                   "in Hindi (Devanagari) that they might want to say. Reply with JSON only: {\"replies\": [\"\", \"\", \"\"]}.")
 
 
+PAUSE = 0.0  # seconds between calls, to stay under a free-tier tokens-per-minute limit
+
+
 async def timed_stream(llm: LLM, messages) -> tuple[str, float, float]:
+    await asyncio.sleep(PAUSE)
     t0 = time.perf_counter()
     first, text = None, ""
     async for d in llm.stream(messages, temperature=0.7, max_tokens=160):
@@ -87,6 +91,7 @@ async def timed_stream(llm: LLM, messages) -> tuple[str, float, float]:
 
 
 async def timed_json(llm: LLM, messages) -> tuple[dict | None, float, str]:
+    await asyncio.sleep(PAUSE)
     t0 = time.perf_counter()
     raw = await llm.complete(messages, temperature=0.2, max_tokens=400, json_mode=True)
     dt = time.perf_counter() - t0
@@ -97,6 +102,8 @@ async def timed_json(llm: LLM, messages) -> tuple[dict | None, float, str]:
 
 
 async def main(args) -> None:
+    global PAUSE
+    PAUSE = args.pause
     s = get_settings()
     llm = LLM(s, provider=args.provider)
     rows, ttfts, json_ok, json_total = [], [], 0, 0
@@ -151,4 +158,5 @@ async def main(args) -> None:
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
     p.add_argument("--provider", choices=["groq", "evon"], default="groq")
+    p.add_argument("--pause", type=float, default=0.0, help="seconds to wait before each call")
     asyncio.run(main(p.parse_args()))
