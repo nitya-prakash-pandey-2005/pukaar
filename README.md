@@ -390,7 +390,7 @@ uv run python -m pytest -q        # 150 passed
 
 ## Team and family
 
-Design and shared voice engine: Nitya Prakash Pandey. Implementation and live testing: Dilavesh Kanz Nidooli. Final review and hardening: Nitya Prakash Pandey.
+Team: Nitya Prakash Pandey · Dilavesh Kanz Nidooli
 
 Part of a three-product entry built on one Gnani voice engine:
 
