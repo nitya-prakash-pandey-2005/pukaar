@@ -102,3 +102,12 @@ def test_cap_xml_stays_well_formed_with_control_characters_and_markup():
     assert info.find("c:headline", ns).text == "Rise <now> & move"
     assert info.find("c:description", ns).text == "ஆறு <உயர்கிறது> &"
     assert info.find("c:area/c:areaDesc", ns).text == "Chennai & suburbs"
+
+
+async def test_two_people_texting_just_help_get_two_pins(tmp_path):
+    # with no sender number, a short "help" is not proof of a resend: never hide a second person
+    store = Store(tmp_path / "p.db")
+    llm = FakeLLM(["{}", "சரி.", "{}", "சரி."])
+    a, _ = await sms_intake("help", None, llm, store, load_gazetteer(), load_guidance())
+    b, _ = await sms_intake("Help", None, llm, store, load_gazetteer(), load_guidance())
+    assert a.id != b.id and len(store.list_incidents()) == 2

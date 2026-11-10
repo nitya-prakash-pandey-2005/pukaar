@@ -37,8 +37,9 @@ async def sms_intake(text: str, gps: tuple[float, float] | None, llm, store: Sto
                      kb: list[Guidance]) -> tuple[Incident, str]:
     """One text message -> facts -> incident on the map (channel "text") + a guarded reply SMS."""
     lang = detect_lang(text)
-    # the same message again (gateway retry, or the sender resends): same incident, same reply, no new tokens
-    dup = store.recent_caller_call(text, time.time() - MERGE_WINDOW_S)
+    # the same message again (gateway retry, or the sender resends): same incident, same reply, no new tokens.
+    # Only 4+ words: with no sender number, two people texting just "help" are two people.
+    dup = store.recent_caller_call(text, time.time() - MERGE_WINDOW_S) if len(text.split()) >= 4 else None
     if dup and (old := store.get_incident(store.get_call(dup)["incident_id"])) and old.status != "resolved":
         said = [t["text"] for t in store.get_call(dup)["turns"] if t["speaker"] == "pukaar"]
         return old, said[-1] if said else fallback(lang, old.facts.hazard)
