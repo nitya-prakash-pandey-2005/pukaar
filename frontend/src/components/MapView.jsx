@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import L from "leaflet";
 import { levelColor } from "../lib/labels";
+import { addHeat, heatPoints } from "../context/heat";
 
 const CENTRE = [13.0827, 80.2707];
 // CARTO basemaps now need an API key; OSM tiles are darkened in CSS (.map .leaflet-tile-pane)
@@ -27,19 +28,24 @@ export default function MapView({ incidents, selectedId, onSelect, hotspots = []
   const map = useRef(null);
   const layer = useRef(null);
   const areas = useRef(null);
+  const heat = useRef(null);
+  const points = useRef([]);
 
   useEffect(() => {
     map.current = L.map(el.current, { zoomControl: true }).setView(CENTRE, 11);
     L.tileLayer(TILES, { attribution: ATTRIBUTION, maxZoom: 19 }).addTo(map.current);
     areas.current = L.layerGroup().addTo(map.current);
     layer.current = L.layerGroup().addTo(map.current);
+    heat.current = addHeat(map.current, () => points.current);
     // the map may start in a hidden tab (zero size); re-measure whenever it becomes visible or resizes
     const ro = new ResizeObserver(() => map.current.invalidateSize());
     ro.observe(el.current);
-    return () => { ro.disconnect(); map.current.remove(); };
+    return () => { ro.disconnect(); heat.current.remove(); map.current.remove(); };
   }, []);
 
   useEffect(() => {
+    points.current = heatPoints(incidents);
+    heat.current.update();
     layer.current.clearLayers();
     for (const inc of incidents) {
       if (inc.lat == null) continue;
