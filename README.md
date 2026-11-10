@@ -1,26 +1,31 @@
 <div align="center">
 
-# Pukaar · पुकार · புகார்
+<img src="docs/brand/banner.png" alt="Pukaar · पुकार · புகார் — When every line is busy, Pukaar picks up." width="100%">
 
-**When every line is busy, Pukaar picks up.**
+**Pukaar answers overflow emergency calls in the caller's own language, keeps them calm, asks the questions a rescuer needs, and puts every caller on a live rescue map. A human confirms every dispatch.**
 
-Pukaar answers overflow emergency calls in the caller's own language, keeps them calm, asks the questions a rescuer needs, and puts every caller on a live rescue map. A human confirms every dispatch.
-
-**Live demo: *[link]*** · **[One-page pitch](PITCH.md)** · [Run it locally](#run-it)
-
-![Gnani Prisma v3.0](https://img.shields.io/badge/Gnani-Prisma%20v3.0%20STT-7c3aed)
-![Gnani Timbre v3.0](https://img.shields.io/badge/Gnani-Timbre%20v3.0%20TTS-db2777)
+![Gnani Prisma v3.0](https://img.shields.io/badge/Gnani-Prisma%20v3.0%20STT-0e7490)
+![Gnani Timbre v3.0](https://img.shields.io/badge/Gnani-Timbre%20v3.0%20TTS-2563eb)
 ![Tests](https://img.shields.io/badge/tests-150%20passing-16a34a)
 ![Python](https://img.shields.io/badge/Python-3.12-3776ab?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-backend-009688?logo=fastapi&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=black)
 ![CAP 1.2](https://img.shields.io/badge/alerts-CAP%201.2-f59e0b)
 
+**Live demo:** *[live demo link]* · **Video:** *[video link]* · **[One-page pitch (PDF)](PITCH.pdf)** · [PITCH.md](PITCH.md) · [Combined pitch: three products, one Gnani engine](https://github.com/nitya-prakash-pandey-2005/dadi-vs-scammers/blob/main/PITCH.md)<br>
+Sister repos: [Dadi vs Scammers](https://github.com/nitya-prakash-pandey-2005/dadi-vs-scammers) · [Apni Awaaz](https://github.com/nitya-prakash-pandey-2005/apni-awaaz) · [Run it locally](#run-it)
+
 <img src="docs/screenshots/product/desktop-overview.png" alt="Pukaar: the caller phone, live KPIs and the rescue map with severity-coloured pins" width="900">
 
 <sub>Every screenshot is from a live run on Gnani Prisma and Timbre (10 Nov 2026) with synthetic callers. No real emergency data.</sub>
 
 </div>
+
+---
+
+## Contents
+
+[The problem](#the-problem) · [What it does](#what-it-does) · [Screens](#screens) · [Wireframe](#wireframe) · [How it works](#how-it-works) · [How it's different](#how-its-different) · [Gnani models used](#gnani-models-used) · [Measured results](#measured-results) · [Safety by design](#safety-by-design) · [How we would make it more advanced](#how-we-would-make-it-more-advanced) · [Run it](#run-it) · [Tests](#tests) · [Team and family](#team-and-family) · [Project docs](#project-docs)
 
 ---
 
@@ -40,16 +45,21 @@ The pattern repeats: the official line is busy, so people fall back to social me
 
 ## What it does
 
+| | Feature | In one line |
+|---|---|---|
+| 1 | **Answers the call, in the caller's language** | Prisma transcribes code-mixed 8 kHz phone audio; Timbre replies in the same language, one question at a time. |
+| 2 | **Severity you can explain** | The LLM only extracts facts; a fixed rule table scores 0–100 and shows every point. |
+| 3 | **One rescue map, no duplicates** | Spoken landmarks and phone location put the caller on the map; reports within 300 m and 3 h merge. |
+| 4 | **No voice? Send a text** | An SMS goes through the same triage and gets the next question back. |
+| 5 | **Human dispatch, heard in the caller's language** | A dispatcher confirms team and ETA; the caller hears it live or as a missed callback. |
+| 6 | **Broadcast alerts in 7 languages, as CAP 1.2** | One English alert, spoken by Timbre in 7 languages and exported as CAP 1.2 XML. |
+| 7 | **A noise drill, built in** | Synthetic calls buried in rain show what noise costs, language by language. |
+
 ### 1. Answers the call, in the caller's language
 
 The caller speaks the way people speak in a flood: fast, mixed languages, rain in the background. Gnani **Prisma v3.0** transcribes the 8 kHz phone audio with automatic Indic language detection and code-mix output. Pukaar replies with Gnani **Timbre v3.0** in the same language: one line of reassurance, at most one approved safety instruction, and one question.
 
 It asks in a fixed order, the order a rescue team needs: **where are you → how many people → anyone hurt or needing medicine → how high is the water → anyone old, pregnant, a baby, sick or disabled**.
-
-<p>
-<img src="docs/screenshots/product/desktop-live-call.png" alt="A live Tamil call: captions on the caller phone, the incident marked live in the queue" width="610">
-<img src="docs/screenshots/product/mobile-live-call.png" alt="The same live call at phone width" width="200">
-</p>
 
 ### 2. Severity you can explain, point by point
 
@@ -57,30 +67,15 @@ The LLM only **extracts facts** (hazard, water level, people, injuries, vulnerab
 
 > We don't let an AI decide who gets rescued first. It fills in a form; the rules rank; a human decides.
 
-<p>
-<img src="docs/screenshots/product/desktop-incident-severity.png" alt="Incident sheet: why this severity, facts, approved guidance given" width="610">
-<img src="docs/screenshots/product/mobile-incident-severity.png" alt="Incident sheet at phone width" width="200">
-</p>
-
 ### 3. One rescue map, no duplicates
 
 Pukaar locates callers two ways: the phone's emergency location (simulated in the demo) and the landmarks they say ("near the Vijayanagar bus stop"), matched against a Chennai gazetteer of 42 localities with Tamil aliases. Reports within 300 m and 3 hours about the same hazard merge into one incident, so five calls about one rooftop become one pin with a caller count. A merged report can raise an incident's water level but never lower it.
 
 The **flood-night surge** button replays 24 synthetic callers in four languages through the real triage, from a committed recording, so it costs no tokens and no Gnani credits.
 
-<p>
-<img src="docs/screenshots/product/desktop-control-room.png" alt="Control room after a surge: KPIs, the rescue map with merged pins and the severity queue" width="610">
-<img src="docs/screenshots/product/mobile-map-queue.png" alt="Rescue map and queue at phone width" width="200">
-</p>
-
 ### 4. No voice? Send a text
 
 Weak network, a speech-impaired caller, a jammed line: one text message goes through the same triage and lands on the same map, and Pukaar texts back the next question it needs answered. The `/api/sms` endpoint is where an SMS or WhatsApp gateway would post; in the demo, the caller phone's SMS box sends it.
-
-<p>
-<img src="docs/screenshots/product/desktop-sms-typed.png" alt="A Tamil SMS typed on the caller phone" width="405">
-<img src="docs/screenshots/product/desktop-sms-reply.png" alt="Pukaar's Tamil reply asks the next missing fact; the texter is on the map" width="405">
-</p>
 
 ### 5. Human dispatch, heard in the caller's language
 
@@ -88,15 +83,57 @@ The dispatcher picks a team, types an ETA and confirms. Only then may Pukaar men
 
 **Missed-call mode:** no balance? Give a missed call. The pin appears at once and Pukaar calls back.
 
-<p>
-<img src="docs/screenshots/product/desktop-incident-dispatched.png" alt="The SMS incident dispatched: NDRF Boat 1, ETA 40 min, and a box to message the caller" width="610">
-</p>
-
 ### 6. Broadcast alerts in 7 languages, exported as CAP 1.2
 
 A district officer types one English alert. Pukaar translates it in a single LLM call and Timbre speaks it in Tamil, Hindi, Telugu, Malayalam, Kannada, Bengali and English. Place names are masked as `{P1}` before translation and restored from the gazetteer, so "Adyar" stays அடையாறு (without the mask, the model once wrote "Aadhaar river").
 
 The alert downloads as **CAP 1.2 XML**, one `<info>` block per language. CAP is the OASIS standard that India's SACHET alert platform is built on.
+
+### 7. A noise drill, built in
+
+Synthetic distress calls are spoken by Timbre, cut to an 8 kHz phone band, buried in rain at 0–20 dB, transcribed by Prisma and triaged. The results card in the control room shows what noise costs, language by language.
+
+---
+
+## Screens
+
+All from the live run of 10 Nov 2026 (real Gnani + Groq, synthetic callers). Desktop at 1440 px, phone at 390 px.
+
+**A live Tamil call:** captions on the caller phone, the incident marked live in the queue.
+
+<p>
+<img src="docs/screenshots/product/desktop-live-call.png" alt="A live Tamil call: captions on the caller phone, the incident marked live in the queue" width="610">
+<img src="docs/screenshots/product/mobile-live-call.png" alt="The same live call at phone width" width="200">
+</p>
+
+**Why this severity:** driver bars, facts and the approved guidance given.
+
+<p>
+<img src="docs/screenshots/product/desktop-incident-severity.png" alt="Incident sheet: why this severity, facts, approved guidance given" width="610">
+<img src="docs/screenshots/product/mobile-incident-severity.png" alt="Incident sheet at phone width" width="200">
+</p>
+
+**Control room after a surge:** KPIs, merged pins and the severity queue.
+
+<p>
+<img src="docs/screenshots/product/desktop-control-room.png" alt="Control room after a surge: KPIs, the rescue map with merged pins and the severity queue" width="610">
+<img src="docs/screenshots/product/mobile-map-queue.png" alt="Rescue map and queue at phone width" width="200">
+</p>
+
+**SMS intake:** a Tamil text, and Pukaar's Tamil reply asking for the next missing fact.
+
+<p>
+<img src="docs/screenshots/product/desktop-sms-typed.png" alt="A Tamil SMS typed on the caller phone" width="405">
+<img src="docs/screenshots/product/desktop-sms-reply.png" alt="Pukaar's Tamil reply asks the next missing fact; the texter is on the map" width="405">
+</p>
+
+**Human dispatch:** NDRF Boat 1, ETA 40 min, and a box to message the caller.
+
+<p>
+<img src="docs/screenshots/product/desktop-incident-dispatched.png" alt="The SMS incident dispatched: NDRF Boat 1, ETA 40 min, and a box to message the caller" width="610">
+</p>
+
+**Broadcast and CAP 1.2:** one English alert spoken in Tamil, Hindi, Telugu and English, and the exported XML.
 
 <p>
 <img src="docs/screenshots/product/desktop-broadcast.png" alt="One English alert spoken in Tamil, Hindi, Telugu and English" width="610">
@@ -107,14 +144,91 @@ The alert downloads as **CAP 1.2 XML**, one `<info>` block per language. CAP is 
 <img src="docs/screenshots/product/desktop-cap-export.png" alt="The exported CAP 1.2 XML: status Exercise, one info block per language" width="610">
 </p>
 
-### 7. A noise drill, built in
-
-Synthetic distress calls are spoken by Timbre, cut to an 8 kHz phone band, buried in rain at 0–20 dB, transcribed by Prisma and triaged. The results card in the control room shows what noise costs, language by language.
+**Noise drill results card.**
 
 <p>
 <img src="docs/screenshots/product/desktop-noise-drill.png" alt="Noise drill results card" width="610">
 <img src="docs/screenshots/product/mobile-noise-drill.png" alt="Noise drill at phone width" width="200">
 </p>
+
+---
+
+## Wireframe
+
+The two screens and the path one call takes between them. Teal arrows are automated (Gnani, the LLM and the rules); amber arrows are human decisions.
+
+<img src="docs/design/wireframe.svg" alt="Low-fidelity wireframe: the caller phone (call, missed call, SMS, location, noise, captions, callback) and the control room (KPIs, rescue map, severity queue, incident sheet with dispatch, broadcast with CAP export, noise drill), linked through the server path Prisma → LLM facts → rules → guard → Timbre" width="100%">
+
+<sub>Source: [`docs/design/wireframe.svg`](docs/design/wireframe.svg), generated by [`scripts/make_wireframe.py`](scripts/make_wireframe.py).</sub>
+
+---
+
+## How it works
+
+### Architecture
+
+```mermaid
+flowchart TB
+    caller(["Caller<br/>browser mic, 8 kHz"]) -->|"/ws/call"| prisma["Gnani Prisma v3.0<br/>indic-auto, codemix, keyterms"]
+    sms(["SMS / WhatsApp text"]) -->|"/api/sms"| extract
+    prisma --> extract["LLM fact extraction<br/>Groq qwen3.8-27b"]
+    extract --> rules["Severity rule table<br/>0-100, drivers"]
+    extract --> locate["Locate<br/>GPS + gazetteer landmarks"]
+    rules --> dedup{"Dedup<br/>300 m, 3 h, same hazard"}
+    locate --> dedup
+    dedup --> incident[("Incident store")]
+    extract --> reply["Reply: next missing fact<br/>+ max 1 approved instruction"]
+    reply --> guard{"Guard<br/>no time promises,<br/>no 'you are safe',<br/>approved IDs only"}
+    guard --> timbre["Gnani Timbre v3.0<br/>Chetana voice"]
+    timbre --> caller
+    incident -->|"/ws/control"| room["Control room<br/>map, queue, KPIs"]
+    room -->|"human confirms"| dispatch["Dispatch + ETA"]
+    dispatch --> callback["Callback in the<br/>caller's language"]
+    callback --> timbre
+    room --> broadcast["Broadcast alert<br/>7 languages"]
+    broadcast --> timbre
+    broadcast --> cap["CAP 1.2 XML"]
+```
+
+### One caller, step by step
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant C as Caller phone
+    participant S as Pukaar server
+    participant P as Gnani Prisma v3.0
+    participant L as LLM (Groq qwen3.8-27b)
+    participant T as Gnani Timbre v3.0
+    participant R as Control room
+    actor D as Dispatcher
+    C->>S: 8 kHz PCM over /ws/call
+    S->>P: stream audio (indic-auto, codemix, keyterms)
+    P-->>S: transcript of the turn (e.g. Tamil script)
+    S->>L: extract facts (one extraction per turn)
+    L-->>S: hazard, water level, people, vulnerable, medical, landmarks
+    par Reply to the caller
+        S->>L: reply: next missing fact + at most 1 approved guidance ID
+        L-->>S: reply text (not streamed: the guard sees all of it)
+        S->>S: guard: no "you are safe", no time unless an ETA is confirmed, known IDs only, else the safe line
+        S->>T: speak in the caller's language (Chetana)
+        T-->>C: reply audio
+    and Update the control room
+        S->>S: rule table score 0-100, locate (GPS, gazetteer), dedup (300 m, 3 h)
+        S-)R: incident upsert over /ws/control (pin, queue, drivers)
+    end
+    D->>R: pick team, type ETA, confirm
+    R->>S: dispatch
+    S->>L: translate the confirmation (a translation that adds a time, a number or "you are safe" is dropped)
+    S->>T: speak it in the caller's language
+    T-->>C: live if still on the line, else a missed callback
+```
+
+1. The browser streams the caller's microphone as 8 kHz PCM over `/ws/call`. Optional rain is mixed in to test noise.
+2. Prisma transcribes each turn. The LLM extracts facts and merges them with what the caller said before.
+3. Facts are located (phone GPS, then spoken landmarks against the gazetteer), scored by the rule table and merged into an existing incident if one is close enough.
+4. The reply asks for the next missing fact and may add one instruction from the approved list. The guard checks it before Timbre speaks.
+5. The control room receives every change over `/ws/control`. Dispatch, messages, callbacks and broadcasts go back to callers through Timbre.
 
 ---
 
@@ -197,39 +311,6 @@ Triage accuracy was flat from clean audio to 0 dB: locality, vulnerable people a
 
 ---
 
-## How it works
-
-```mermaid
-flowchart TB
-    caller(["Caller<br/>browser mic, 8 kHz"]) -->|"/ws/call"| prisma["Gnani Prisma v3.0<br/>indic-auto, codemix, keyterms"]
-    sms(["SMS / WhatsApp text"]) -->|"/api/sms"| extract
-    prisma --> extract["LLM fact extraction<br/>Groq qwen3.8-27b"]
-    extract --> rules["Severity rule table<br/>0-100, drivers"]
-    extract --> locate["Locate<br/>GPS + gazetteer landmarks"]
-    rules --> dedup{"Dedup<br/>300 m, 3 h, same hazard"}
-    locate --> dedup
-    dedup --> incident[("Incident store")]
-    extract --> reply["Reply: next missing fact<br/>+ max 1 approved instruction"]
-    reply --> guard{"Guard<br/>no time promises,<br/>no 'you are safe',<br/>approved IDs only"}
-    guard --> timbre["Gnani Timbre v3.0<br/>Chetana voice"]
-    timbre --> caller
-    incident -->|"/ws/control"| room["Control room<br/>map, queue, KPIs"]
-    room -->|"human confirms"| dispatch["Dispatch + ETA"]
-    dispatch --> callback["Callback in the<br/>caller's language"]
-    callback --> timbre
-    room --> broadcast["Broadcast alert<br/>7 languages"]
-    broadcast --> timbre
-    broadcast --> cap["CAP 1.2 XML"]
-```
-
-1. The browser streams the caller's microphone as 8 kHz PCM over `/ws/call`. Optional rain is mixed in to test noise.
-2. Prisma transcribes each turn. The LLM extracts facts and merges them with what the caller said before.
-3. Facts are located (phone GPS, then spoken landmarks against the gazetteer), scored by the rule table and merged into an existing incident if one is close enough.
-4. The reply asks for the next missing fact and may add one instruction from the approved list. The guard checks it before Timbre speaks.
-5. The control room receives every change over `/ws/control`. Dispatch, messages, callbacks and broadcasts go back to callers through Timbre.
-
----
-
 ## Safety by design
 
 - **No false reassurance.** The guard blocks "you are safe" in English, Hindi, Tamil and Telugu, and any arrival time ("10 minutes", "jaldi pahunch", "10 நிமிஷத்துல வருவோம்", "help will come soon") unless a dispatcher has confirmed an ETA. A blocked reply is replaced by a safe fallback line.
@@ -243,6 +324,23 @@ flowchart TB
 <p>
 <img src="docs/screenshots/product/mobile-guard-fallback.png" alt="Live call: the caller's lines in Tamil, then Pukaar's safe fallback line" width="220">
 </p>
+
+---
+
+## How we would make it more advanced
+
+What we would build next, in order, and why. None of this is in the repo today.
+
+| Next step | What we would do | Why |
+|---|---|---|
+| **1. Real telephony** | Put Pukaar behind a real number through a cloud telephony provider such as Exotel that can stream call audio to a WebSocket, as an overflow route that only takes calls a human line rejects as busy or unanswered. Later, the same overflow hook on a state's 112 (ERSS) or a city helpline such as GCC 1913, which needs the operator's agreement. | Today the caller is a browser microphone. `/ws/call` already takes 8 kHz PCM, the phone-line format, so the engine does not change; what changes is who can reach it. Routing only overflow keeps humans first. |
+| **2. Real caller location** | Take location from the telecom emergency location feed instead of the simulated browser location, and keep spoken landmarks as the cross-check. | The map is only as good as the pin. In the noise drill, locality was right for 67% of calls, the weakest triage number, and a gazetteer only knows the places in it. |
+| **3. SACHET / CAP feeds** | Read official CAP warnings for the district (the standard SACHET is built on) so Pukaar knows which areas are under a red alert, and hand our CAP 1.2 `Exercise` alerts to the alerting authority for review instead of only downloading them. | Pukaar already writes CAP 1.2; it does not read it. An incoming warning should raise the priority of calls from the warned area, and an officer should approve before anything goes out as `Actual`. |
+| **4. GIS flood layers** | Overlay flood-inundation, road-closure and relief-camp layers on the rescue map, and add "inside a mapped flood zone" as one more line in the rule table. | Callers misjudge water depth. A mapped zone is a second, independent signal, and it stays explainable as one more driver bar. Camp locations also let Pukaar say where the nearest camp is. |
+| **5. Offline and low-bandwidth mode** | Cache the district's map tiles and the gazetteer in the control-room PWA (it already has a service worker), queue dispatch actions while offline and sync them later, and send callbacks by SMS when the voice line is down. | In Michaung, power and mobile networks were down for three to four days. A control room that goes blank when the link drops is not a control room. |
+| **6. Evon hosted on-prem for triage** | Host Gnani Evon v3.3 in a state data centre and point the existing adapter at it (`LLM_PROVIDER=evon`, see [`docs/EVON-HOSTING.md`](docs/EVON-HOSTING.md)). | Caller data would not leave the state, and there would be no shared rate limit: one live turn costs about 1,000 Groq tokens, so the free tier fits one live call at a time. |
+| **7. More languages and cities** | Add gazetteers with local-script aliases for other flood-prone districts (Kerala, Assam, Bihar), local place names for Hindi and Telugu broadcasts, and guard phrases checked by native speakers. | Prisma's `indic-auto` and Timbre already cover more languages than we tested. The limits today are ours: 42 Chennai localities, and only Tamil aliases. |
+| **8. Load testing** | Replay the surge recording at hundreds of concurrent calls against a staging server, measure Gnani concurrency, the store (SQLite today) and the `/ws/control` fan-out, then move the store to Postgres if it is the bottleneck. | A flood is a burst. We have measured single live calls and a 24-caller text surge, not a thousand callers at once. |
 
 ---
 
@@ -263,10 +361,21 @@ cp .env.example .env
 uv run python -m uvicorn pukaar.app:create_app --factory --host 127.0.0.1 --port 8766
 ```
 
-Frontend dev server: `cd frontend && npm run dev` (http://localhost:5192, proxies to 8766).
-Static demo (no backend, replays the recorded live run; what the Vercel link serves): `cd frontend && npm run build:demo`, see [`docs/DEPLOY-VERCEL.md`](docs/DEPLOY-VERCEL.md).
-Noise drill: `uv run python scripts/run_drill.py --n 6` (spends Gnani credits; TTS is cached).
-Before a demo, delete `cache/pukaar.db`: new calls within 300 m and 3 hours merge into old test incidents (dedup working as designed). Use earphones so Pukaar does not hear itself.
+**Static demo, no backend and no keys** (replays the recorded live run; this is what the live demo link serves):
+
+```bash
+cd frontend && npm run build:demo          # writes frontend/dist
+python -m http.server 8080 -d dist         # open http://localhost:8080
+```
+
+See [`docs/DEPLOY-VERCEL.md`](docs/DEPLOY-VERCEL.md) for Vercel. Run `npm run build` again afterwards so a local backend serves the real app.
+
+- Frontend dev server: `cd frontend && npm run dev` (http://localhost:5192, proxies to 8766).
+- Noise drill: `uv run python scripts/run_drill.py --n 6` (spends Gnani credits; TTS is cached).
+- Before a demo, delete `cache/pukaar.db`: new calls within 300 m and 3 hours merge into old test incidents (dedup working as designed). Use earphones so Pukaar does not hear itself.
+- One-page PDF: `uv run --no-project --with markdown python scripts/make_pitch_pdf.py` regenerates [`PITCH.pdf`](PITCH.pdf) from [`PITCH.md`](PITCH.md) (needs Chrome).
+
+---
 
 ## Tests
 
@@ -277,23 +386,36 @@ uv run python -m pytest -q        # 150 passed
 - **88 backend tests**: severity rules and dedup (`test_domain`), fact extraction and the reply guard (`test_triage`), the agent's question order, guidance, caller merging, dispatch and callbacks (`test_agent`), SMS, relay and dispatch translation (`test_channels`), the REST and WebSocket API (`test_app`), broadcast and CAP (`test_broadcast`), the surge simulator and the noise drill scoring.
 - **62 voice-core tests**: the Gnani protocol (Prisma headers, Timbre bodies), the request gate and 429 retries, the call session (barge-in, echo guard, reconnects), turn detection, audio and the LLM adapter.
 
-## Project docs
-
-- [`docs/02-design.md`](docs/02-design.md): design and safety rules
-- [`docs/test-log.md`](docs/test-log.md): every live test, with latency
-- [`docs/drill-results.md`](docs/drill-results.md): full noise drill tables
-- [`docs/01-gnani-api-reference.md`](docs/01-gnani-api-reference.md): what we learned about the Gnani APIs
-- [`docs/review-cl-2026-11-10.md`](docs/review-cl-2026-11-10.md): final review findings and the live checklist
-- [`docs/06-demo-and-post.md`](docs/06-demo-and-post.md): demo script
-- [`docs/DEPLOY-VERCEL.md`](docs/DEPLOY-VERCEL.md): the static demo on Vercel and how to refresh its recorded data
-- [`PITCH.md`](PITCH.md): one-page pitch
-
 ---
 
 ## Team and family
 
 Design and shared voice engine: Nitya Prakash Pandey. Implementation and live testing: Dilavesh Kanz Nidooli. Final review and hardening: Nitya Prakash Pandey.
 
-Part of a three-product entry built on one Gnani voice engine: [Dadi vs Scammers](https://github.com/nitya-prakash-pandey-2005/dadi-vs-scammers), Pukaar, [Apni Awaaz](https://github.com/nitya-prakash-pandey-2005/apni-awaaz).
+Part of a three-product entry built on one Gnani voice engine:
+
+| Product | What it does |
+|---|---|
+| [**Dadi vs Scammers**](https://github.com/nitya-prakash-pandey-2005/dadi-vs-scammers) (flagship) | An AI grandmother answers scam calls, wastes the scammer's time and extracts mule accounts into a complaint. |
+| **Pukaar** (this repo) | An overflow disaster helpline that answers in the caller's language and puts every caller on the rescue map. |
+| [**Apni Awaaz**](https://github.com/nitya-prakash-pandey-2005/apni-awaaz) | Gives people who lost their voice their own voice back from old voice notes. |
+
+Combined pitch: [dadi-vs-scammers/PITCH.md](https://github.com/nitya-prakash-pandey-2005/dadi-vs-scammers/blob/main/PITCH.md).
 
 Built for Gnani AI's Great Indian AI Internship Challenge. #GnaniAI #GreatIndianAIInternshipChallenge
+
+---
+
+## Project docs
+
+- [`docs/02-design.md`](docs/02-design.md): design and safety rules
+- [`docs/design/wireframe.svg`](docs/design/wireframe.svg): low-fidelity wireframe of both screens and the call flow
+- [`docs/brand/`](docs/brand/): logo, wordmark and README banner
+- [`docs/test-log.md`](docs/test-log.md): every live test, with latency
+- [`docs/drill-results.md`](docs/drill-results.md): full noise drill tables
+- [`docs/01-gnani-api-reference.md`](docs/01-gnani-api-reference.md): what we learned about the Gnani APIs
+- [`docs/review-cl-2026-11-10.md`](docs/review-cl-2026-11-10.md): final review findings and the live checklist
+- [`docs/06-demo-and-post.md`](docs/06-demo-and-post.md): demo script
+- [`docs/DEPLOY-VERCEL.md`](docs/DEPLOY-VERCEL.md): the static demo on Vercel and how to refresh its recorded data
+- [`docs/EVON-HOSTING.md`](docs/EVON-HOSTING.md): how to host Gnani Evon for the LLM adapter
+- [`PITCH.md`](PITCH.md) / [`PITCH.pdf`](PITCH.pdf): one-page pitch
