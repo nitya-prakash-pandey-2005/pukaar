@@ -36,7 +36,7 @@ def main() -> None:
     roster = load_teams()
     teams = live_status(roster, incs)
     # roster_status lets the demo recompute "busy" after a dispatcher acts in the browser (src/demo/demo.js)
-    write("teams.json", [{**asdict(t), "roster_status": r.status} for t, r in zip(teams, roster)])
+    write("teams.json", [{**asdict(t), "roster_status": r.status} for t, r in zip(teams, roster, strict=True)])
     write("plan.json", plan(incs, teams))
     write("sitrep.json", sitrep(incs, calls, now))
     write("hotspots.json", hotspots(incs))

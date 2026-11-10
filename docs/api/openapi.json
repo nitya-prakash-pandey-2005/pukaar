@@ -118,6 +118,107 @@
         }
       }
     },
+    "/api/teams": {
+      "get": {
+        "summary": "Get Teams",
+        "operationId": "get_teams_api_teams_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/incidents/{incident_id}/recommend": {
+      "get": {
+        "summary": "Recommend Teams",
+        "operationId": "recommend_teams_api_incidents__incident_id__recommend_get",
+        "parameters": [
+          {
+            "name": "incident_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Incident Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/plan": {
+      "get": {
+        "summary": "Get Plan",
+        "operationId": "get_plan_api_plan_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sitrep": {
+      "get": {
+        "summary": "Get Sitrep",
+        "operationId": "get_sitrep_api_sitrep_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/hotspots": {
+      "get": {
+        "summary": "Get Hotspots",
+        "operationId": "get_hotspots_api_hotspots_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/incidents/{incident_id}/dispatch": {
       "post": {
         "summary": "Dispatch",

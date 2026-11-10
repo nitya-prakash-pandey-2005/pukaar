@@ -101,6 +101,18 @@ merge into one incident (see `docs/ARCHITECTURE.md`, "Incident store and dedup")
 
 Dispatch, resolve, SMS and missed-call also push `incident` and `kpis` events to every control-room socket.
 
+### Decision support (read-only)
+
+Suggestions only: none of these dispatch anything. A person confirms through `POST /api/incidents/{id}/dispatch`. The roster is synthetic (`backend/data/teams.json`); rules in `docs/02-design.md` §11.
+
+| Method and path | Returns |
+|---|---|
+| `GET /api/teams` | The roster with live status: `[{"id", "name", "type": "boat"\|"fire"\|"ambulance"\|"medical", "base", "lat", "lon", "capacity", "speed_kmh", "status": "available"\|"busy"}]`. A team on an open dispatched incident is busy until that incident is resolved. |
+| `GET /api/incidents/{id}/recommend` | `{"incident_id", "teams_free", "recommendations": [...]}`: the top 3 free teams, best first, each `{"team_id", "team", "type", "base", "fit", "distance_km", "eta_min", "eta": "~30 min", "capacity", "score": 0-100, "reasons": [...], "summary": "boat · 3.2 km · ~30 min · ..."}`. `distance_km`/`eta` are null when the incident has no location. 404 if the incident does not exist. |
+| `GET /api/plan` | `{"assignments": [{"incident_id", "place", "level", "score", "team_id", "team", "type", "distance_km", "eta_min", "eta", "summary"}], "unassigned": [{"incident_id", "place", "level", "score", "reason"}], "teams_free": [names]}`. Waiting incidents, most severe then oldest first, each given its best free team; no team twice; unlocated incidents are never assigned. |
+| `GET /api/hotspots` | `{"radius_m": 500, "hotspots": n, "clusters": [{"lat", "lon", "count", "people", "max_level", "max_score", "spread_m", "places", "waiting", "incident_ids"}]}`. Open, located incidents within 500 m (single linkage), most urgent first; `hotspots` counts clusters of 2 or more. |
+| `GET /api/sitrep` | The district situation report: `{"district", "generated_at", "calls", "incidents", "by_level", "status": {"waiting", "dispatched", "resolved"}, "people_affected", "vulnerable": {"elderly", "children", "medical", "disabled"}, "trapped", "on_roof", "critical_waiting": {"count", "avg_min", "oldest_min"}, "hotspots": [...], "timeline": [...], "markdown"}`. Vulnerable and trapped figures count incidents (households), not people. |
+
 ### More ways in
 
 | Method and path | Body | Returns |
