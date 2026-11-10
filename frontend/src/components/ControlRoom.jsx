@@ -10,6 +10,7 @@ import BroadcastCard from "./BroadcastCard";
 import PlanCard from "./PlanCard";
 import HotspotsCard from "./HotspotsCard";
 import SitRepButton from "./SitRep";
+import SituationCard from "../context/SituationCard";
 
 function Kpis({ k }) {
   return (
@@ -47,6 +48,7 @@ export default function ControlRoom({ control, guidance }) {
         <MapView incidents={incidents} selectedId={selectedId} onSelect={select} hotspots={hot?.clusters} />
         <p className="pill-src" style={{ marginTop: 8 }}>Surge callers are simulated text calls with synthetic data. Live calls use Gnani Prisma and Timbre.</p>
       </Card>
+      <div className="cr-split">
       <Card title="Queue by severity" icon={ListOrdered} right={<span className="small muted">{liveCalls.length} live call{liveCalls.length === 1 ? "" : "s"}</span>}>
         {incidents.length === 0 && <div className="small muted">No calls yet. Start a call on the caller phone.</div>}
         <div className="list">
@@ -72,6 +74,8 @@ export default function ControlRoom({ control, guidance }) {
           ))}
         </div>
       </Card>
+      <SituationCard version={version} />
+      </div>
       <div className="grid g2 cr-pair">
         <PlanCard onReview={review} />
         <HotspotsCard data={hot} onSelect={select} />

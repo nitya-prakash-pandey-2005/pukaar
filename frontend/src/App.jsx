@@ -9,6 +9,7 @@ import { useControl } from "./state/useControl";
 import CallerPhone from "./components/CallerPhone";
 import ControlRoom from "./components/ControlRoom";
 import Interpreter from "./components/Interpreter";
+import InterpreterAside from "./context/InterpreterAside";
 import { DEMO, REPO_URL } from "./demo/demo";
 
 const NAV = [{ group: "Helpline", items: [
@@ -75,7 +76,7 @@ export default function App() {
         footer={<div className="pill-src">Built on Gnani AI: Prisma v3.0 (STT) · Timbre v3.0 (TTS) · Evon v3.3 (LLM, when hosted)</div>}
       >
         {DEMO && <DemoBanner />}
-        {route.path === "/interpret" ? <Interpreter route={route} /> : (<>
+        {route.path === "/interpret" ? <div className="ctx-wide"><div className="ctx-main"><Interpreter route={route} /></div><InterpreterAside /></div> : (<>
         <PageHead
           kicker="Pukaar · पुकार"
           title="Every flood call answered, in the caller's language."
