@@ -9,7 +9,7 @@ statement points at the module that implements it. For the wire formats see [API
 
 ```mermaid
 flowchart LR
-    subgraph Caller side
+    subgraph callers["Caller side"]
         phone["Caller page<br/>(mic + speaker, PCM16 8 kHz)"]
         sms["SMS / WhatsApp gateway"]
         missed["Missed call"]
