@@ -47,7 +47,11 @@ export default function BroadcastCard() {
           <Megaphone size={16} /> {busy ? "Translating and speaking…" : `Speak in ${langs.length} language${langs.length === 1 ? "" : "s"}`}
         </button>
         {items.length > 0 && (
-          <button className="btn ghost" onClick={downloadCap}><FileCode2 size={16} /> Download CAP 1.2 XML (for SACHET-style alert systems)</button>
+          <>
+            {/* short label: the long one ran past the button edges at phone width */}
+            <button className="btn ghost" onClick={downloadCap}><FileCode2 size={16} /> Download CAP 1.2 XML</button>
+            <span className="pill-src">CAP 1.2 is the alert format SACHET-style alert systems consume.</span>
+          </>
         )}
         {items.map((i) => (
           <div key={i.lang} className="bcast">
