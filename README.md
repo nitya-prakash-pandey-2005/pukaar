@@ -8,7 +8,7 @@ Pukaar answers overflow emergency calls in the caller's own language, keeps them
 
 ![Gnani Prisma v3.0](https://img.shields.io/badge/Gnani-Prisma%20v3.0%20STT-7c3aed)
 ![Gnani Timbre v3.0](https://img.shields.io/badge/Gnani-Timbre%20v3.0%20TTS-db2777)
-![Tests](https://img.shields.io/badge/tests-148%20passing-16a34a)
+![Tests](https://img.shields.io/badge/tests-150%20passing-16a34a)
 ![Python](https://img.shields.io/badge/Python-3.12-3776ab?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-backend-009688?logo=fastapi&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=black)
@@ -189,7 +189,7 @@ Triage accuracy was flat from clean audio to 0 dB: locality, vulnerable people a
 
 - The drill is small (6 calls per noise level). Treat its percentages as a smoke test, not a benchmark.
 - The gazetteer covers 42 Chennai localities. Another city needs its own gazetteer file.
-- A romanised SMS ("paani kamar tak") has no script to detect, so its language comes from the LLM. In the live run, a romanised-Hindi SMS that named a Chennai locality was tagged Tamil and answered in Tamil.
+- A romanised SMS ("paani kamar tak") has no script to detect. In the live run, a romanised-Hindi SMS that named a Chennai locality was tagged Tamil by the LLM and answered in Tamil. Common Hindi and Tamil words now decide first and the LLM's guess second; other romanised languages still rely on the LLM.
 - Hindi and Telugu broadcasts keep place names in Latin script ("Adyar"); only Tamil aliases are in the gazetteer.
 - Phone location is simulated in the browser. A real deployment would take it from the telecom emergency location feed.
 
@@ -268,10 +268,10 @@ Before a demo, delete `cache/pukaar.db`: new calls within 300 m and 3 hours merg
 ## Tests
 
 ```bash
-uv run python -m pytest -q        # 148 passed
+uv run python -m pytest -q        # 150 passed
 ```
 
-- **86 backend tests**: severity rules and dedup (`test_domain`), fact extraction and the reply guard (`test_triage`), the agent's question order, guidance, caller merging, dispatch and callbacks (`test_agent`), SMS, relay and dispatch translation (`test_channels`), the REST and WebSocket API (`test_app`), broadcast and CAP (`test_broadcast`), the surge simulator and the noise drill scoring.
+- **88 backend tests**: severity rules and dedup (`test_domain`), fact extraction and the reply guard (`test_triage`), the agent's question order, guidance, caller merging, dispatch and callbacks (`test_agent`), SMS, relay and dispatch translation (`test_channels`), the REST and WebSocket API (`test_app`), broadcast and CAP (`test_broadcast`), the surge simulator and the noise drill scoring.
 - **62 voice-core tests**: the Gnani protocol (Prisma headers, Timbre bodies), the request gate and 429 retries, the call session (barge-in, echo guard, reconnects), turn detection, audio and the LLM adapter.
 
 ## Project docs
