@@ -55,9 +55,11 @@ export default function ControlRoom({ control, guidance }) {
                     i.call_ids.length > 1 && `${i.call_ids.length} callers`, ago(i.updated_at)].filter(Boolean).join(" · ")}
                 </div>
               </div>
-              {i.channel === "missed_call" && <Badge tone="cyan">missed call</Badge>}
-              {i.channel === "text" && <Badge tone="muted">simulated</Badge>}
-              <Badge tone={i.status === "new" ? "amber" : i.status === "dispatched" ? "green" : "muted"}>{i.status}</Badge>
+              <span className="li-tags">
+                {i.channel === "missed_call" && <Badge tone="cyan">missed call</Badge>}
+                {i.channel === "text" && <Badge tone="muted">simulated</Badge>}
+                <Badge tone={i.status === "new" ? "amber" : i.status === "dispatched" ? "green" : "muted"}>{i.status}</Badge>
+              </span>
             </button>
           ))}
         </div>
