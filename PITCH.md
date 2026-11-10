@@ -1,6 +1,6 @@
 # Pukaar · पुकार · புகார்: when every line is busy, Pukaar picks up
 
-**Team:** Nitya Prakash Pandey & Dilavesh Kanz Nidooli · Built on Gnani **Prisma v3.0** (speech-to-text) and **Timbre v3.0** (text-to-speech) · **Live demo:** *[live demo link]* · **Video:** *[video link]* · Code: [github.com/nitya-prakash-pandey-2005/pukaar](https://github.com/nitya-prakash-pandey-2005/pukaar)
+**Team:** Nitya Prakash Pandey & Dilavesh Kanz Nidooli · Built on Gnani **Prisma v3.0** (speech-to-text) and **Timbre v3.0** (text-to-speech) · **Live demo:** [pukaar-snowy.vercel.app](https://pukaar-snowy.vercel.app/) · **Video:** *[video link]* · Code: [github.com/nitya-prakash-pandey-2005/pukaar](https://github.com/nitya-prakash-pandey-2005/pukaar)
 
 ## Problem
 
