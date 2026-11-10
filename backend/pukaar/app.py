@@ -46,7 +46,7 @@ class MessageIn(BaseModel):
 
 class SmsIn(BaseModel):
     text: str
-    gps: list[float] | None = None
+    gps: tuple[float, float] | None = None  # [lat, lon]; anything else is a 422, not a crash in locate()
 
 
 class CapIn(BaseModel):

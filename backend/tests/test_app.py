@@ -149,3 +149,8 @@ def test_sms_message_and_cap_routes(client):
     assert client.get(f"/api/calls/{m['sent'][0]['call_id']}/callbacks").json()[0]["text"] == "Boat is at the temple gate."
     cap = client.post("/api/broadcast/cap", json={"text_en": "Flood", "items": [{"lang": "en-IN", "text": "Flood"}]})
     assert cap.status_code == 200 and "urn:oasis:names:tc:emergency:cap:1.2" in cap.text
+
+
+def test_sms_rejects_a_malformed_gps(client):
+    assert client.post("/api/sms", json={"text": "help", "gps": [13.0]}).status_code == 422
+    assert client.post("/api/sms", json={"text": "help", "gps": [13.0, 80.2, 5]}).status_code == 422
