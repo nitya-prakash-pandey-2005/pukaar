@@ -42,6 +42,6 @@ Bengaluru's Namma 112 "VANKI" (2026) translates for human call-takers. Telangana
 
 ## One engine, three products
 
-Pukaar shares its realtime voice engine with [Dadi vs Scammers](https://github.com/nitya-prakash-pandey-2005/dadi-vs-scammers) and [Apni Awaaz](https://github.com/nitya-prakash-pandey-2005/apni-awaaz). The engine handles barge-in, fillers, an echo guard, reconnects and a gate for Gnani's one-request-per-key limit. See the [combined pitch](https://github.com/nitya-prakash-pandey-2005/dadi-vs-scammers/blob/main/docs/THREE-PRODUCTS.md).
+Pukaar shares its realtime voice engine with [Dadi vs Scammers](https://github.com/nitya-prakash-pandey-2005/dadi-vs-scammers) and [Apni Awaaz](https://github.com/nitya-prakash-pandey-2005/apni-awaaz). The engine handles barge-in, fillers, an echo guard, reconnects and a gate for Gnani's one-request-per-key limit. See the [combined pitch](https://github.com/nitya-prakash-pandey-2005/pukaar/blob/main/docs/THREE-PRODUCTS.pdf).
 
 #GnaniAI #GreatIndianAIInternshipChallenge

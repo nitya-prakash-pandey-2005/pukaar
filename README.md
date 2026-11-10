@@ -13,7 +13,7 @@
 ![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=black)
 ![CAP 1.2](https://img.shields.io/badge/alerts-CAP%201.2-f59e0b)
 
-**Live demo:** [pukaar-snowy.vercel.app](https://pukaar-snowy.vercel.app/) · **Video:** *[video link]* · **[One-page pitch (PDF)](PITCH.pdf)** · [PITCH.md](PITCH.md) · [Combined pitch: three products, one Gnani engine](https://github.com/nitya-prakash-pandey-2005/dadi-vs-scammers/blob/main/docs/THREE-PRODUCTS.md)<br>
+**Live demo:** [pukaar-snowy.vercel.app](https://pukaar-snowy.vercel.app/) · **Video:** *[video link]* · **[One-page pitch (PDF)](PITCH.pdf)** · [PITCH.md](PITCH.md) · [Combined pitch: three products, one Gnani engine](docs/THREE-PRODUCTS.pdf)<br>
 Sister repos: [Dadi vs Scammers](https://github.com/nitya-prakash-pandey-2005/dadi-vs-scammers) · [Apni Awaaz](https://github.com/nitya-prakash-pandey-2005/apni-awaaz) · [Run it locally](#run-it)
 
 <img src="docs/screenshots/product/desktop-overview.png" alt="Pukaar: the caller phone, live KPIs and the rescue map with severity-coloured pins" width="900">
@@ -436,7 +436,7 @@ Part of a three-product entry built on one Gnani voice engine:
 | **Pukaar** (this repo) | An overflow disaster helpline that answers in the caller's language and puts every caller on the rescue map. |
 | [**Apni Awaaz**](https://github.com/nitya-prakash-pandey-2005/apni-awaaz) | Gives people who lost their voice their own voice back from old voice notes. |
 
-Combined pitch: [dadi-vs-scammers/PITCH.md](https://github.com/nitya-prakash-pandey-2005/dadi-vs-scammers/blob/main/docs/THREE-PRODUCTS.md).
+Combined pitch: [THREE-PRODUCTS.pdf](docs/THREE-PRODUCTS.pdf).
 
 Built for Gnani AI's Great Indian AI Internship Challenge. #GnaniAI #GreatIndianAIInternshipChallenge
 
