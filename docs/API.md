@@ -190,6 +190,47 @@ It is ignored if the call does not exist or is still live.
 | `{"type": "set_noise", "snr_db": 5}` | Change the injected rain level; `null` turns it off. |
 | `{"type": "hangup"}` | End the call (closing the socket does the same). |
 
+## Interpreter WebSocket: `/ws/interpret`
+
+Rescuer <-> caller machine interpretation (`backend/pukaar/interpreter.py`). One socket per interpreter session; both
+roles share it (one device, or the phone passed between the two people). Push-to-talk, half-duplex.
+
+**1. Open** with a `start` message (any other first message, an unknown language or a sample rate other than 8000 /
+16000 gets an `error` and close code 1008):
+
+```json
+{"type": "start", "rescuer_lang": "hi-IN", "caller_lang": "ta-IN", "sample_rate": 16000}
+```
+
+Rescuer languages: `hi-IN`, `en-IN`. Caller languages: `ta-IN`, `te-IN`, `hi-IN`, `en-IN`. Defaults: `hi-IN`, `ta-IN`, 16000.
+
+**2. Client to server:**
+
+| Message | Effect |
+|---|---|
+| `{"type": "talk", "role": "rescuer"}` | Push-to-talk pressed: asks for the floor. |
+| binary frames | PCM16 mono at `sample_rate` from the floor holder (up to 30 s per turn; more is dropped). |
+| `{"type": "done", "role": "rescuer"}` | Released: the clip is interpreted (under 0.25 s counts as a mis-tap and is not sent). |
+| `{"type": "cancel", "role": "rescuer"}` | Give the floor back without interpreting. |
+| `{"type": "set_lang", "role": "caller", "lang": "te-IN"}` | Change one side's language. |
+| `{"type": "hangup"}` | End the session. |
+
+**3. Server to client:**
+
+| Message | When |
+|---|---|
+| `{"type": "ready", "langs": {"rescuer": "hi-IN", "caller": "ta-IN"}, "voices": {"caller": "Chetana", "rescuer": "Prakash"}, "choices": {...}, "machine_interpretation": true}` | After `start`. `voices` is the Timbre voice each listener hears. |
+| `{"type": "langs", ...}` | After `set_lang` (same fields). |
+| `{"type": "floor", "role": "caller", "barge_in": true, "stop_audio_of": "rescuer"}` | Floor granted. `barge_in`: the other side's translation was still playing; stop it. |
+| `{"type": "busy", "role": "caller", "speaking": "rescuer"}` | The other side holds the floor (or its turn is still being interpreted): no overlap. |
+| `{"type": "interpreting", "role": "rescuer"}` | The clip is with Prisma, the LLM and Timbre. |
+| `{"type": "turn", "id": 1, "role": "rescuer", "src_lang": "hi-IN", "dst_lang": "ta-IN", "original": "...", "translation": "...", "translated": true, "note": null, "spoken_lang": "ta-IN", "voice": "Chetana", "audio_url": "/api/interpret/audio/<sha1>", "audio_s": 4.2, "prisma_ms": 640, "stt_ms": 900, "translate_ms": 700, "tts_ms": 1100, "total_ms": 2700}` | One interpreted turn. `translated: false` with a `note` means the translation was withheld (it added a time, a number or "you are safe", dropped a number, or the LLM failed) and `translation` holds the speaker's own words, spoken in `spoken_lang` (the source language). `prisma_ms` is Prisma's own reported latency; the `*_ms` fields are wall-clock per step. |
+| `{"type": "unheard", "role": "caller", "original": "", ...}` | Prisma heard nothing, or the clip was a mis-tap (`"reason": "too short"`). |
+| `{"type": "floor_free"}` | Either side may talk. |
+| `{"type": "error", "error": "..."}` | Bad message, or a turn failed (the floor is released). |
+
+`GET /api/interpret/audio/{sha1}` serves the turn's Timbre clip (WAV, 24 kHz live, cached by text, voice and language).
+
 ## Control-room WebSocket: `/ws/control`
 
 Read-only fan-out. On connect the server sends one snapshot:

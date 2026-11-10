@@ -6,7 +6,7 @@
 
 ![Gnani Prisma v3.0](https://img.shields.io/badge/Gnani-Prisma%20v3.0%20STT-0e7490)
 ![Gnani Timbre v3.0](https://img.shields.io/badge/Gnani-Timbre%20v3.0%20TTS-2563eb)
-![Tests](https://img.shields.io/badge/tests-250%20passing-16a34a)
+![Tests](https://img.shields.io/badge/tests-275%20passing-16a34a)
 ![Python](https://img.shields.io/badge/Python-3.12-3776ab?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-backend-009688?logo=fastapi&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=black)
@@ -55,6 +55,7 @@ The pattern repeats: the official line is busy, so people fall back to social me
 | 6 | **Broadcast alerts in 7 languages, as CAP 1.2** | One English alert, spoken by Timbre in 7 languages and exported as CAP 1.2 XML. |
 | 7 | **A noise drill, built in** | Synthetic calls buried in rain show what noise costs, language by language. |
 | 8 | **Which team, where, and a one-page SitRep** | Suggests the best free rescue team with its reasons, plans the whole queue, rings hotspots on the map and prints a district situation report. A human still confirms every dispatch. |
+| 9 | **Rescuer interpreter** | A rescue team from another state speaks Hindi or English; the trapped caller hears it in Tamil, Telugu, Hindi or English (Timbre), and the answer comes back translated, with captions in both languages. Machine interpretation, one side at a time. |
 
 ### 1. Answers the call, in the caller's language
 
@@ -106,6 +107,14 @@ Decision support for the dispatcher, all plain rules over a **synthetic roster o
 Read-only endpoints: `GET /api/teams`, `/api/incidents/{id}/recommend`, `/api/plan`, `/api/hotspots`, `/api/sitrep`. Dispatch still goes through `POST /api/incidents/{id}/dispatch`.
 
 ---
+
+### 9. Rescuer interpreter
+
+Rescue teams sent from other states often do not speak the caller's language: an NDRF boat crew from the north may speak Hindi, the woman on a roof in Velachery speaks Tamil. The **Interpreter** page (also linked from every incident as "Talk to the caller through the interpreter") puts two push-to-talk buttons on one screen, one per side, each with its own language (rescuer: Hindi or English; caller: Tamil, Telugu, Hindi or English).
+
+Each turn: the clip goes to Prisma with **one locale** (the speaker's), **one short LLM call** translates it, and Timbre speaks it in the listener's language (the caller hears "Chetana", the rescuer "Prakash"). Both sides see the original and the translation side by side, with the time of each step. One side talks at a time (a server-side speaking lock); pressing while the other side's translation is still playing stops it (barge-in).
+
+The translation is checked like everything Pukaar says: it may not add a time promise, a number or a "you are safe" that the speaker did not say (`guard.adds_nothing`), and it may not drop a number the speaker did say. If it fails, the listener hears the speaker's own words and both captions say why. The page is labelled **machine interpretation**.
 
 ## Screens
 
@@ -283,8 +292,10 @@ One lesson we took from Corti: in a Copenhagen trial of 169,049 calls, its model
 |---|---|---|
 | **Prisma v3.0** (`prisma-v3.0`), realtime WebSocket | Live calls | `language_code: indic-auto`, `format: codemix`, 8 kHz PCM, keyterms = flood words plus every gazetteer locality |
 | **Prisma v3.0**, REST | Noise drill | same model, `indic-auto`, Pukaar keyterms |
+| **Prisma v3.0**, REST | Rescuer interpreter | one locale per side (the speaker's: `hi-IN`, `en-IN`, `ta-IN` or `te-IN`), 16 kHz push-to-talk clips |
 | **Timbre v3.0** (`timbre-v3.0`) | Every reply, greeting and filler | voice "Chetana", speed 0.95, raw PCM at 8 kHz; greeting and fillers pre-rendered once and cached |
 | **Timbre v3.0** | Broadcast alerts, callbacks | MP3 at 24 kHz for broadcasts; PCM for callbacks; cached by text |
+| **Timbre v3.0** | Rescuer interpreter | the caller hears "Chetana", the rescuer "Prakash"; WAV at 24 kHz, cached by text |
 | **Timbre v3.0** | Noise drill and demo callers | other Timbre voices (for example "Prakash") speak the synthetic callers |
 
 **LLM:** Groq `qwen/qwen3.8-27b` for fact extraction, replies and translation. The adapter also supports **Gnani Evon v3.3** through an OpenAI-compatible endpoint (`LLM_PROVIDER=evon`, see [`docs/EVON-HOSTING.md`](docs/EVON-HOSTING.md)); we did not host Evon for the demo.
@@ -402,10 +413,10 @@ See [`docs/DEPLOY-VERCEL.md`](docs/DEPLOY-VERCEL.md) for Vercel. Run `npm run bu
 ## Tests
 
 ```bash
-uv run python -m pytest -q        # 250 passed
+uv run python -m pytest -q        # 275 passed
 ```
 
-- **148 backend tests**: severity rules and dedup (`test_domain`, with thresholds and edge cases in `test_domain_edges`), the store's dedup and KPIs (`test_store`), LLM-outage fallbacks and fake mode (`test_fallbacks`), fact extraction and the reply guard (`test_triage`), the agent's question order, guidance, caller merging, dispatch and callbacks (`test_agent`), SMS, relay and dispatch translation (`test_channels`), the REST and WebSocket API (`test_app`), broadcast and CAP (`test_broadcast`), team matching, capacity, ETA and no double booking (`test_allocate`), the SitRep and hotspot clustering (`test_sitrep_hotspots`), the surge simulator and the noise drill scoring.
+- **173 backend tests**: severity rules and dedup (`test_domain`, with thresholds and edge cases in `test_domain_edges`), the store's dedup and KPIs (`test_store`), LLM-outage fallbacks and fake mode (`test_fallbacks`), fact extraction and the reply guard (`test_triage`), the agent's question order, guidance, caller merging, dispatch and callbacks (`test_agent`), SMS, relay and dispatch translation (`test_channels`), the REST and WebSocket API (`test_app`), broadcast and CAP (`test_broadcast`), team matching, capacity, ETA and no double booking (`test_allocate`), the SitRep and hotspot clustering (`test_sitrep_hotspots`), the surge simulator and the noise drill scoring, and the rescuer interpreter (`test_interpreter`: both directions, names and numbers kept, the guard fallback, the speaking lock and barge-in, language validation and the `/ws/interpret` protocol end to end with fakes).
 - **102 voice-core tests**: the Gnani protocol and offline clients (Prisma stream and REST, Timbre REST and stream, voice cloning), the request gate and 429 retries, the call session (barge-in, echo guard, reconnects, fallback lines, listen-only agents), turn-based STT, audio and the LLM adapter.
 
 ---

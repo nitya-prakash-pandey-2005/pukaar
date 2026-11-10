@@ -24,6 +24,7 @@ flowchart LR
         guard["guard_reply()<br/>guard.py"]
         store[("Store: SQLite<br/>calls, turns, incidents,<br/>callbacks<br/>store.py")]
         channels["sms_intake, relay_line,<br/>cap_xml<br/>channels.py"]
+        interp["Rescuer interpreter<br/>/ws/interpret<br/>interpreter.py"]
         bcast["make_broadcast<br/>broadcast.py"]
         sim["Surge replay / generate<br/>sim.py"]
         decide["Decision support (read-only):<br/>recommend, plan, hotspots, sitrep<br/>allocate.py, hotspots.py, sitrep.py"]
@@ -56,6 +57,11 @@ flowchart LR
     rest --> decide --> store
     store --> wsctl --> ctl
     ctl --> rest
+    ctl <--> interp
+    interp --> prisma
+    interp --> llm
+    interp --> timbre
+    interp --> guard
 ```
 
 `voice-core/` is the shared voice engine (also used by the team's other products). It owns the realtime session,
@@ -156,6 +162,14 @@ REST actions (dispatch, resolve, SMS, missed call) and the surge push `incident`
   the same translation-only check (`channels.relay_line`).
 - Missed call: `POST /api/missed-call` creates a call and a pin at once; the call back opens `/ws/call` with
   `callback_for`, which continues the same call id and incident with a callback greeting.
+
+## Rescuer interpreter
+
+`/ws/interpret` (`interpreter.py`): push-to-talk machine interpretation between a rescuer (Hindi/English) and a caller
+(Tamil/Telugu/Hindi/English). Per turn: Prisma REST with the speaker's one locale, one short LLM translation, Timbre in
+the listener's language. A server-side speaking lock keeps it half-duplex; a press during the other side's playback
+is a barge-in. Translations pass `guard.adds_nothing` and must keep every number; otherwise the speaker's own words
+are spoken with a note. Not stored in the incident store (it is a conversation aid, not a record).
 
 ## Broadcast alerts and CAP
 

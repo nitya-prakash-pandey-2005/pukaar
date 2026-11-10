@@ -181,9 +181,11 @@ export default function Interpreter({ route }) {
           ))}
         </div>
         <div className="row" style={{ marginTop: 12, flexWrap: "wrap" }}>
-          <button className="btn ghost" onClick={replay} disabled={replaying || !!holding || busy}>
-            <Play size={16} /> {replaying ? "Playing the recorded interpretation…" : "Play a recorded interpretation"}
-          </button>
+          {DEMO && (
+            <button className="btn ghost" onClick={replay} disabled={replaying || !!holding || busy}>
+              <Play size={16} /> {replaying ? "Playing the recorded interpretation…" : "Play a recorded interpretation"}
+            </button>
+          )}
           {busy && <span className="small muted">Interpreting…</span>}
         </div>
       </Card>
