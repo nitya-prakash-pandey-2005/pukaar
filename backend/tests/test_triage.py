@@ -106,3 +106,14 @@ def test_guard_keeps_every_approved_line_and_plain_questions():
     for ok in ["I am with you. How high is the water on your body?", "Stay calm. How many people are with you?",
                "Stay safe and keep this phone with you.", "Tell me the area name and a nearby landmark."]:
         assert guard_reply(ok, set(), None)[0] == ok
+
+
+def test_fallback_gives_high_ground_advice_only_for_water_hazards():
+    # "stay on a high, dry place" is flood advice; in a burning building or on a slipping slope it is wrong advice
+    from pukaar.guard import fallback
+    assert "high" in fallback("en-IN") and "high" in fallback("en-IN", "flood")
+    for hz in ("fire", "landslide", "building_collapse"):
+        line, ids = guard_reply("We will reach in 10 minutes.", set(), None, "ta-IN", hz)
+        assert ids == [] and line == fallback("ta-IN", hz) and line and "உயரமான" not in line
+        assert "high" not in fallback("en-IN", hz)
+        assert "GEN-02" not in {g.id for g in pick_guidance(Facts(hazard=hz), load_guidance(), {"GEN-01", "FLD-06"})}

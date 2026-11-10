@@ -41,7 +41,7 @@ async def sms_intake(text: str, gps: tuple[float, float] | None, llm, store: Sto
     dup = store.recent_caller_call(text, time.time() - MERGE_WINDOW_S)
     if dup and (old := store.get_incident(store.get_call(dup)["incident_id"])) and old.status != "resolved":
         said = [t["text"] for t in store.get_call(dup)["turns"] if t["speaker"] == "pukaar"]
-        return old, said[-1] if said else fallback(lang)
+        return old, said[-1] if said else fallback(lang, old.facts.hazard)
     turn = Turn("caller", text, 0.0, lang)
     f = resolve_locality(await extract_facts(llm, [turn], Facts()), [text], places, gps)
     if lang == "en-IN" and f.caller_language in TTS_LANGS:  # most SMS are romanised Hindi/Tamil ("paani aa gaya")
@@ -57,12 +57,12 @@ async def sms_intake(text: str, gps: tuple[float, float] | None, llm, store: Sto
                                  temperature=0.4, max_tokens=120)
     except Exception:
         raw = ""
-    reply, ids = guard_reply(raw, {g.id for g in cands}, None, lang)
+    reply, ids = guard_reply(raw, {g.id for g in cands}, None, lang, f.hazard)
     if ids:
         store.add_guidance(cid, ids)
-    store.add_turn(cid, Turn("pukaar", reply or fallback(lang), 0.0, lang))
+    store.add_turn(cid, Turn("pukaar", reply or fallback(lang, f.hazard), 0.0, lang))
     store.end_call(cid, 0.0)
-    return store.get_incident(inc.id) or inc, reply or fallback(lang)
+    return store.get_incident(inc.id) or inc, reply or fallback(lang, f.hazard)
 
 
 async def relay_line(llm, lang: str, text_en: str) -> str:

@@ -14,5 +14,5 @@
  {"id": "FIR-01", "hazards": ["fire"], "when": ["any"], "text_en": "Stay low under the smoke and cover your nose and mouth with a wet cloth."},
  {"id": "BLD-01", "hazards": ["building_collapse"], "when": ["any"], "text_en": "If you are trapped, tap on a pipe or wall so rescuers can hear you. Do not light a match."},
  {"id": "GEN-01", "hazards": ["any"], "when": ["any"], "text_en": "Your details are recorded and the control room can see you on the map."},
- {"id": "GEN-02", "hazards": ["any"], "when": ["any"], "text_en": "Stay calm and stay on a high, dry place. Keep this phone with you."}
+ {"id": "GEN-02", "hazards": ["flood", "cyclone", "medical", "other"], "when": ["any"], "text_en": "Stay calm and stay on a high, dry place. Keep this phone with you."}
 ]

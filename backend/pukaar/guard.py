@@ -23,17 +23,25 @@ _SAFE_RE = re.compile(
     re.IGNORECASE)
 
 
-def fallback(lang: str | None) -> str:
-    return FALLBACK.get((lang or "en").split("-")[0], FALLBACK["en"])
+# "stay on a high, dry place" is flood advice: wrong in a burning building or under a slipping slope
+NOT_HIGH_GROUND = {"fire", "landslide", "building_collapse"}
 
 
-def guard_reply(text: str, allowed_ids: set[str], eta: str | None, lang: str | None = None) -> tuple[str, list[str]]:
+def fallback(lang: str | None, hazard: str | None = None) -> str:
+    line = FALLBACK.get((lang or "en").split("-")[0], FALLBACK["en"])
+    if hazard in NOT_HIGH_GROUND:  # keep only "help is being arranged" (the first sentence)
+        line = re.split(r"(?<=[.।])\s+", line)[0]
+    return line
+
+
+def guard_reply(text: str, allowed_ids: set[str], eta: str | None, lang: str | None = None,
+                hazard: str | None = None) -> tuple[str, list[str]]:
     """Returns (speakable text with [[ID]] tags removed, ids used), or the safe fallback line."""
     ids = _ID_RE.findall(text)
     bad_tag = len(ids) != len(_ANY_TAG_RE.findall(text))
     if (bad_tag or any(i not in allowed_ids for i in ids) or (eta is None and _TIME_RE.search(text))
             or _SAFE_RE.search(text)):
-        return fallback(lang), []
+        return fallback(lang, hazard), []
     return re.sub(r"\s{2,}", " ", _ANY_TAG_RE.sub("", text)).strip(), ids
 
 

@@ -88,10 +88,10 @@ class PukaarAgent:
             raw = await self.llm.complete(msgs, temperature=0.4, max_tokens=120)
         except Exception:
             raw = ""
-        text, ids = guard_reply(raw, {g.id for g in cands}, self.eta, self.tts_language)
-        spoken = bool(text) and text != fallback(self.tts_language)  # the LLM's own reply survived the guard
+        text, ids = guard_reply(raw, {g.id for g in cands}, self.eta, self.tts_language, f.hazard)
+        spoken = bool(text) and text != fallback(self.tts_language, f.hazard)  # the LLM's own reply survived the guard
         if not spoken:  # LLM error, empty, only a tag, or blocked: the safe line, which asks and gives nothing
-            text, ids = fallback(self.tts_language), []
+            text, ids = fallback(self.tts_language, f.hazard), []
         if slot and spoken:
             self.asked.add(slot)
         if ids:

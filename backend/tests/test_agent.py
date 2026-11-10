@@ -157,3 +157,10 @@ def test_a_merged_second_caller_never_lowers_the_incident(store):
     # the first caller's next turn (its full facts again) does not lower it either
     again = store.upsert_incident(a, Facts(hazard="flood", water_level="knee", people_count=4), (12.98, 80.22, "gps", 0.7))
     assert again.facts.water_level == "chest" and again.severity.score >= first.severity.score
+
+
+async def test_fire_caller_fallback_has_no_flood_advice(store):
+    from pukaar.guard import fallback
+    a = make_agent(store, ['{"hazard": "fire", "locality": "Tambaram"}'], [""])
+    said = " ".join([s async for s in a.reply_sentences(HIST)])
+    assert said == fallback("ta-IN", "fire") and "உயரமான" not in said
