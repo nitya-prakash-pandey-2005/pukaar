@@ -225,6 +225,18 @@ const ADJUST = [
     const recommendations = r.recommendations.filter((x) => !b.has(x.team));
     return { ...r, recommendations, teams_free: Math.max(0, r.teams_free - (r.recommendations.length - recommendations.length)) };
   }],
+  [/^\/api\/hotspots$/, (h) => { // the surge replay starts from fewer incidents: only areas with pins on the map now
+    const RANK = { critical: 3, high: 2, medium: 1, low: 0 };
+    const clusters = h.clusters.map((c) => {
+      const incs = c.incident_ids.map((id) => room.incidents.get(id)).filter((i) => i && i.status !== "resolved");
+      if (!incs.length) return null;
+      const worst = incs.reduce((a, b) => (RANK[b.severity.level] > RANK[a.severity.level]
+        || (b.severity.level === a.severity.level && b.severity.score > a.severity.score) ? b : a));
+      return { ...c, incident_ids: incs.map((i) => i.id), count: incs.length, waiting: incs.filter((i) => i.status === "new").length,
+        people: incs.reduce((n, i) => n + (i.facts.people_count || 1), 0), max_level: worst.severity.level, max_score: worst.severity.score };
+    }).filter(Boolean);
+    return { ...h, clusters, hotspots: clusters.filter((c) => c.count >= 2).length };
+  }],
   [/^\/api\/plan$/, (p) => {
     const b = busyNow();
     const waiting = (id) => room.incidents.get(id)?.status === "new";

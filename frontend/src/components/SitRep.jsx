@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { Download, FileText, Printer, X } from "lucide-react";
 import { toast } from "../ui";
 import { getJSON } from "../lib/api";
+import { DEMO } from "../demo/demo";
 
 const LEVELS = ["critical", "high", "medium", "low"];
 
@@ -36,7 +37,7 @@ function Report({ r, onClose }) {
         <header>
           <div className="sr-kicker">Pukaar · District situation report</div>
           <h1>{r.district} floods</h1>
-          <div className="sr-sub">Generated {new Date(r.generated_at * 1000).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })} · synthetic demo data</div>
+          <div className="sr-sub">{DEMO ? "As at the end of the recorded run," : "Generated"} {new Date(r.generated_at * 1000).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })} · synthetic demo data</div>
         </header>
         <section className="sr-tiles">
           <div><b>{r.calls}</b><span>calls answered</span></div>
