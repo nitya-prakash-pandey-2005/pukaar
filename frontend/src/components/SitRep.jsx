@@ -4,6 +4,7 @@ import { Download, FileText, Printer, X } from "lucide-react";
 import { toast } from "../ui";
 import { getJSON } from "../lib/api";
 import { DEMO } from "../demo/demo";
+import SitRepCharts from "../context/SitRepCharts";
 
 const LEVELS = ["critical", "high", "medium", "low"];
 
@@ -45,6 +46,7 @@ function Report({ r, onClose }) {
           <div><b>{r.people_affected}</b><span>people affected (open)</span></div>
           <div className="crit"><b>{cw.count}</b><span>critical waiting{cw.count ? ` · avg ${cw.avg_min} min · oldest ${cw.oldest_min} min` : ""}</span></div>
         </section>
+        <SitRepCharts r={r} />
         <section className="sr-cols">
           <div>
             <h2>By severity</h2>
