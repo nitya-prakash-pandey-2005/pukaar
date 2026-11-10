@@ -5,6 +5,7 @@ import {
   ShieldCheck, Siren, SlidersHorizontal, Truck, Waves, FileText, Radar, Check,
 } from "lucide-react";
 import "../landing.css";
+import { DEMO } from "../demo/demo";
 
 // Links the lead can change after deployment
 export const VIDEO_URL = "https://github.com/nitya-prakash-pandey-2005/pukaar#readme";
@@ -15,6 +16,8 @@ export const AWAAZ_URL = "https://apni-awaaz-kappa.vercel.app/";
 const DADI_REPO = "https://github.com/nitya-prakash-pandey-2005/dadi-vs-scammers";
 const AWAAZ_REPO = "https://github.com/nitya-prakash-pandey-2005/apni-awaaz";
 const APP_HREF = "#/app";
+// demo build: the CTAs also start the recorded call (see takeAutoplay in demo/demo.js)
+const PLAY_HREF = DEMO ? "#/app?play=1" : APP_HREF;
 
 const reduceMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 const scrollToId = (id) => document.getElementById(id)?.scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth", block: "start" });
@@ -89,7 +92,7 @@ function Nav() {
         <button onClick={() => scrollToId("how")}>How it works</button>
         <button onClick={() => scrollToId("results")}>Results</button>
       </nav>
-      <a className="lp-btn lp-btn-sm" href={APP_HREF}>Open control room <ArrowRight size={15} /></a>
+      <a className="lp-btn lp-btn-sm" href={PLAY_HREF}>Open control room <ArrowRight size={15} /></a>
     </header>
   );
 }
@@ -118,7 +121,7 @@ function Hero() {
             Pukaar answers overflow emergency calls in the caller's own language, keeps them calm, asks what a rescuer needs, and puts every caller on a live rescue map. <b>A human confirms every dispatch.</b>
           </p>
           <div className="lp-ctas" data-hero>
-            <a className="lp-btn" href={APP_HREF}><PhoneIncoming size={18} /> Open the live control room</a>
+            <a className="lp-btn" href={PLAY_HREF}><PhoneIncoming size={18} /> Open the live control room</a>
             <a className="lp-btn lp-btn-ghost" href={VIDEO_URL} target="_blank" rel="noreferrer"><PlayCircle size={18} /> Watch the 3-minute video</a>
           </div>
           <ul className="lp-chips" data-hero>
@@ -398,7 +401,7 @@ function Closing() {
       <h2>See a flood night in the control room.</h2>
       <p>The demo replays a real run recorded on Gnani's live servers on 10 Nov 2026. Play the recorded Tamil call, open an incident and see exactly why it ranks where it does.</p>
       <div className="lp-ctas center">
-        <a className="lp-btn" href={APP_HREF}><PhoneIncoming size={18} /> Open the live control room</a>
+        <a className="lp-btn" href={PLAY_HREF}><PhoneIncoming size={18} /> Open the live control room</a>
         <a className="lp-btn lp-btn-ghost" href={REPO_URL} target="_blank" rel="noreferrer"><Github size={18} /> Read the code</a>
       </div>
     </section>

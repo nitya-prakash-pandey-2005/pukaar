@@ -4,7 +4,7 @@ import { Badge, Card, Hud, Seg, toast } from "../ui";
 import { DISCLAIMER, LEVEL_TONE, jitter, mmss } from "../lib/labels";
 import { useNow } from "../state/useCall";
 import { postJSON } from "../lib/api";
-import { DEMO } from "../demo/demo";
+import { DEMO, autoplayWanted, takeAutoplay } from "../demo/demo";
 
 const NOISE_OPTIONS = [
   { value: "off", label: "Off" },
@@ -51,6 +51,14 @@ export default function CallerPhone({ call, places, placeName, setPlaceName, noi
     return p ? jitter([p.lat, p.lon]) : null;
   };
   const startCall = () => call.start(gps(), noiseToDb(noise));
+  const startRef = useRef(startCall);
+  startRef.current = startCall;
+  // demo build, arrived from a landing CTA: play the recorded call without hunting for the button
+  useEffect(() => {
+    if (!autoplayWanted()) return undefined;
+    const id = setTimeout(() => { if (takeAutoplay()) startRef.current(); }, 900); // places load first
+    return () => clearTimeout(id);
+  }, []);
   const changeNoise = (v) => {
     setNoise(v);
     if (live) call.setNoise(noiseToDb(v));

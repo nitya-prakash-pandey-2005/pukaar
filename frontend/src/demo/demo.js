@@ -5,6 +5,21 @@
 export const DEMO = import.meta.env.VITE_DEMO === "1";
 export const REPO_URL = "https://github.com/nitya-prakash-pandey-2005/pukaar";
 
+// Landing CTA -> "#/app?play=1": the control room starts the recorded call by itself (demo build only). Only after a
+// real click on this page (so the browser allows audio), only once per page load, and the flag is dropped from the
+// URL so a refresh does not replay it.
+const PLAY_FLAG = /[?&]play=1(&|$)/;
+let autoplayed = false;
+export const autoplayWanted = () => DEMO && !autoplayed && PLAY_FLAG.test(window.location.hash)
+  && navigator.userActivation?.hasBeenActive === true;
+export function takeAutoplay() {
+  if (!autoplayWanted()) return false;
+  autoplayed = true;
+  const { pathname, search, hash } = window.location;
+  window.history.replaceState(window.history.state, "", `${pathname}${search}${hash.split("?")[0]}`);
+  return true;
+}
+
 const realFetch = window.fetch.bind(window);
 const RealWS = window.WebSocket;
 const TO_CONTROL = new Set(["incident", "language"]);
