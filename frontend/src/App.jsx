@@ -24,9 +24,19 @@ export default function App() {
   const route = useRoute();
   useEffect(() => { if (route.path === "/" || route.path === "") window.location.hash = "/app"; }, [route.path]);
 
-  const { data: health } = useApi("/api/health");
-  const { data: places } = useApi("/api/places");
-  const { data: guidance } = useApi("/api/guidance");
+  const { data: health, reload: reloadHealth } = useApi("/api/health");
+  const { data: places, reload: reloadPlaces } = useApi("/api/places");
+  const { data: guidance, reload: reloadGuidance } = useApi("/api/guidance");
+  // the pill follows the server: "Warming up voices…" turns green, and an outage or restart shows up
+  useEffect(() => {
+    const id = setInterval(reloadHealth, 5000);
+    return () => clearInterval(id);
+  }, [reloadHealth]);
+  // page opened before the server was up: fetch the places and guidance once it answers
+  useEffect(() => {
+    if (health && !places) reloadPlaces();
+    if (health && !guidance) reloadGuidance();
+  }, [health]); // eslint-disable-line react-hooks/exhaustive-deps
   const call = useCall();
   const control = useControl();
   const [placeName, setPlaceName] = useState("Velachery");
