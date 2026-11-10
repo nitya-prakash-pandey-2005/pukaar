@@ -390,7 +390,7 @@ function Closing() {
     <section className="lp-section lp-closing" data-reveal>
       <Logo size={64} />
       <h2>See a flood night in the control room.</h2>
-      <p>The demo replays a real run recorded on Gnani's live servers on 10 Nov 2026. Press the surge button and watch 24 synthetic callers land on the map.</p>
+      <p>The demo replays a real run recorded on Gnani's live servers on 10 Nov 2026. Play the recorded Tamil call, open an incident and see exactly why it ranks where it does.</p>
       <div className="lp-ctas center">
         <a className="lp-btn" href={APP_HREF}><PhoneIncoming size={18} /> Open the live control room</a>
         <a className="lp-btn lp-btn-ghost" href={REPO_URL} target="_blank" rel="noreferrer"><Github size={18} /> Read the code</a>
