@@ -11,12 +11,14 @@ export default function BroadcastCard() {
   const [text, setText] = useState(DEFAULT);
   const [langs, setLangs] = useState(["ta-IN", "hi-IN", "te-IN", "en-IN"]);
   const [items, setItems] = useState([]);
+  const [spoken, setSpoken] = useState(""); // the English the items were translated from (the box may be edited since)
   const [busy, setBusy] = useState(false);
   const toggle = (l) => setLangs((ls) => (ls.includes(l) ? ls.filter((x) => x !== l) : [...ls, l]));
   const send = async () => {
     setBusy(true);
     try {
       setItems(await postJSON("/api/broadcast", { text_en: text, langs }));
+      setSpoken(text);
     } catch (e) {
       toast(`Broadcast failed: ${e.message}`, "warn");
     }
@@ -25,7 +27,8 @@ export default function BroadcastCard() {
   const downloadCap = async () => {
     try {
       const r = await fetch("/api/broadcast/cap", { method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text_en: text, items: items.map(({ lang, text: t }) => ({ lang, text: t })) }) });
+        body: JSON.stringify({ text_en: spoken, items: items.map(({ lang, text: t }) => ({ lang, text: t })) }) });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`); // never save an error page as the alert file
       const url = URL.createObjectURL(await r.blob());
       Object.assign(document.createElement("a"), { href: url, download: "pukaar-alert-cap.xml" }).click();
       URL.revokeObjectURL(url);
