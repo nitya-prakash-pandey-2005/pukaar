@@ -61,8 +61,17 @@ class Facts(BaseModel):
         if "people_count" in d:
             try:
                 d["people_count"] = int(d["people_count"])
+                if d["people_count"] < 0:
+                    d.pop("people_count")
             except (TypeError, ValueError):
                 d.pop("people_count")
+        # one malformed field ("trapped": "unknown") must not fail the whole object and lose the other facts
+        for k in ("trapped", "on_roof"):
+            if k in d and str(d[k]).strip().lower() not in {"true", "false", "yes", "no", "1", "0"}:
+                d.pop(k)
+        for k in ("locality", "landmark", "caller_language"):
+            if k in d and not isinstance(d[k], str):
+                d.pop(k)
         return d
 
 
@@ -205,9 +214,10 @@ MERGE_WINDOW_S = 3 * 3600
 def should_merge(a: Incident, b_facts: Facts, b_latlon: tuple[float, float] | None, now: float) -> bool:
     if a.status == "resolved" or now - a.updated_at > MERGE_WINDOW_S:
         return False
-    if a.facts.hazard and b_facts.hazard and a.facts.hazard != b_facts.hazard:
-        return False
-    if b_latlon and a.lat is not None and haversine_m((a.lat, a.lon), b_latlon) < 300:
+    if not (a.facts.hazard and b_facts.hazard) or a.facts.hazard != b_facts.hazard:
+        return False  # design §7 "hazard matches": an unknown hazard joins nothing yet (it re-checks every turn)
+    # distance only between real positions: a gazetteer centre ("landmark") is shared by the whole locality
+    if b_latlon and a.lat is not None and a.loc_source != "landmark" and haversine_m((a.lat, a.lon), b_latlon) < 300:
         return True
     fa, fb = a.facts, b_facts
     return bool(fa.locality and fb.locality and fa.landmark and fb.landmark

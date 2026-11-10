@@ -76,6 +76,23 @@ def test_dedup_merges_same_roof():
     assert not should_merge(a, Facts(hazard="fire"), near, now=60)  # other hazard
 
 
+def test_dedup_ignores_distance_to_a_gazetteer_centre():
+    # a no-GPS caller is pinned on the locality centre, which every other caller from that locality shares
+    a = _incident(loc_source="landmark", facts=Facts(hazard="flood", locality="Velachery", landmark="Vijayanagar bus stand"))
+    other_family = Facts(hazard="flood", locality="Velachery", landmark="Phoenix mall")
+    assert not should_merge(a, other_family, (a.lat + 50 / 111_000, a.lon), now=60)
+    assert should_merge(a, Facts(hazard="flood", locality="Velachery", landmark="Vijayanagar bus stand"), None, now=60)
+
+
+def test_dedup_needs_a_known_matching_hazard():
+    # design §7: "hazard matches"; an empty first turn must not join (and later relabel) a fire incident nearby
+    a = _incident(facts=Facts(hazard="fire"))
+    near = (12.9800 + 100 / 111_000, 80.2200)
+    assert not should_merge(a, Facts(), near, now=60)
+    assert not should_merge(_incident(facts=Facts()), Facts(hazard="flood"), near, now=60)
+    assert should_merge(a, Facts(hazard="fire"), near, now=60)
+
+
 def test_dedup_same_locality_similar_landmark_far_gps():
     a = _incident()
     f = Facts(hazard="flood", locality="velachery", landmark="Bus Depot")

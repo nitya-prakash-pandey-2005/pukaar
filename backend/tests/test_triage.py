@@ -30,6 +30,15 @@ async def test_extract_facts_bad_json_keeps_previous():
     assert await extract_facts(Boom(), HIST, prev) == prev
 
 
+async def test_one_malformed_field_keeps_the_other_new_facts():
+    # "trapped": "unknown" used to fail validation of the whole object, so chest-deep water was lost for that turn
+    llm = FakeLLM([json.dumps({"locality": "Velachery", "water_level": "chest", "trapped": "unknown", "on_roof": "yes",
+                               "landmark": ["temple"], "people_count": -3, "caller_language": None})])
+    f = await extract_facts(llm, HIST, Facts(people_count=2))
+    assert f.locality == "Velachery" and f.water_level == "chest" and f.on_roof is True
+    assert f.trapped is None and f.landmark is None and f.people_count == 2
+
+
 def test_pick_guidance_specific_first():
     kb = load_guidance()
     f = Facts(hazard="flood", water_level="chest", medical_needs=["insulin"])
@@ -65,3 +74,35 @@ def test_guard_reply():
                           ("দশ মিনিটে আসবে।", "bn-IN"), ("Help is coming soon.", "en-IN")):
         assert guard_reply(promise, set(), None, lang)[0] == FALLBACK.get(lang[:2], FALLBACK["en"]), promise
     assert guard_reply("Stay on the roof and keep your phone on.", set(), None)[0] == "Stay on the roof and keep your phone on."
+
+
+def test_guard_blocks_time_promises_in_words_hours_and_telugu():
+    for text, lang in [
+        ("The boat will reach you in ten minutes.", "en"),
+        ("Rescuers will be there within an hour.", "en"),
+        ("Help will come in 2 hours.", "en"),
+        ("Boat aadhe ghante mein aa jayegi.", "hi"),
+        ("नाव आधे घंटे में पहुंचेगी।", "hi"),
+        ("படகு ஒரு மணி நேரத்தில் வரும்.", "ta"),
+        ("పడవ 10 నిమిషాల్లో వస్తుంది.", "te"),
+        ("పడవ ఒక గంటలో వస్తుంది.", "te"),
+    ]:
+        assert guard_reply(text, set(), None, lang)[0] == FALLBACK[lang], text
+    assert guard_reply("The boat will reach you in ten minutes.", set(), "10 min")[0].startswith("The boat")
+
+
+def test_guard_blocks_false_reassurance():
+    for text, lang in [("Don't worry, you are safe now.", "en"), ("You'll be fine, stay there.", "en"),
+                       ("घबराइए मत, आप सुरक्षित हैं।", "hi"), ("Aap safe hain, ghabraiye mat.", "hi"),
+                       ("பயப்படாதீங்க, நீங்க பாதுகாப்பா இருக்கீங்க.", "ta"), ("మీరు సురక్షితంగా ఉన్నారు.", "te")]:
+        assert guard_reply(text, set(), "20 min", lang)[0] == FALLBACK[lang], text
+
+
+def test_guard_keeps_every_approved_line_and_plain_questions():
+    for g in load_guidance():
+        assert guard_reply(f"Stay calm. {g.text_en} [[{g.id}]]", {g.id}, None)[1] == [g.id], g.id
+    for line in FALLBACK.values():
+        assert guard_reply(line, set(), None)[0] == line
+    for ok in ["I am with you. How high is the water on your body?", "Stay calm. How many people are with you?",
+               "Stay safe and keep this phone with you.", "Tell me the area name and a nearby landmark."]:
+        assert guard_reply(ok, set(), None)[0] == ok

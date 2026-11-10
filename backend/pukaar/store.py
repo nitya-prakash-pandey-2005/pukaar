@@ -97,11 +97,11 @@ class Store:
         now = time.time()
         row = self.db.execute("SELECT incident_id FROM calls WHERE id=?", (call_id,)).fetchone()
         own = self.get_incident(row["incident_id"] if row else None)
-        latlon = (loc[0], loc[1]) if loc else None
+        near = (loc[0], loc[1]) if loc and loc[2] != "landmark" else None  # a gazetteer centre is not a position
 
         def find_other() -> Incident | None:
             return next((i for i in self.list_incidents() if i.id != (own and own.id)
-                         and should_merge(i, facts, latlon, now)), None)
+                         and should_merge(i, facts, near, now)), None)
 
         if own and own.call_ids == [call_id]:  # this caller's own pin: update it, unless it now duplicates another
             target = find_other()

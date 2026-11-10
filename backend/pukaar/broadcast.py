@@ -62,7 +62,11 @@ async def make_broadcast(text_en: str, langs: list[str], llm, tts: Callable[[str
             translations = {}
     items = []
     for lang in langs:
-        text = text_en if lang.startswith("en") else unmask(str(translations.get(lang) or "").strip(), found, lang)
+        raw = str(translations.get(lang) or "").strip()
+        text = text_en if lang.startswith("en") else unmask(raw, found, lang)
+        # a translation that lost or mangled a {Pn} token would announce the alert without the place: skip it
+        if not lang.startswith("en") and (any(tok not in raw for tok in found) or re.search(r"\{\s*P\s*\d", text)):
+            text = ""
         if text:
             items.append({"lang": lang, "language": LANG_NAMES[lang.split("-")[0]], "text": text, "audio": await tts(text, lang)})
     return items

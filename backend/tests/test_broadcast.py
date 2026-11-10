@@ -27,9 +27,22 @@ async def test_broadcast_survives_bad_translation_json():
     assert [i["lang"] for i in items] == ["en-IN"]
 
 
+async def test_broadcast_skips_a_translation_that_lost_a_place_name():
+    from pukaar.data import load_gazetteer
+    llm = FakeLLM([json.dumps({"ta-IN": "ஆற்றில் நீர் உயர்கிறது, {P2} மக்கள் வெளியேறுங்கள்",  # {P1} (Adyar) dropped
+                               "hi-IN": "{P1} नदी बढ़ रही है, {P 2} के लोग",                  # {P2} mangled
+                               "te-IN": "{P1} నది, {P2} ప్రజలు"})])
+
+    async def tts(text, lang):
+        return "k"
+    items = await make_broadcast("The Adyar river is rising near Kotturpuram.", ["en-IN", "ta-IN", "hi-IN", "te-IN"],
+                                 llm, tts, places=load_gazetteer())
+    assert [i["lang"] for i in items] == ["en-IN", "te-IN"]
+
+
 async def test_broadcast_place_names_use_gazetteer_spelling_per_script():
     from pukaar.data import load_gazetteer
-    llm = FakeLLM([json.dumps({"ta-IN": "{P1} ஆற்றில் நீர், {P2} மக்கள்", "hi-IN": "{P1} नदी, {P2} के लोग", "te-IN": "{P1} నది"})])
+    llm = FakeLLM([json.dumps({"ta-IN": "{P1} ஆற்றில் நீர், {P2} மக்கள்", "hi-IN": "{P1} नदी, {P2} के लोग", "te-IN": "{P1} నది, {P2} ప్రజలు"})])
     seen = []
 
     async def tts(text, lang):
@@ -40,4 +53,4 @@ async def test_broadcast_place_names_use_gazetteer_spelling_per_script():
     assert "Adyar" not in llm.calls[0][-1]["content"] and "{P1}" in llm.calls[0][-1]["content"]
     assert items[0]["text"] == "அடையாறு ஆற்றில் நீர், கோட்டூர்புரம் மக்கள்"
     assert items[1]["text"] == "Adyar नदी, Kotturpuram के लोग"  # no Devanagari alias: English name
-    assert items[2]["text"] == "Adyar నది" and "{" not in "".join(seen)
+    assert items[2]["text"] == "Adyar నది, Kotturpuram ప్రజలు" and "{" not in "".join(seen)

@@ -79,7 +79,9 @@ class PukaarAgent:
         t0 = time.monotonic()
         f = await self._facts_for(history)
         slot = next_slot(f, self.asked)
-        cands = pick_guidance(f, self.kb, self.given)
+        # GEN-01 says the control room can see the caller on the map: only true once they are located
+        located = locate(f, self.places, self.gps) is not None
+        cands = pick_guidance(f, self.kb, self.given if located else self.given | {"GEN-01"})
         msgs = build_reply_messages(f, slot, cands, self.tts_language, self.eta, history)
         try:
             # not streamed: the guard must see the whole reply before anything is spoken
@@ -87,8 +89,10 @@ class PukaarAgent:
         except Exception:
             raw = ""
         text, ids = guard_reply(raw, {g.id for g in cands}, self.eta, self.tts_language)
-        text = text or fallback(self.tts_language)
-        if slot:
+        spoken = bool(text) and text != fallback(self.tts_language)  # the LLM's own reply survived the guard
+        if not spoken:  # LLM error, empty, only a tag, or blocked: the safe line, which asks and gives nothing
+            text, ids = fallback(self.tts_language), []
+        if slot and spoken:
             self.asked.add(slot)
         if ids:
             self.given.update(ids)

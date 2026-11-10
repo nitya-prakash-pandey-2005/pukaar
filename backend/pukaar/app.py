@@ -224,8 +224,9 @@ def create_app(settings: Settings | None = None, *, session_factory=None, intel_
             raise HTTPException(409, "a surge is already running")
         rec = settings.cache_dir / ("surge_fake.json" if fake else "surge_recording.json")
         demo = DATA / "surge_demo.json"  # committed recording, so a fresh clone can replay without tokens
-        src = rec if rec.exists() else demo if demo.exists() and not fake else None
-        if src and not body.fresh:  # replay: no LLM calls, so live calls keep the Groq token budget
+        # fake mode always replays the committed recording: the fake LLM only knows the scripted call's 4 facts
+        src = demo if fake else rec if rec.exists() else demo
+        if src.exists() and not body.fresh:  # replay: no LLM calls, so live calls keep the Groq token budget
             rows = json.loads(src.read_text(encoding="utf-8"))[: max(1, min(40, body.n))]
             st.surge = asyncio.create_task(replay_surge(rows, store, places, broadcast))
             return {"started": len(rows), "mode": "replay"}
