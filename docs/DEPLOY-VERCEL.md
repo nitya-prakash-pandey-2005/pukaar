@@ -65,6 +65,7 @@ What the script does:
 - **Safe by construction:** it runs the real FastAPI app in-process on `cache/pukaar.db` and `cache/tts/`. Every key is blanked, the LLM is a dummy that raises if called, and voice sessions are disabled, so it cannot reach Gnani or Groq.
 - **What it writes:** everything under `frontend/demo/`:
   - the GET snapshots;
+  - the decision-support GETs (`teams`, `plan`, `hotspots`, `sitrep`, `incidents/{id}/recommend`), written by `scripts/snapshot_decision.py` from the recorded incidents with the same pure functions as the server (it runs at the end of `snapshot_demo.py`, or alone: `uv run python scripts/snapshot_decision.py`). In the browser, a team dispatched during the demo shows as busy and leaves the plan (`src/demo/demo.js`);
   - `control.json` (the end-state snapshot and the surge timeline);
   - `call.json` (the call timeline; the severity stages are recomputed with the same rule table from the facts said so far);
   - `broadcast.json` (texts from the CAP file, audio from the Timbre cache);
