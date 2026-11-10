@@ -91,3 +91,14 @@ async def test_romanised_sms_is_answered_in_the_language_the_llm_heard(tmp_path)
     inc, _ = await sms_intake("Saidapet mein paani ghar ke andar aa gaya, 3 log hain", None, llm, store,
                               load_gazetteer(), load_guidance())
     assert store.call_lang(inc.call_ids[0]) == "hi-IN" and "Reply in Hindi" in llm.calls[1][0]["content"]
+
+
+def test_cap_xml_stays_well_formed_with_control_characters_and_markup():
+    # XML 1.0 forbids most control characters; one pasted into the alert made the whole export unparseable
+    xml = cap_xml("Rise <now> & move\x0b", [{"lang": "ta-IN", "text": "ஆறு\x00 <உயர்கிறது> &"}],
+                  area="Chennai & suburbs\x1f", identifier="pukaar-1")
+    ns = {"c": CAP_NS}
+    info = ET.fromstring(xml).find("c:info", ns)
+    assert info.find("c:headline", ns).text == "Rise <now> & move"
+    assert info.find("c:description", ns).text == "ஆறு <உயர்கிறது> &"
+    assert info.find("c:area/c:areaDesc", ns).text == "Chennai & suburbs"

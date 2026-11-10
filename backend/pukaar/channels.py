@@ -23,6 +23,12 @@ _SCRIPTS = (("ta-IN", r"[஀-௿]"), ("te-IN", r"[ఀ-౿]"), ("kn-IN", r"[ಀ-�
 IST = timezone(timedelta(hours=5, minutes=30))
 
 
+def _xml_text(s: str) -> str:
+    """Drops the characters XML 1.0 cannot carry (most control characters): one made the whole export unparseable."""
+    return "".join(c for c in s if c in "\t\n\r" or (ord(c) >= 32 and not 0xD800 <= ord(c) <= 0xDFFF
+                                                     and ord(c) not in (0xFFFE, 0xFFFF)))
+
+
 def detect_lang(text: str) -> str:
     return next((code for code, rx in _SCRIPTS if re.search(rx, text or "")), "en-IN")
 
@@ -84,12 +90,12 @@ def cap_xml(text_en: str, items: list[dict], *, area: str, identifier: str, sent
     for tag, val in (("identifier", identifier), ("sender", "pukaar@district-eoc.example"),
                      ("sent", sent or datetime.now(IST).replace(microsecond=0).isoformat()), ("status", status),
                      ("msgType", "Alert"), ("scope", "Public")):
-        ET.SubElement(root, q(tag)).text = val
+        ET.SubElement(root, q(tag)).text = _xml_text(val)
     for it in items:
         info = ET.SubElement(root, q("info"))
         for tag, val in (("language", it["lang"]), ("category", "Met"), ("event", event), ("urgency", "Immediate"),
                          ("severity", "Severe"), ("certainty", "Likely"), ("headline", text_en[:120]),
                          ("description", it["text"])):
-            ET.SubElement(info, q(tag)).text = val
-        ET.SubElement(ET.SubElement(info, q("area")), q("areaDesc")).text = area
+            ET.SubElement(info, q(tag)).text = _xml_text(val)
+        ET.SubElement(ET.SubElement(info, q("area")), q("areaDesc")).text = _xml_text(area)
     return ET.tostring(root, encoding="unicode", xml_declaration=False)

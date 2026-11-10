@@ -154,3 +154,10 @@ def test_sms_message_and_cap_routes(client):
 def test_sms_rejects_a_malformed_gps(client):
     assert client.post("/api/sms", json={"text": "help", "gps": [13.0]}).status_code == 422
     assert client.post("/api/sms", json={"text": "help", "gps": [13.0, 80.2, 5]}).status_code == 422
+
+
+def test_cap_rejects_bad_items_and_ids_are_unique(client):
+    assert client.post("/api/broadcast/cap", json={"text_en": "Flood", "items": [{"lang": "ta-IN", "text": 5}]}).status_code == 422
+    body = {"text_en": "Flood", "items": [{"lang": "en-IN", "text": "Flood"}]}
+    ids = {client.post("/api/broadcast/cap", json=body).text.split("<identifier>")[1].split("<")[0] for _ in range(3)}
+    assert len(ids) == 3  # two alerts exported in the same second must not share a CAP identifier

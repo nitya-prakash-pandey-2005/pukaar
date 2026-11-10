@@ -13,6 +13,7 @@ import os
 import random
 import re
 import time
+import uuid
 from contextlib import asynccontextmanager
 from types import SimpleNamespace
 
@@ -49,9 +50,14 @@ class SmsIn(BaseModel):
     gps: tuple[float, float] | None = None  # [lat, lon]; anything else is a 422, not a crash in locate()
 
 
+class CapItem(BaseModel):
+    lang: str
+    text: str
+
+
 class CapIn(BaseModel):
     text_en: str
-    items: list[dict]
+    items: list[CapItem]
     area: str = "Chennai"
 
 
@@ -195,8 +201,8 @@ def create_app(settings: Settings | None = None, *, session_factory=None, intel_
 
     @app.post("/api/broadcast/cap")
     async def broadcast_cap(body: CapIn):
-        xml = cap_xml(body.text_en, [i for i in body.items if i.get("lang") and i.get("text")], area=body.area,
-                      identifier=f"pukaar-{int(time.time())}")
+        xml = cap_xml(body.text_en, [i.model_dump() for i in body.items if i.lang in BROADCAST_LANGS and i.text.strip()],
+                      area=body.area, identifier=f"pukaar-{int(time.time())}-{uuid.uuid4().hex[:8]}")
         return Response(xml, media_type="application/xml",
                         headers={"Content-Disposition": "attachment; filename=pukaar-alert-cap.xml"})
 
