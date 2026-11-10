@@ -33,8 +33,10 @@ async def sms_intake(text: str, gps: tuple[float, float] | None, llm, store: Sto
     f = resolve_locality(await extract_facts(llm, [turn], Facts()), [text], places, gps)
     cid = store.create_call(lang)
     store.add_turn(cid, turn)
-    inc = store.upsert_incident(cid, f, locate(f, places, gps), channel="text")
-    cands = pick_guidance(f, kb, set())
+    loc = locate(f, places, gps)
+    inc = store.upsert_incident(cid, f, loc, channel="text")
+    # GEN-01 says the control room can see the texter on the map: only true once they are located
+    cands = pick_guidance(f, kb, set() if loc else {"GEN-01"})
     try:
         raw = await llm.complete(build_reply_messages(f, next_slot(f), cands, lang, None, [turn]),
                                  temperature=0.4, max_tokens=120)

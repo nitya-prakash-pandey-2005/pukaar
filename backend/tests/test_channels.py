@@ -59,3 +59,15 @@ async def test_relay_keeps_the_dispatchers_own_time_and_numbers():
     out = "படகு 2, 20 நிமிடங்களில் கோவிலை அடையும்."
     assert await relay_line(FakeLLM([out]), "ta-IN", src) == out
     assert await relay_line(FakeLLM(["படகு 2, 30 நிமிடங்களில் கோவிலை அடையும்."]), "ta-IN", src) == src  # changed number
+
+
+async def test_unlocated_sms_is_not_told_the_control_room_sees_them(tmp_path):
+    # GEN-01 = "the control room can see you on the map": false with no GPS and no known place (as for voice calls)
+    facts = json.dumps({"hazard": "fire", "people_count": 2})
+    llm = FakeLLM([facts, "சரி.", facts, "சரி."])
+    await sms_intake("fire in the next house, smoke everywhere", None, llm, Store(tmp_path / "a.db"), load_gazetteer(), load_guidance())
+    assert "GEN-01" not in llm.calls[1][0]["content"]
+    await sms_intake("fire in the next house, smoke everywhere", (12.98, 80.22), llm, Store(tmp_path / "b.db"), load_gazetteer(),
+                     load_guidance())
+    assert "GEN-01" in llm.calls[3][0]["content"]
+
