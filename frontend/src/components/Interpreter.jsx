@@ -88,7 +88,10 @@ export default function Interpreter({ route }) {
       if (r.current.held !== m.role) { r.current.ws?.send(JSON.stringify({ type: "cancel", role: m.role })); return; }
       try {
         r.current.mic = await startMic({ targetRate: RATE, onFrame: (ab) => r.current.ws?.readyState === 1 && r.current.ws.send(ab) });
-        if (r.current.held !== m.role) stopMic(); // released while the mic was starting
+        if (r.current.held !== m.role) { // released while the mic was starting: give the floor back
+          stopMic();
+          r.current.ws?.send(JSON.stringify({ type: "cancel", role: m.role }));
+        }
         else setHolding(m.role);
       } catch (e) {
         toast(`Microphone unavailable: ${e?.message || e}`, "warn");
@@ -113,8 +116,6 @@ export default function Interpreter({ route }) {
     ws.onclose = () => setConn("offline");
     return () => { stopMic(); try { r.current.audio?.pause(); ws.close(); } catch { /* closed */ } };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => () => r.current.replay?.forEach(clearTimeout), []);
 
   const setLang = (role, lang) => {
     setLangs((l) => ({ ...l, [role]: lang }));

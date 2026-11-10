@@ -7,8 +7,8 @@ from voice_core.config import Settings
 from voice_core.testing import FakeLLM
 
 from pukaar.app import create_app
-from pukaar.interpreter import (NOTE_ADDED, NOTE_FAILED, NOTE_LOST, FakeInterpLLM, FakeTranscriber, Interpreter,
-                                check, clean, translate)
+from pukaar.interpreter import (MAX_CLIP_BYTES, NOTE_ADDED, NOTE_FAILED, NOTE_LOST, FakeInterpLLM, FakeTranscriber,
+                                Interpreter, check, clean, translate)
 
 RESCUER_HI = "हम नाव लेकर आ रहे हैं। आपके घर के पास कौन सी बड़ी इमारत है?"
 TO_CALLER_TA = "நாங்க படகுடன் வருகிறோம். உங்க வீட்டுக்கு பக்கத்துல எந்த பெரிய கட்டிடம் இருக்கு?"
@@ -278,3 +278,27 @@ def test_fake_parts_cycle():
     a = asyncio.run(tr(b"", "hi-IN", "rescuer"))[0]
     assert asyncio.run(FakeInterpLLM().complete([{"role": "user", "content": a}])) != a
     assert json.dumps(a, ensure_ascii=False)
+
+
+def test_ws_cancel_frees_the_floor_and_long_clips_are_capped(client):
+    with client.websocket_connect("/ws/interpret") as ws:
+        ws.send_json({"type": "start"})
+        ws.receive_json()
+        ws.send_json({"type": "talk", "role": "rescuer"})
+        ws.receive_json()
+        ws.send_json({"type": "cancel", "role": "rescuer"})
+        assert ws.receive_json()["type"] == "floor_free"
+        ws.send_json({"type": "talk", "role": "caller"})  # the other side can talk now
+        assert ws.receive_json()["type"] == "floor"
+        got = []
+        client.made["it"].transcribe = lambda wav, lang, role: _record(got, wav)
+        for _ in range(35):  # 35 s held down: Prisma REST gets at most 30 s
+            ws.send_bytes(SECOND)
+        ws.send_json({"type": "done", "role": "caller"})
+        _until(ws, "unheard")
+        assert len(got[0]) - 44 == MAX_CLIP_BYTES
+
+
+async def _record(got, wav):
+    got.append(wav)
+    return "", None
