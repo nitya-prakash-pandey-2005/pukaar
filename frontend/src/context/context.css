@@ -68,3 +68,5 @@ html.app-motion .ctx-col > *:nth-child(3) { animation-delay: .16s; }
 
 /* incident density layer (Leaflet.heat) sits softly under the pins */
 .map .leaflet-heatmap-layer { opacity: 0.78; }
+
+.count-up { font-variant-numeric: tabular-nums; }

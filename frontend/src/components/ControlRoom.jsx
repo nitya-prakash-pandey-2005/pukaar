@@ -11,14 +11,15 @@ import PlanCard from "./PlanCard";
 import HotspotsCard from "./HotspotsCard";
 import SitRepButton from "./SitRep";
 import SituationCard from "../context/SituationCard";
+import CountUp from "../motion/CountUp";
 
 function Kpis({ k }) {
   return (
     <div className="kpis">
-      <Card><Stat value={k?.calls ?? 0} label="Calls answered" /></Card>
-      <Card><Stat value={k?.avg_answer_s ?? "–"} unit={k?.avg_answer_s != null ? "s" : ""} label="Average reply time" /></Card>
-      <Card><Stat value={k?.critical_open ?? 0} label="Critical open" tone={k?.critical_open ? "rose" : undefined} /></Card>
-      <Card><Stat value={k?.people_affected ?? 0} label="People affected" /></Card>
+      <Card><Stat value={<CountUp value={k?.calls ?? 0} />} label="Calls answered" /></Card>
+      <Card><Stat value={<CountUp value={k?.avg_answer_s ?? "–"} />} unit={k?.avg_answer_s != null ? "s" : ""} label="Average reply time" /></Card>
+      <Card><Stat value={<CountUp value={k?.critical_open ?? 0} />} label="Critical open" tone={k?.critical_open ? "rose" : undefined} /></Card>
+      <Card><Stat value={<CountUp value={k?.people_affected ?? 0} />} label="People affected" /></Card>
     </div>
   );
 }
