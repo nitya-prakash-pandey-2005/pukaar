@@ -63,7 +63,7 @@ export default function App() {
     <>
       <AppShell
         path={route.path}
-        brand={{ name: "Pukaar", sub: "AI disaster helpline · Gnani", logo: "/icons/icon.svg", href: "#/app" }}
+        brand={{ name: "Pukaar", sub: "AI disaster helpline", logo: "/icons/icon.svg", href: "#/app" }}
         nav={NAV}
         titles={TITLES}
         topRight={<HealthPill health={health} />}

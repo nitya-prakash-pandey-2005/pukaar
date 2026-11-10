@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 240" role="img" aria-label="Pukaar wordmark">
+  <title>Pukaar · पुकार · புகார்</title>
+  <defs>
+    <linearGradient id="pk-tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b1a36"/>
+      <stop offset="1" stop-color="#05060f"/>
+    </linearGradient>
+    <linearGradient id="pk-pin" x1="0.15" y1="0" x2="0.85" y2="1">
+      <stop offset="0" stop-color="#5eead4"/>
+      <stop offset="0.45" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+    <linearGradient id="pk-call" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd166"/>
+      <stop offset="1" stop-color="#ff7a45"/>
+    </linearGradient>
+    <linearGradient id="pk-wave" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#3b82f6"/>
+    </linearGradient>
+    <clipPath id="pk-hole"><circle cx="256" cy="204" r="84"/></clipPath>
+    <linearGradient id="pk-word" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0ea5e9"/><stop offset="1" stop-color="#2563eb"/></linearGradient>
+  </defs>
+  <g transform="translate(8 8) scale(0.4375)">
+  <rect width="512" height="512" rx="116" fill="url(#pk-tile)"/>
+  <path d="M256 432C256 432 112 296 112 204A144 144 0 1 1 400 204C400 296 256 432 256 432Z" fill="url(#pk-pin)"/>
+  <circle cx="256" cy="204" r="84" fill="#061226"/>
+  <g clip-path="url(#pk-hole)">
+    <circle cx="228" cy="190" r="27" fill="url(#pk-call)"/>
+    <path d="M168 300C168 252 194 230 228 230S288 252 288 300Z" fill="url(#pk-call)"/>
+  </g>
+  <path d="M268 160A46 46 0 0 1 268 220" fill="none" stroke="url(#pk-call)" stroke-width="16" stroke-linecap="round"/>
+  <path d="M292 140A74 74 0 0 1 292 240" fill="none" stroke="url(#pk-call)" stroke-width="16" stroke-linecap="round" opacity=".8"/>
+  <path d="M40 392C82 362 124 362 166 392S250 422 292 392S376 362 418 392S472 412 490 400" fill="none" stroke="#071024" stroke-width="54" stroke-linecap="round"/>
+  <path d="M52 392C88 366 128 366 166 392S250 418 292 392S376 366 414 392S462 408 474 402" fill="none" stroke="url(#pk-wave)" stroke-width="24" stroke-linecap="round"/>
+  <path d="M96 450C124 432 152 432 180 450S236 468 264 450S320 432 348 450S398 462 416 456" fill="none" stroke="url(#pk-wave)" stroke-width="18" stroke-linecap="round" opacity=".7"/>
+
+  </g>
+  <text x="264" y="128" font-family="'Space Grotesk Variable','Space Grotesk','Segoe UI',Inter,Arial,sans-serif" font-size="112" font-weight="700" letter-spacing="-3" fill="url(#pk-word)">Pukaar</text>
+  <text x="268" y="196" font-family="'Nirmala UI','Noto Sans Devanagari','Noto Sans Tamil','Segoe UI',sans-serif" font-size="44" font-weight="600" fill="#0d9488">पुकार <tspan fill="#64748b">·</tspan> புகார் <tspan fill="#64748b" font-family="'Segoe UI',Inter,Arial,sans-serif" font-weight="500" font-size="30" dx="10">a call for help</tspan></text>
+</svg>

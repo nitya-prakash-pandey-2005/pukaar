@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Headphones, MapPin, MessageSquare, PhoneCall, PhoneIncoming, PhoneMissed, PhoneOff, ShieldAlert } from "lucide-react";
-import { Badge, Card, Hud, Seg, hueOf, toast } from "../ui";
+import { Badge, Card, Hud, Seg, toast } from "../ui";
 import { DISCLAIMER, LEVEL_TONE, jitter, mmss } from "../lib/labels";
 import { useNow } from "../state/useCall";
 import { postJSON } from "../lib/api";
@@ -65,7 +65,7 @@ export default function CallerPhone({ call, places, placeName, setPlaceName, noi
 
       <div className="avatar-wrap">
         <div className={`ring ${live ? "live" : ""}`} ref={ringRef}>
-          <div className="face" style={{ background: hueOf(190) }}>P</div>
+          <div className="face brand-face"><img src="/icons/icon.svg" alt="Pukaar" width="108" height="108" /></div>
         </div>
       </div>
 
