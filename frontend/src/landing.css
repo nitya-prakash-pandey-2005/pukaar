@@ -229,7 +229,9 @@ html.lp-js .lp .lp-sev-bar i { transform: scaleX(0); }
 a.lp-prod:hover { transform: translateY(-4px); border-color: var(--lp-line-2); }
 .lp-prod b { font-family: var(--font-display); font-size: 22px; letter-spacing: -0.02em; }
 .lp-prod span { color: var(--lp-ink-2); font-size: 14.5px; line-height: 1.55; }
-.lp-prod em { margin-top: auto; font: normal 600 13px var(--font-mono); color: var(--lp-cyan); }
+.lp-prod-links { margin-top: auto; display: flex; gap: 16px; flex-wrap: wrap; }
+.lp-prod-links a, .lp-prod em { font: normal 600 13px var(--font-mono); color: var(--lp-cyan); text-decoration: none; }
+.lp-prod-links a:hover { text-decoration: underline; }
 .lp-prod.on { border-color: rgba(245, 158, 11, .45); background: linear-gradient(150deg, rgba(245, 158, 11, .12), rgba(12, 32, 60, .55)); }
 .lp-prod.on em { color: var(--lp-amber-2); }
 

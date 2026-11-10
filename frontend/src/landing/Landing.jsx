@@ -9,8 +9,11 @@ import "../landing.css";
 // Links the lead can change after deployment
 export const VIDEO_URL = "https://github.com/nitya-prakash-pandey-2005/pukaar#readme";
 export const REPO_URL = "https://github.com/nitya-prakash-pandey-2005/pukaar";
-export const DADI_URL = "https://github.com/nitya-prakash-pandey-2005/dadi-vs-scammers";
-export const AWAAZ_URL = "https://github.com/nitya-prakash-pandey-2005/apni-awaaz";
+export const PUKAAR_URL = "https://pukaar-snowy.vercel.app/";
+export const DADI_URL = "https://dadi-vs-scammers.vercel.app/";
+export const AWAAZ_URL = "https://apni-awaaz-kappa.vercel.app/";
+const DADI_REPO = "https://github.com/nitya-prakash-pandey-2005/dadi-vs-scammers";
+const AWAAZ_REPO = "https://github.com/nitya-prakash-pandey-2005/apni-awaaz";
 const APP_HREF = "#/app";
 
 const reduceMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
@@ -371,15 +374,18 @@ function Family() {
         <p><code>voice-core</code>: streaming STT, barge-in, an echo guard, a request gate with 429 retries, reconnect backoff and a TTS stall timeout.</p>
       </div>
       <div className="lp-family">
-        <a className="lp-prod" href={DADI_URL} target="_blank" rel="noreferrer" data-reveal>
-          <b>Dadi vs Scammers</b><span>An AI grandmother answers scam calls, wastes the scammer's time and extracts mule accounts into a complaint.</span><em>GitHub ↗</em>
-        </a>
-        <div className="lp-prod on" data-reveal>
-          <b>Pukaar</b><span>The overflow line for floods: every caller answered, triaged and on the map.</span><em>You are here</em>
+        <div className="lp-prod" data-reveal>
+          <b>Dadi vs Scammers</b><span>An AI grandmother answers scam calls, wastes the scammer's time and extracts mule accounts into a complaint.</span>
+          <div className="lp-prod-links"><a href={DADI_URL} target="_blank" rel="noreferrer">Live demo ↗</a><a href={DADI_REPO} target="_blank" rel="noreferrer">GitHub ↗</a></div>
         </div>
-        <a className="lp-prod" href={AWAAZ_URL} target="_blank" rel="noreferrer" data-reveal>
-          <b>Apni Awaaz</b><span>Gives people who lost their voice their own voice back, from old voice notes, in 10 Indian languages.</span><em>GitHub ↗</em>
-        </a>
+        <div className="lp-prod on" data-reveal>
+          <b>Pukaar</b><span>The overflow line for floods: every caller answered, triaged and on the map.</span>
+          <div className="lp-prod-links"><em>You are here</em><a href={REPO_URL} target="_blank" rel="noreferrer">GitHub ↗</a></div>
+        </div>
+        <div className="lp-prod" data-reveal>
+          <b>Apni Awaaz</b><span>Gives people who lost their voice their own voice back, from old voice notes, in 10 Indian languages.</span>
+          <div className="lp-prod-links"><a href={AWAAZ_URL} target="_blank" rel="noreferrer">Live demo ↗</a><a href={AWAAZ_REPO} target="_blank" rel="noreferrer">GitHub ↗</a></div>
+        </div>
       </div>
     </section>
   );
