@@ -11,7 +11,7 @@ from voice_core.types import Turn
 
 from .data import Guidance, Place
 from .domain import KEYTERMS, Facts, Incident, locate, next_slot, resolve_locality
-from .guard import fallback, guard_reply
+from .guard import adds_nothing, fallback, guard_reply
 from .store import Store
 from .triage import LANG_NAMES, build_reply_messages, extract_facts, pick_guidance
 
@@ -130,7 +130,8 @@ async def dispatch_line(llm, lang: str, team: str, eta: str | None) -> str:
     except Exception:
         return base
     text, _ = guard_reply(out, set(), eta, lang)
-    return text or base
+    # blocked, or a time / number the dispatcher did not enter: their own English words, not a generic line
+    return text if text and text != fallback(lang) and adds_nothing(base, text) else base
 
 
 async def deliver_dispatch(store: Store, incident: Incident, llm,

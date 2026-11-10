@@ -164,3 +164,13 @@ async def test_fire_caller_fallback_has_no_flood_advice(store):
     a = make_agent(store, ['{"hazard": "fire", "locality": "Tambaram"}'], [""])
     said = " ".join([s async for s in a.reply_sentences(HIST)])
     assert said == fallback("ta-IN", "fire") and "உயரமான" not in said
+
+
+async def test_dispatch_translation_never_changes_the_eta_or_drops_the_team():
+    from pukaar.agent import dispatch_line
+    base = "A rescue team (NDRF Boat 1) is on the way. Expected in 25 min. Stay where you are and keep this phone with you."
+    # the model turned the dispatcher's 25 into 10: the caller gets the dispatcher's own words instead
+    assert await dispatch_line(FakeLLM(["NDRF Boat 1 படகு 10 நிமிடத்தில் வரும்."]), "ta-IN", "NDRF Boat 1", "25 min") == base
+    # no ETA given and the model added one: the team and "on the way" still reach the caller, not a generic line
+    out = await dispatch_line(FakeLLM(["NDRF Boat 1 15 मिनट में पहुँचेगी।"]), "hi-IN", "NDRF Boat 1", None)
+    assert out.startswith("A rescue team (NDRF Boat 1) is on the way.") and "15" not in out
