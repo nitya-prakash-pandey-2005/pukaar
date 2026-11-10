@@ -1,0 +1,47 @@
+<!doctype html>
+<!-- Source of docs/brand/banner.png. Render: headless Chrome screenshot at 1600x480 (fonts from frontend/node_modules after npm install). -->
+<html><head><meta charset="utf-8">
+<style>
+@font-face { font-family: SG; src: url("../../frontend/node_modules/@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2") format("woff2"); font-weight: 300 700; }
+@font-face { font-family: IN; src: url("../../frontend/node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; }
+html, body { margin: 0; width: 1600px; height: 480px; overflow: hidden; }
+body {
+  background:
+    radial-gradient(900px 420px at 18% 30%, rgba(34, 211, 238, 0.20), transparent 60%),
+    radial-gradient(700px 380px at 92% 110%, rgba(37, 99, 235, 0.30), transparent 60%),
+    radial-gradient(420px 260px at 70% 0%, rgba(255, 122, 69, 0.10), transparent 70%),
+    linear-gradient(180deg, #0a1530 0%, #05060f 100%);
+  font-family: IN, "Segoe UI", sans-serif; color: #e9ecf8; position: relative;
+}
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 40px 40px; mask-image: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent); }
+svg.waves { position: absolute; left: 0; right: 0; bottom: 0; width: 1600px; height: 140px; }
+.wrap { position: relative; display: flex; align-items: center; gap: 56px; padding: 70px 110px 0; }
+.wrap img { width: 250px; height: 250px; filter: drop-shadow(0 18px 50px rgba(34, 211, 238, 0.35)); }
+h1 { font-family: SG, sans-serif; font-weight: 700; font-size: 104px; letter-spacing: -3px; margin: 0; line-height: 1; background: linear-gradient(90deg, #5eead4, #22d3ee 40%, #60a5fa); -webkit-background-clip: text; color: transparent; }
+.title { display: flex; align-items: baseline; flex-wrap: nowrap; }
+.sub { margin-top: 10px; font-size: 22px; letter-spacing: .14em; text-transform: uppercase; color: #7d86a8; font-weight: 600; }
+.names { font-family: SG, sans-serif; font-size: 64px; font-weight: 600; margin: 0 0 0 6px; white-space: nowrap; color: #e9ecf8; }
+.names .ind { font-family: "Nirmala UI", sans-serif; font-weight: 600; color: #5eead4; }
+.names .dot { color: #4b5275; margin: 0 14px; }
+.tag { margin-top: 22px; font-size: 34px; font-weight: 500; color: #e9ecf8; }
+.tag b { color: #ffb36b; font-weight: 700; }
+.chips { margin-top: 22px; display: flex; gap: 12px; }
+.chip { font-size: 17px; font-weight: 600; letter-spacing: .02em; padding: 7px 14px; border-radius: 999px; border: 1px solid rgba(94, 234, 212, .35); color: #b7f5ec; background: rgba(34, 211, 238, .08); }
+</style></head>
+<body>
+<div class="grid"></div>
+<svg class="waves" viewBox="0 0 1600 140" preserveAspectRatio="none">
+  <defs><linearGradient id="w" x1="0" x2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#2563eb"/></linearGradient></defs>
+  <path d="M0 70 C 100 40, 200 40, 300 70 S 500 100, 600 70 S 800 40, 900 70 S 1100 100, 1200 70 S 1400 40, 1500 70 S 1600 90, 1600 90" fill="none" stroke="url(#w)" stroke-width="5" opacity=".55"/>
+  <path d="M0 105 C 100 80, 200 80, 300 105 S 500 130, 600 105 S 800 80, 900 105 S 1100 130, 1200 105 S 1400 80, 1500 105 S 1600 120, 1600 120" fill="none" stroke="url(#w)" stroke-width="4" opacity=".3"/>
+</svg>
+<div class="wrap">
+  <img src="logo.svg" alt="">
+  <div>
+    <div class="title"><h1>Pukaar</h1><span class="names"><span class="dot">·</span><span class="ind">पुकार</span><span class="dot">·</span><span class="ind">புகார்</span></span></div>
+    <div class="sub">a call for help, in the caller's own language</div>
+    <div class="tag">When every line is busy, <b>Pukaar picks up.</b></div>
+    <div class="chips"><span class="chip">AI disaster helpline</span><span class="chip">Gnani Prisma + Timbre</span><span class="chip">Tamil · Hindi · Telugu · English</span></div>
+  </div>
+</div>
+</body></html>
