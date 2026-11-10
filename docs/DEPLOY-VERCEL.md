@@ -19,7 +19,7 @@ The live demo link is the real Pukaar frontend in **demo mode**. It has no backe
    - the cyan "Interactive demo" banner is there;
    - the "Recorded run · 10 Nov" pill shows in the top bar;
    - "Play a recorded call" plays a Tamil call.
-6. Paste the URL into the "Live demo" placeholders in `README.md` and `PITCH.md`.
+6. Replace the `*[live demo link]*` placeholders in `README.md` and `PITCH.md` with the URL (and `*[video link]*` with the video URL), then regenerate the one-page PDF: `uv run --no-project --with markdown --with pypdf python scripts/make_pitch_pdf.py` (it shrinks the font until `PITCH.pdf` is one page).
 
 To check locally before deploying:
 

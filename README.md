@@ -373,7 +373,7 @@ See [`docs/DEPLOY-VERCEL.md`](docs/DEPLOY-VERCEL.md) for Vercel. Run `npm run bu
 - Frontend dev server: `cd frontend && npm run dev` (http://localhost:5192, proxies to 8766).
 - Noise drill: `uv run python scripts/run_drill.py --n 6` (spends Gnani credits; TTS is cached).
 - Before a demo, delete `cache/pukaar.db`: new calls within 300 m and 3 hours merge into old test incidents (dedup working as designed). Use earphones so Pukaar does not hear itself.
-- One-page PDF: `uv run --no-project --with markdown python scripts/make_pitch_pdf.py` regenerates [`PITCH.pdf`](PITCH.pdf) from [`PITCH.md`](PITCH.md) (needs Chrome).
+- One-page PDF: `uv run --no-project --with markdown --with pypdf python scripts/make_pitch_pdf.py` regenerates [`PITCH.pdf`](PITCH.pdf) from [`PITCH.md`](PITCH.md) (needs Chrome).
 
 ---
 
