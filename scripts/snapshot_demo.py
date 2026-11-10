@@ -206,6 +206,8 @@ def main() -> None:
     write("sms.json", sms)
     print(f"demo snapshot: {len(incidents)} incidents, {len(calls)} calls, call replay {cid} ({end} s), "
           f"{len(events)} surge events, {len(sms)} SMS -> {OUT.relative_to(ROOT)}")
+    import snapshot_decision  # same folder; recommender, plan, SitRep and hotspots from the incidents just written
+    snapshot_decision.main()
 
 
 if __name__ == "__main__":

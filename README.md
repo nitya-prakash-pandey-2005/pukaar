@@ -54,6 +54,7 @@ The pattern repeats: the official line is busy, so people fall back to social me
 | 5 | **Human dispatch, heard in the caller's language** | A dispatcher confirms team and ETA; the caller hears it live or as a missed callback. |
 | 6 | **Broadcast alerts in 7 languages, as CAP 1.2** | One English alert, spoken by Timbre in 7 languages and exported as CAP 1.2 XML. |
 | 7 | **A noise drill, built in** | Synthetic calls buried in rain show what noise costs, language by language. |
+| 8 | **Which team, where, and a one-page SitRep** | Suggests the best free rescue team with its reasons, plans the whole queue, rings hotspots on the map and prints a district situation report. A human still confirms every dispatch. |
 
 ### 1. Answers the call, in the caller's language
 
@@ -92,6 +93,17 @@ The alert downloads as **CAP 1.2 XML**, one `<info>` block per language. CAP is 
 ### 7. A noise drill, built in
 
 Synthetic distress calls are spoken by Timbre, cut to an 8 kHz phone band, buried in rain at 0–20 dB, transcribed by Prisma and triaged. The results card in the control room shows what noise costs, language by language.
+
+### 8. Which team, where the hotspots are, and a one-page SitRep
+
+Decision support for the dispatcher, all plain rules over a **synthetic roster of 10 teams** (NDRF/SDRF and volunteer boats, fire & rescue, 108 ambulances, a medical team) based at gazetteer localities ([`backend/data/teams.json`](backend/data/teams.json)):
+
+- **Recommended teams.** The incident sheet ranks the free teams out of 100: the right kind of team for the facts (50: a boat for waist-deep water or people trapped or on a roof, an ambulance or medical team for injuries and medical needs, fire & rescue for fire, collapse and landslide), room for everyone reported (15) and ETA (35: straight line × 1.3 at the team's speed, plus 5 minutes to leave). Every suggestion says why, e.g. "boat · 3.2 km · ~30 min · carries 4 of 8, more trips needed · water chest-high". An ambulance is never sent into waist-deep water. **"Dispatch this team" only fills the dispatch form** with the team and ETA; the dispatcher checks and confirms.
+- **Plan all.** One suggested team per waiting incident, most severe first, then the longest waiting, never the same team twice. Incidents with no free team that fits, or with no location, are listed for a human decision instead of guessed.
+- **Hotspots.** Open incidents within 500 m of each other are grouped (single linkage) and shown as soft circles sized by people and coloured by the worst severity, with a list in the control room.
+- **SitRep.** A district situation report: calls, incidents by severity, waiting / dispatched / resolved, people affected, households with elderly people, children, medical needs or disability, trapped and on-roof counts, how long critical incidents have waited, top localities and a recent timeline. It prints to PDF and downloads as Markdown.
+
+Read-only endpoints: `GET /api/teams`, `/api/incidents/{id}/recommend`, `/api/plan`, `/api/hotspots`, `/api/sitrep`. Dispatch still goes through `POST /api/incidents/{id}/dispatch`.
 
 ---
 
@@ -142,6 +154,16 @@ All from the live run of 10 Nov 2026 (real Gnani + Groq, synthetic callers). Des
 
 <p>
 <img src="docs/screenshots/product/desktop-cap-export.png" alt="The exported CAP 1.2 XML: status Exercise, one info block per language" width="610">
+</p>
+
+**Recommended teams and the one-page SitRep** (static demo build, computed from the same recorded incidents): "Dispatch this team" filled the form; the dispatcher still confirms.
+
+<p>
+<img src="docs/screenshots/product/desktop-recommended-teams.png" alt="Incident sheet: three recommended teams with reasons, and the dispatch form filled with the best one and its ETA" width="610">
+</p>
+
+<p>
+<img src="docs/screenshots/product/desktop-sitrep.png" alt="District situation report: totals, severity, status, vulnerable households and hotspots by locality" width="610">
 </p>
 
 **Noise drill results card.**
@@ -316,7 +338,7 @@ Triage accuracy was flat from clean audio to 0 dB: locality, vulnerable people a
 - **No false reassurance.** The guard blocks "you are safe" in English, Hindi, Tamil and Telugu, and any arrival time ("10 minutes", "jaldi pahunch", "10 நிமிஷத்துல வருவோம்", "help will come soon") unless a dispatcher has confirmed an ETA. A blocked reply is replaced by a safe fallback line.
 - **Approved guidance only.** The model may cite advice only by ID from 16 entries in [`backend/data/guidance_kb.json`](backend/data/guidance_kb.json) (flood, medical, cyclone, landslide, fire, collapse, general), at most one per reply. A reply that cites an unknown ID or a broken tag is replaced by the safe line. Flood advice such as "go to a high place" is never given to fire, landslide or collapse callers.
 - **Translations add nothing.** A translated dispatch or message that adds a time, a number or "you are safe" is not sent; the caller hears the dispatcher's own words instead.
-- **A human confirms every dispatch.** Pukaar never sends a team. It fills the form, ranks the queue and relays the dispatcher's decision.
+- **A human confirms every dispatch.** Pukaar never sends a team. It ranks the queue, suggests teams with their reasons, fills the form and relays the dispatcher's decision.
 - **When in doubt, the safe line.** If the LLM fails, returns nothing or is blocked, the caller hears a fixed line in their language: "Help is being arranged. Please stay on a high, dry place." (only the first sentence for fire, landslide or collapse).
 - **Synthetic data only.** The caller phone says "Simulated emergency call: synthetic data". Every caller in this repo, the surge recording, the drill and these screenshots is synthetic.
 - **CAP alerts are marked `Exercise`**, not `Actual`, and validate against the official OASIS CAP 1.2 schema ([review notes](docs/review-cl-2026-11-10.md)).
@@ -380,10 +402,10 @@ See [`docs/DEPLOY-VERCEL.md`](docs/DEPLOY-VERCEL.md) for Vercel. Run `npm run bu
 ## Tests
 
 ```bash
-uv run python -m pytest -q        # 150 passed
+uv run python -m pytest -q        # 210 passed
 ```
 
-- **88 backend tests**: severity rules and dedup (`test_domain`), fact extraction and the reply guard (`test_triage`), the agent's question order, guidance, caller merging, dispatch and callbacks (`test_agent`), SMS, relay and dispatch translation (`test_channels`), the REST and WebSocket API (`test_app`), broadcast and CAP (`test_broadcast`), the surge simulator and the noise drill scoring.
+- **148 backend tests**: severity rules and dedup (`test_domain`, with thresholds and edge cases in `test_domain_edges`), the store's dedup and KPIs (`test_store`), LLM-outage fallbacks and fake mode (`test_fallbacks`), fact extraction and the reply guard (`test_triage`), the agent's question order, guidance, caller merging, dispatch and callbacks (`test_agent`), SMS, relay and dispatch translation (`test_channels`), the REST and WebSocket API (`test_app`), broadcast and CAP (`test_broadcast`), team matching, capacity, ETA and no double booking (`test_allocate`), the SitRep and hotspot clustering (`test_sitrep_hotspots`), the surge simulator and the noise drill scoring.
 - **62 voice-core tests**: the Gnani protocol (Prisma headers, Timbre bodies), the request gate and 429 retries, the call session (barge-in, echo guard, reconnects), turn detection, audio and the LLM adapter.
 
 ---

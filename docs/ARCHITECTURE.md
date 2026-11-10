@@ -26,6 +26,7 @@ flowchart LR
         channels["sms_intake, relay_line,<br/>cap_xml<br/>channels.py"]
         bcast["make_broadcast<br/>broadcast.py"]
         sim["Surge replay / generate<br/>sim.py"]
+        decide["Decision support (read-only):<br/>recommend, plan, hotspots, sitrep<br/>allocate.py, hotspots.py, sitrep.py"]
         wsctl["/ws/control fan-out<br/>app.py"]
         rest["REST /api/*<br/>app.py"]
     end
@@ -36,7 +37,7 @@ flowchart LR
         llm["LLM: Groq qwen/qwen3.8-27b<br/>(Evon via the same adapter)"]
     end
 
-    ctl["Control room web app<br/>(map, queue, dispatch, broadcast)"]
+    ctl["Control room web app<br/>(map, queue, dispatch, plan, SitRep, broadcast)"]
 
     phone <--> wscall --> session
     session <--> prisma
@@ -52,6 +53,7 @@ flowchart LR
     rest --> bcast --> llm
     bcast --> timbre
     rest --> sim --> store
+    rest --> decide --> store
     store --> wsctl --> ctl
     ctl --> rest
 ```

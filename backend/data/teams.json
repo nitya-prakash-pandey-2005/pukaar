@@ -1,0 +1,12 @@
+[
+ {"id": "ndrf-b1", "name": "NDRF Boat 1", "type": "boat", "base": "Velachery", "lat": 12.97726, "lon": 80.22092, "capacity": 8, "speed_kmh": 12, "status": "available"},
+ {"id": "ndrf-b2", "name": "NDRF Boat 2", "type": "boat", "base": "Mudichur", "lat": 12.91498, "lon": 80.06884, "capacity": 8, "speed_kmh": 12, "status": "available"},
+ {"id": "sdrf-b3", "name": "SDRF Boat 3", "type": "boat", "base": "Saidapet", "lat": 13.02082, "lon": 80.22395, "capacity": 6, "speed_kmh": 12, "status": "available"},
+ {"id": "ndrf-b4", "name": "NDRF Boat 4", "type": "boat", "base": "KK Nagar", "lat": 13.03865, "lon": 80.20522, "capacity": 8, "speed_kmh": 12, "status": "available"},
+ {"id": "vol-b5", "name": "Volunteer boat Kotturpuram", "type": "boat", "base": "Kotturpuram", "lat": 13.01937, "lon": 80.24355, "capacity": 4, "speed_kmh": 10, "status": "available"},
+ {"id": "fire-gdy", "name": "Fire & Rescue Guindy", "type": "fire", "base": "Guindy", "lat": 13.00867, "lon": 80.21261, "capacity": 6, "speed_kmh": 30, "status": "available"},
+ {"id": "fire-prb", "name": "Fire & Rescue Perambur", "type": "fire", "base": "Perambur", "lat": 13.11272, "lon": 80.24202, "capacity": 6, "speed_kmh": 30, "status": "available"},
+ {"id": "amb-ady", "name": "Ambulance 108 Adyar", "type": "ambulance", "base": "Adyar", "lat": 13.00645, "lon": 80.25778, "capacity": 2, "speed_kmh": 30, "status": "available"},
+ {"id": "amb-por", "name": "Ambulance 108 Porur", "type": "ambulance", "base": "Porur", "lat": 13.03246, "lon": 80.15829, "capacity": 2, "speed_kmh": 30, "status": "busy"},
+ {"id": "med-crp", "name": "Medical team Chromepet", "type": "medical", "base": "Chromepet", "lat": 12.95219, "lon": 80.14117, "capacity": 4, "speed_kmh": 25, "status": "available"}
+]

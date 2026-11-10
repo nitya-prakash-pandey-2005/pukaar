@@ -27,13 +27,16 @@ from voice_core.llm import LLM
 from voice_core.session import VoiceAgentSession
 
 from .agent import PukaarAgent, deliver_dispatch
-from .channels import cap_xml, relay_line, sms_intake
-from .domain import Facts
+from .allocate import live_status, load_teams, plan, recommend
 from .assets import load_or_make_fillers, rain_noise
-from .data import DATA, load_gazetteer, load_guidance
-from .fake_mode import FakeTriageLLM, ScriptedStt, tone_tts
 from .broadcast import BROADCAST_LANGS, make_broadcast
+from .channels import cap_xml, relay_line, sms_intake
+from .data import DATA, load_gazetteer, load_guidance
+from .domain import Facts
+from .fake_mode import FakeTriageLLM, ScriptedStt, tone_tts
+from .hotspots import hotspots
 from .sim import replay_surge, run_surge
+from .sitrep import sitrep
 from .store import Store
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -81,12 +84,13 @@ class DispatchIn(BaseModel):
     eta: str | None = None
 
 
-def create_app(settings: Settings | None = None, *, session_factory=None, intel_llm=None) -> FastAPI:
+def create_app(settings: Settings | None = None, *, session_factory=None, intel_llm=None, teams=None) -> FastAPI:
     settings = settings or get_settings()
     fake = os.environ.get("PUKAAR_FAKE") == "1"
     settings.cache_dir.mkdir(parents=True, exist_ok=True)
     store = Store(settings.cache_dir / ("pukaar_fake.db" if fake else "pukaar.db"))
     places, kb = load_gazetteer(), load_guidance()
+    roster = tuple(load_teams() if teams is None else teams)
     intel_llm = intel_llm or (FakeTriageLLM() if fake else LLM(settings, purpose="intel"))
     tts_cache = TtsCache(settings.cache_dir)
     control: set[WebSocket] = set()
@@ -158,6 +162,31 @@ def create_app(settings: Settings | None = None, *, session_factory=None, intel_
     @app.get("/api/incidents/{incident_id}")
     async def incident(incident_id: str):
         return get_or_404(store.get_incident(incident_id), "incident").model_dump()
+
+    # ------------------------------------------------------------------ decision support (read-only; a human dispatches)
+    @app.get("/api/teams")
+    async def get_teams():
+        return [t.__dict__ for t in live_status(roster, store.list_incidents())]
+
+    @app.get("/api/incidents/{incident_id}/recommend")
+    async def recommend_teams(incident_id: str):
+        inc = get_or_404(store.get_incident(incident_id), "incident")
+        teams = live_status(roster, store.list_incidents())
+        return {"incident_id": inc.id, "recommendations": recommend(inc, teams, top=3),
+                "teams_free": sum(t.status == "available" for t in teams)}
+
+    @app.get("/api/plan")
+    async def get_plan():
+        incs = store.list_incidents()
+        return plan(incs, live_status(roster, incs))
+
+    @app.get("/api/sitrep")
+    async def get_sitrep():
+        return sitrep(store.list_incidents(), store.kpis()["calls"], time.time())
+
+    @app.get("/api/hotspots")
+    async def get_hotspots():
+        return hotspots(store.list_incidents())
 
     @app.post("/api/incidents/{incident_id}/dispatch")
     async def dispatch(incident_id: str, body: DispatchIn):
