@@ -9,7 +9,7 @@ from pathlib import Path
 
 from voice_core.types import Turn
 
-from .domain import Facts, Incident, merge_facts, score, should_merge
+from .domain import Facts, Incident, merge_reports, score, should_merge
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS calls (
@@ -130,7 +130,7 @@ class Store:
             self._link(call_id, inc.id)
             return self._save(inc)
 
-        target.facts = merge_facts(target.facts, facts)
+        target.facts = merge_reports(target.facts, facts)  # another caller's report never lowers it
         target.severity, target.updated_at = score(target.facts), now
         if call_id not in target.call_ids:
             target.call_ids.append(call_id)

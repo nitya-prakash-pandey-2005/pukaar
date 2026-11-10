@@ -87,6 +87,21 @@ def merge_facts(old: Facts, new: Facts) -> Facts:
     return Facts(**m)
 
 
+_WATER_ORDER = ["none", "ankle", "knee", "waist", "chest", "neck"]
+
+
+def merge_reports(old: Facts, new: Facts) -> Facts:
+    """Facts of one incident from several callers: never lower it. A neighbour's "waist" must not hide a family's
+    "chest", nor their "not trapped" a "trapped"; otherwise as merge_facts (lists union, people max)."""
+    m = merge_facts(old, new)
+    levels = [w for w in (old.water_level, new.water_level) if w]
+    upd: dict = {"water_level": max(levels, key=_WATER_ORDER.index) if levels else None}
+    for k in ("trapped", "on_roof"):
+        if getattr(old, k) or getattr(new, k):
+            upd[k] = True
+    return m.model_copy(update=upd)
+
+
 class Severity(BaseModel):
     score: int
     level: str

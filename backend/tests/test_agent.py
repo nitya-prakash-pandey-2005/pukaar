@@ -141,3 +141,19 @@ def test_kpis(store):
     store.create_call("ta-IN")
     k = store.kpis()
     assert k["calls"] == 1 and k["critical_open"] == 0 and k["people_affected"] == 0
+
+
+def test_a_merged_second_caller_never_lowers_the_incident(store):
+    # seen in fake mode: a surge caller on the same spot said "waist" and a critical 84 dropped to 72
+    from pukaar.domain import Facts
+    a, b = store.create_call("ta-IN"), store.create_call("hi-IN")
+    first = store.upsert_incident(a, Facts(hazard="flood", water_level="chest", on_roof=True, trapped=True,
+                                           people_count=4, locality="Velachery"), (12.98, 80.22, "gps", 0.7))
+    merged = store.upsert_incident(b, Facts(hazard="flood", water_level="waist", on_roof=False, trapped=False,
+                                            people_count=2, locality="Velachery"), (12.9801, 80.2201, "gps", 0.7))
+    assert merged.id == first.id and merged.call_ids == [a, b]
+    assert merged.facts.water_level == "chest" and merged.facts.on_roof is True and merged.facts.trapped is True
+    assert merged.severity.score >= first.severity.score
+    # the first caller's next turn (its full facts again) does not lower it either
+    again = store.upsert_incident(a, Facts(hazard="flood", water_level="knee", people_count=4), (12.98, 80.22, "gps", 0.7))
+    assert again.facts.water_level == "chest" and again.severity.score >= first.severity.score
