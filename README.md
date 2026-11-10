@@ -7,6 +7,7 @@
 ![Gnani Prisma v3.0](https://img.shields.io/badge/Gnani-Prisma%20v3.0%20STT-0e7490)
 ![Gnani Timbre v3.0](https://img.shields.io/badge/Gnani-Timbre%20v3.0%20TTS-2563eb)
 ![Tests](https://img.shields.io/badge/tests-277%20passing-16a34a)
+[![CI](https://github.com/nitya-prakash-pandey-2005/pukaar/actions/workflows/ci.yml/badge.svg)](https://github.com/nitya-prakash-pandey-2005/pukaar/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/Python-3.12-3776ab?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-backend-009688?logo=fastapi&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=black)
