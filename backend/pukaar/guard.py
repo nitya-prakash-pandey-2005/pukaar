@@ -35,3 +35,13 @@ def guard_reply(text: str, allowed_ids: set[str], eta: str | None, lang: str | N
             or _SAFE_RE.search(text)):
         return fallback(lang), []
     return re.sub(r"\s{2,}", " ", _ANY_TAG_RE.sub("", text)).strip(), ids
+
+
+def _numbers(text: str) -> set[int]:
+    return {int(n) for n in re.findall(r"\d+", text)}  # \d and int() also read Tamil/Devanagari digits
+
+
+def adds_nothing(src: str, out: str) -> bool:
+    """True if a translation of `src` adds no time promise, no "you are safe" and no number the source lacks."""
+    return not ((_TIME_RE.search(out) and not _TIME_RE.search(src)) or (_SAFE_RE.search(out) and not _SAFE_RE.search(src))
+                or not _numbers(out) <= _numbers(src))

@@ -11,7 +11,7 @@ from voice_core.types import Turn
 
 from .data import Guidance, Place
 from .domain import Facts, Incident, locate, next_slot, resolve_locality
-from .guard import fallback, guard_reply
+from .guard import adds_nothing, fallback, guard_reply
 from .store import Store
 from .triage import LANG_NAMES, build_reply_messages, extract_facts, pick_guidance
 
@@ -60,7 +60,8 @@ async def relay_line(llm, lang: str, text_en: str) -> str:
         ], temperature=0.2, max_tokens=150)).strip()
     except Exception:
         return text_en
-    return out or text_en
+    # a translation that adds a time, a "you are safe" or a number is not sent: the dispatcher's own words go instead
+    return out if out and adds_nothing(text_en, out) else text_en
 
 
 def cap_xml(text_en: str, items: list[dict], *, area: str, identifier: str, sent: str | None = None,

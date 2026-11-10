@@ -44,3 +44,18 @@ def test_cap_xml_has_one_info_block_per_language():
     assert [i.find("c:language", ns).text for i in infos] == ["en-IN", "ta-IN"]
     assert infos[1].find("c:description", ns).text == "அடையாறு ஆறு உயர்கிறது."
     assert infos[0].find("c:area/c:areaDesc", ns).text == "Chennai"
+
+
+async def test_relay_never_adds_a_time_promise_reassurance_or_number():
+    src = "The boat is at the temple gate. Wave a white cloth."
+    # a translation that adds facts is not sent: the dispatcher's own English words go instead
+    assert await relay_line(FakeLLM(["படகு 10 நிமிஷத்துல வந்துடும்."]), "ta-IN", src) == src
+    assert await relay_line(FakeLLM(["नाव मंदिर के द्वार पर है। आप अब सुरक्षित हैं।"]), "hi-IN", src) == src
+    assert await relay_line(FakeLLM(["படகு 2 கோவில் வாயிலில் உள்ளது."]), "ta-IN", src) == src
+
+
+async def test_relay_keeps_the_dispatchers_own_time_and_numbers():
+    src = "Boat 2 reaches the temple in 20 minutes."
+    out = "படகு 2, 20 நிமிடங்களில் கோவிலை அடையும்."
+    assert await relay_line(FakeLLM([out]), "ta-IN", src) == out
+    assert await relay_line(FakeLLM(["படகு 2, 30 நிமிடங்களில் கோவிலை அடையும்."]), "ta-IN", src) == src  # changed number
