@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CheckCircle2, Send } from "lucide-react";
+import { CheckCircle2, Languages, Send } from "lucide-react";
 import { Badge, Sheet, toast } from "../ui";
 import { getJSON, postJSON, useApi } from "../lib/api";
 import { HAZARD_LABEL, LEVEL_TONE, TEAMS, ago } from "../lib/labels";
@@ -174,6 +174,10 @@ export default function IncidentSheet({ inc, guidance, onClose, preset: planned 
             <section>
               <h4>Message the caller{inc.call_ids.length > 1 ? "s" : ""}</h4>
               <MessageForm inc={inc} />
+              {/* rescue team from another state: live machine interpretation, caller's language preselected */}
+              <a className="btn ghost block" style={{ marginTop: 8 }} href={`#/interpret?caller=${calls[0]?.lang || "ta-IN"}`}>
+                <Languages size={16} /> Talk to the caller through the interpreter
+              </a>
             </section>
           )}
 

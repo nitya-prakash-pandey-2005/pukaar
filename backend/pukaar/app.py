@@ -22,7 +22,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from voice_core.audio import wav_bytes
 from voice_core.config import Settings, get_settings, repo_root
-from voice_core.gnani import TtsCache
+from voice_core.gnani import TtsCache, transcribe_rest, tts_rest
 from voice_core.llm import LLM
 from voice_core.session import VoiceAgentSession
 
@@ -35,6 +35,7 @@ from .data import DATA, load_gazetteer, load_guidance
 from .domain import Facts
 from .fake_mode import FakeTriageLLM, ScriptedStt, tone_tts
 from .hotspots import hotspots
+from .interpreter import MAX_CLIP_BYTES, FakeInterpLLM, FakeTranscriber, Interpreter
 from .sim import replay_surge, run_surge
 from .sitrep import sitrep
 from .store import Store
@@ -84,7 +85,8 @@ class DispatchIn(BaseModel):
     eta: str | None = None
 
 
-def create_app(settings: Settings | None = None, *, session_factory=None, intel_llm=None, teams=None) -> FastAPI:
+def create_app(settings: Settings | None = None, *, session_factory=None, intel_llm=None, teams=None,
+               interpreter_factory=None) -> FastAPI:
     settings = settings or get_settings()
     fake = os.environ.get("PUKAAR_FAKE") == "1"
     settings.cache_dir.mkdir(parents=True, exist_ok=True)
@@ -413,6 +415,142 @@ def create_app(settings: Settings | None = None, *, session_factory=None, intel_
             await broadcast({"type": "call_ended", "call_id": agent.call_id})
             await broadcast({"type": "kpis", **store.kpis()})
             alive["v"] = False
+            try:
+                await ws.close()
+            except Exception:
+                pass
+
+
+    # ------------------------------------------------------------------ rescuer <-> caller interpreter
+    async def interp_speak(text: str, lang: str, voice: str) -> tuple[str, float]:
+        """Timbre WAV for one interpreted line (cached by text, voice and language) -> (audio url, seconds)."""
+        hz = 8000 if fake else 24000
+        kw = dict(voice=voice, language=lang, speed=1.0, sample_rate=hz)
+        key = tts_cache.key(text, wav=True, **kw)
+        data = tts_cache.get(key)
+        if data is None:
+            if fake:
+                pcm = b"".join([c async for c in tone_tts(None, text, sample_rate=hz)])
+            else:
+                pcm = await tts_rest(settings.gnani_api_key, text, **kw)
+            data = wav_bytes(pcm, hz)
+            tts_cache.put(key, data)
+        return f"/api/interpret/audio/{key}", (len(data) - 44) / (2 * hz)
+
+    async def interp_transcribe(wav: bytes, lang: str, role: str) -> tuple[str, float | None]:
+        ev = await transcribe_rest(settings.gnani_api_key, wav, language_code=lang)
+        return ev.text, ev.latency_ms
+
+    def default_interpreter(rescuer_lang: str, caller_lang: str) -> Interpreter:
+        if fake:
+            return Interpreter(transcribe=FakeTranscriber(), llm=FakeInterpLLM(), speak=interp_speak,
+                               rescuer_lang=rescuer_lang, caller_lang=caller_lang)
+        return Interpreter(transcribe=interp_transcribe, llm=LLM(settings), speak=interp_speak,
+                           rescuer_lang=rescuer_lang, caller_lang=caller_lang)
+
+    make_interpreter = interpreter_factory or default_interpreter
+
+    @app.get("/api/interpret/audio/{key}")
+    async def interpret_audio(key: str):
+        data = tts_cache.get(key) if re.fullmatch(r"[0-9a-f]{40}", key) else None
+        if data is None or data[:4] != b"RIFF":
+            raise HTTPException(404, "audio not found")
+        return Response(data, media_type="audio/wav")
+
+    @app.websocket("/ws/interpret")
+    async def ws_interpret(ws: WebSocket):
+        """Protocol (docs/API.md): start -> talk/<PCM16 frames>/done per turn -> turn messages with both captions."""
+        await ws.accept()
+        lock = asyncio.Lock()
+
+        async def send(m: dict) -> None:
+            try:
+                async with lock:
+                    await ws.send_json(m)
+            except Exception:
+                pass
+
+        try:
+            first = await ws.receive_json()
+        except Exception:
+            return
+        try:
+            if first.get("type") != "start":
+                raise ValueError("first message must be start")
+            hz = int(first.get("sample_rate") or 16000)
+            if hz not in (8000, 16000):
+                raise ValueError("sample_rate must be 8000 or 16000")
+            interp = make_interpreter(first.get("rescuer_lang") or "hi-IN", first.get("caller_lang") or "ta-IN")
+        except (ValueError, TypeError) as e:
+            await send({"type": "error", "error": str(e)})
+            await ws.close(code=1008)
+            return
+        await send({**interp.state(), "type": "ready", "machine_interpretation": True})
+        buf = bytearray()
+        work: set[asyncio.Task] = set()
+
+        async def run_turn(role: str, wav: bytes) -> None:
+            await send({"type": "interpreting", "role": role})
+            try:
+                await send(await interp.turn(role, wav))
+            except Exception as e:  # Prisma/Timbre down: say so, never leave the floor locked
+                log.warning("interpreter turn failed: %s", e)
+                interp.release(role)
+                await send({"type": "error", "role": role, "error": "Interpretation failed for this turn. Please try again."})
+            await send({"type": "floor_free"})
+
+        try:
+            while True:
+                msg = await ws.receive()
+                if msg.get("type") == "websocket.disconnect":
+                    break
+                if msg.get("bytes"):
+                    if interp.speaking and not any(not t.done() for t in work) and len(buf) < MAX_CLIP_BYTES:
+                        buf.extend(msg["bytes"][: MAX_CLIP_BYTES - len(buf)])
+                    continue
+                if not msg.get("text"):
+                    continue
+                try:
+                    d = json.loads(msg["text"])
+                    kind, role = d.get("type"), d.get("role")
+                    if kind == "set_lang":
+                        interp.set_lang(role, d.get("lang"))
+                        await send(interp.state())
+                    elif kind == "talk":
+                        if any(not t.done() for t in work):  # the last turn is still being interpreted
+                            await send({"type": "busy", "role": role, "speaking": interp.speaking})
+                            continue
+                        res = interp.claim(role)
+                        if res["type"] == "floor":
+                            buf.clear()
+                        await send(res)
+                    elif kind == "done":
+                        if interp.speaking != role:
+                            continue
+                        clip, too_short = bytes(buf), len(buf) < hz * 2 // 4  # under 0.25 s: a mis-tap
+                        buf.clear()
+                        if too_short:
+                            interp.release(role)
+                            await send({"type": "unheard", "role": role, "original": "", "reason": "too short"})
+                            await send({"type": "floor_free"})
+                            continue
+                        t = asyncio.create_task(run_turn(role, wav_bytes(clip, hz)))
+                        work.add(t)
+                        t.add_done_callback(work.discard)
+                    elif kind == "cancel":
+                        if not any(not t.done() for t in work):
+                            interp.release(role)
+                            buf.clear()
+                            await send({"type": "floor_free"})
+                    elif kind == "hangup":
+                        break
+                except (ValueError, TypeError, json.JSONDecodeError) as e:
+                    await send({"type": "error", "error": str(e)})
+        except (WebSocketDisconnect, RuntimeError):
+            pass
+        finally:
+            for t in list(work):
+                t.cancel()
             try:
                 await ws.close()
             except Exception:

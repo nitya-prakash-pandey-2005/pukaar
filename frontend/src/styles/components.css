@@ -180,3 +180,24 @@ input[type="range"].slider::-moz-range-thumb { width: 16px; height: 16px; border
 .json .k { color: var(--violet-2); } .json .s { color: var(--green); } .json .n { color: var(--amber); }
 .card-head { flex-wrap: wrap; row-gap: 8px; }
 .card-head h3 { flex: 1 1 160px; }
+
+/* ---------------------------------------------------------------- rescuer interpreter */
+.interp-sides { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.interp-side { display: flex; flex-direction: column; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface-2); min-width: 0; }
+.interp-side.on { border-color: var(--accent, #ff4d9d); }
+.interp-side .select { width: auto; min-width: 0; }
+.ptt { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; min-height: 120px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-weight: 600; font-size: 14px; cursor: pointer; touch-action: none; user-select: none; -webkit-user-select: none; padding: 10px; text-align: center; }
+.ptt:disabled { opacity: .5; cursor: not-allowed; }
+.ptt.on { background: var(--grad); color: #fff; border: 0; }
+.interp-head, .interp-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.interp-head { padding: 0 2px 6px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+.interp-log { display: flex; flex-direction: column; gap: 12px; }
+.interp-row { padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.interp-cell { min-width: 0; padding: 8px 10px; border-radius: 10px; background: var(--surface-2); overflow-wrap: anywhere; }
+.interp-cell p { margin: 4px 0 0; font-size: 14px; line-height: 1.45; }
+.interp-cell .tag { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.interp-cell.heard { border-left: 3px solid var(--accent, #ff4d9d); }
+.interp-cell.withheld { border-left-color: #f5a524; }
+.interp-cell .note { font-size: 12px; color: #f5a524; display: flex; gap: 6px; align-items: flex-start; }
+.interp-lat { grid-column: 1 / -1; }
+@media (max-width: 600px) { .interp-sides { grid-template-columns: 1fr; } .ptt { min-height: 92px; } }

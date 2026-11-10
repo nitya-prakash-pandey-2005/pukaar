@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ExternalLink, History, PhoneCall, Radar } from "lucide-react";
+import { ExternalLink, History, Languages, PhoneCall, Radar } from "lucide-react";
 import { useRoute } from "./lib/router";
 import AppShell from "./shell/AppShell";
 import { Badge, PageHead, Toasts } from "./ui";
@@ -8,10 +8,15 @@ import { useCall } from "./state/useCall";
 import { useControl } from "./state/useControl";
 import CallerPhone from "./components/CallerPhone";
 import ControlRoom from "./components/ControlRoom";
+import Interpreter from "./components/Interpreter";
 import { DEMO, REPO_URL } from "./demo/demo";
 
-const NAV = [{ group: "Helpline", items: [{ to: "/app", label: "Live helpline", short: "Live", icon: PhoneCall, exact: true }] }];
-const TITLES = [["/app", "Pukaar control room", "Flood night in Chennai · Gnani Prisma + Timbre"]];
+const NAV = [{ group: "Helpline", items: [
+  { to: "/app", label: "Live helpline", short: "Live", icon: PhoneCall, exact: true },
+  { to: "/interpret", label: "Interpreter", short: "Interpret", icon: Languages, exact: true },
+] }];
+const TITLES = [["/app", "Pukaar control room", "Flood night in Chennai · Gnani Prisma + Timbre"],
+  ["/interpret", "Rescuer interpreter", "Rescuer ↔ caller · Prisma + LLM + Timbre"]];
 
 function HealthPill({ health }) {
   if (DEMO) return <Badge tone="cyan" dot>Recorded run · 10 Nov</Badge>;
@@ -70,6 +75,7 @@ export default function App() {
         footer={<div className="pill-src">Built on Gnani AI: Prisma v3.0 (STT) · Timbre v3.0 (TTS) · Evon v3.3 (LLM, when hosted)</div>}
       >
         {DEMO && <DemoBanner />}
+        {route.path === "/interpret" ? <Interpreter route={route} /> : (<>
         <PageHead
           kicker="Pukaar · पुकार"
           title="Every flood call answered, in the caller's language."
@@ -87,6 +93,7 @@ export default function App() {
             <ControlRoom control={control} guidance={guidance || []} />
           </div>
         </div>
+        </>)}
       </AppShell>
       <Toasts />
     </>
