@@ -57,3 +57,11 @@ html.app-motion .ctx-seg { animation: am-grow .9s cubic-bezier(.2,.8,.2,1) both;
 html.app-motion .ctx-col > * { animation: am-rise .55s cubic-bezier(.2,.8,.2,1) both; }
 html.app-motion .ctx-col > *:nth-child(2) { animation-delay: .08s; }
 html.app-motion .ctx-col > *:nth-child(3) { animation-delay: .16s; }
+
+/* incident sheet: a wider two-column drawer on wide screens, so the facts, drivers, teams and dispatch form sit side by side */
+@media (min-width: 1200px) {
+  .sheet.right { width: min(880px, calc(100vw - 24px)); }
+  .sheet.right > div:last-child > .stack { display: block; columns: 2; column-gap: 28px; }
+  .sheet.right > div:last-child > .stack > * { break-inside: avoid; margin-bottom: 18px; }
+  .sheet.right > div:last-child > .stack > :first-child { column-span: all; }
+}
