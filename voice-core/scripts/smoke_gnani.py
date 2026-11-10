@@ -14,7 +14,7 @@ import time
 
 import numpy as np
 
-from voice_core.audio import float_to_pcm16, pcm16_to_float, wav_bytes
+from voice_core.audio import float_to_pcm16, wav_bytes
 from voice_core.config import get_settings
 from voice_core.gnani import PrismaStream, transcribe_rest, tts_rest, tts_stream
 

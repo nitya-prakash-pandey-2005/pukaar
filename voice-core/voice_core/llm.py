@@ -64,6 +64,7 @@ class LLM:
 
     def __init__(self, settings: Settings, provider: str | None = None, purpose: str = "dialogue", *,
                  max_retries: int = 1, first_token_timeout: float | None = None, timeout: float = 30.0):
+        self.purpose = purpose
         p = provider or (settings.intel_llm_provider if purpose == "intel" else settings.llm_provider)
         if p == "evon" and not settings.evon_base_url:
             p = "groq"
@@ -97,6 +98,10 @@ class LLM:
         return kw
 
     def _note(self, error: BaseException | None) -> None:
+        # /api/health shows whether the conversation works; a background intel call hitting a rate limit must not
+        # turn the status pill into "LLM error" while the caller is being answered normally
+        if self.purpose != "dialogue":
+            return
         LLM.last_status = {"ok": error is None, "error": None if error is None else repr(error)[:300],
                            "provider": self.provider, "model": self.model, "at": time.time()}
 
@@ -164,8 +169,9 @@ class LLM:
                 else:
                     st = pending.find("<think>")
                     if st == -1:
-                        # keep a short tail in case a tag is split across chunks
-                        safe = len(pending) - 7 if "<" in pending[-7:] else len(pending)
+                        # keep a short tail in case a tag is split across chunks (max(0, ...): a buffer shorter
+                        # than the tag, such as "<thi", must be held back whole, not sliced from the end)
+                        safe = max(0, len(pending) - 7) if "<" in pending[-7:] else len(pending)
                         out, pending = out + pending[:safe], pending[safe:]
                         break
                     out, pending, in_think = out + pending[:st], pending[st + 7 :], True

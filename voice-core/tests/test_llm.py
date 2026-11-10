@@ -108,3 +108,15 @@ async def test_last_status_records_failures_and_successes(monkeypatch):
     llm._client = _fake_client(_SlowStream(0.0, ["ok."]))
     assert "".join([c async for c in llm.stream([])]) == "ok."
     assert LLM.last_status["ok"] is True
+
+
+def test_only_the_dialogue_llm_sets_the_health_status():
+    from voice_core.config import Settings
+    from voice_core.llm import LLM
+
+    LLM.last_status = {}
+    LLM(Settings(groq_api_key="k"), purpose="intel")._note(RuntimeError("429 rate limit"))
+    assert LLM.last_status == {}  # a background intel rate limit must not show "LLM error"
+    LLM(Settings(groq_api_key="k"), purpose="dialogue")._note(RuntimeError("404"))
+    assert LLM.last_status["ok"] is False
+    LLM.last_status = {}

@@ -76,6 +76,9 @@ class VoiceAgentSession:
         # speakerphone: the mic hears the agent, so only a non-echo transcript may interrupt her (no speech_start
         # barge-in) and VAD events during her speech and its echo tail are ignored
         self.half_duplex = half_duplex
+        # an agent that only listens (Guardian) and speaks when it has something to say: no fillers, no fallback line,
+        # no barge-in (its warnings are never cut off by the caller; they queue instead)
+        self.listen_only = bool(getattr(agent, "listen_only", False))
         self.stable_after = stable_after  # a stream that lived this long (or gave a transcript) resets the backoff
         self._reconnect_attempt = 0
 
@@ -251,12 +254,12 @@ class VoiceAgentSession:
         if ev.type == "connected":
             await self._safe_json({"type": "status", "stt": "connected"})
         elif ev.type == "speech_start":
-            if self.half_duplex:
+            if self.half_duplex or self.listen_only:
                 return  # on a speakerphone this is usually her own voice; a real transcript barges in instead
             if self._agent_busy():
                 await self._barge_in()
         elif ev.type == "processing":
-            if self.half_duplex and self._in_echo_tail():
+            if self.listen_only or (self.half_duplex and self._in_echo_tail()):
                 return
             if not self._agent_busy():
                 self._schedule_filler()
@@ -296,6 +299,11 @@ class VoiceAgentSession:
         await self._record(turn)
         await self._safe_json({"type": "turn", "speaker": turn.speaker, "text": text, "t": turn.t,
                                "lang": turn.lang, "latency_ms": turn.latency_ms})
+        if self.listen_only:  # never cut off a warning: the next reply waits for the one being spoken
+            prev = self._speak_task if self._speak_task and not self._speak_task.done() else None
+            self._speak_task = asyncio.create_task(self._reply(after=prev))
+            self._request_analysis()
+            return
         # a new user turn supersedes anything still being said: also flush the old reply's audio already buffered
         # at the caller's end (a filler started by this same utterance may finish; the reply queues behind it)
         if (self._speak_task and not self._speak_task.done()) or (
@@ -423,7 +431,15 @@ class VoiceAgentSession:
             options = [t for t in self.agent.filler_texts() if t in self.filler_audio and t != self._last_filler]
         return self.rng.choice(options) if options else None
 
-    async def _reply(self) -> None:
+    async def _reply(self, after: asyncio.Task | None = None) -> None:
+        if after is not None:  # listen_only: speak after the previous line (cancelling this cancels that one too)
+            try:
+                await asyncio.wait({after})
+            except asyncio.CancelledError:
+                after.cancel()
+                raise
+        if self.listen_only:
+            self._reply_audio_started = False
         said: list[str] = []
         meta: dict = {}
         emitted = False
@@ -444,7 +460,7 @@ class VoiceAgentSession:
             cancelled = True
         except Exception as e:
             log.warning("reply failed: %r", e)
-        if not cancelled and not emitted and not self._closing:
+        if not cancelled and not emitted and not self._closing and not self.listen_only:
             # never leave the caller in dead air: say a pre-rendered "say that again?" line instead
             text = self._fallback_choice()
             if text:
@@ -466,7 +482,8 @@ class VoiceAgentSession:
             if not meta:
                 meta = self.agent.turn_meta() if hasattr(self.agent, "turn_meta") else {}
             await self._safe_json({"type": "turn", "speaker": turn.speaker, "text": text, "t": turn.t, **meta})
-        await self._finish_speaking()
+        if said or not self.listen_only:  # a listen-only agent that said nothing sends nothing
+            await self._finish_speaking()
 
     async def _finish_speaking(self) -> None:
         await self._safe_json({"type": "agent_speaking", "on": False})

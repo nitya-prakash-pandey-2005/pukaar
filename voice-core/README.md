@@ -56,7 +56,9 @@ async def reply_sentences(self, history: list[Turn]) -> AsyncIterator[str]
 async def on_user_turn(self, history: list[Turn]) -> dict | None      # background analysis; returns an event to send, e.g. {"type":"intel",...}
                                                                       # coalesced: never two at once; turns that arrive meanwhile get ONE more call with the latest history
 async def record(self, turn: Turn) -> None                            # persistence hook
+listen_only: bool = False                                             # OPTIONAL: see below (Dadi's Guardian mode)
 ```
+- `listen_only = True` (an agent that mostly listens and speaks only when it has something to say, e.g. Dadi's Guardian, which warns an elder during her own call): `reply_sentences` may yield nothing, and then the session sends nothing (no fallback line, no `agent_speaking`); `processing` never triggers a filler; there is no barge-in (`speech_start` and new transcripts never cut it off and never send `stop_audio`); a reply for a newer turn waits until the line being spoken has finished (lines queue; cancelling the newer reply cancels the queued one too). Agents without the attribute behave exactly as before.
 `VoiceAgentSession(agent, *, send_json, send_audio, settings, stt_factory=None, tts_fn=None, filler_audio=None, noise=None, rng=None, filler_delay=0.25, reconnect_delays=(0.5, 1, 2, 4, 8), first_sentence_timeout=8.0, hangup_grace=3.0, half_duplex=False, stable_after=10.0)`:
 - `start()`, `on_audio(pcm16)`, `set_noise(snr_db | None)`, `hangup() -> {"session_seconds": float}`, `.started_at`
 - `filler_audio` (text -> PCM16) is used by reference: an app may fill the same dict in place after the session started (warm-up).
