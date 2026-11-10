@@ -6,7 +6,7 @@
 
 ![Gnani Prisma v3.0](https://img.shields.io/badge/Gnani-Prisma%20v3.0%20STT-0e7490)
 ![Gnani Timbre v3.0](https://img.shields.io/badge/Gnani-Timbre%20v3.0%20TTS-2563eb)
-![Tests](https://img.shields.io/badge/tests-276%20passing-16a34a)
+![Tests](https://img.shields.io/badge/tests-277%20passing-16a34a)
 ![Python](https://img.shields.io/badge/Python-3.12-3776ab?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-backend-009688?logo=fastapi&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=black)
@@ -415,10 +415,10 @@ See [`docs/DEPLOY-VERCEL.md`](docs/DEPLOY-VERCEL.md) for Vercel. Run `npm run bu
 ## Tests
 
 ```bash
-uv run python -m pytest -q        # 276 passed
+uv run python -m pytest -q        # 277 passed
 ```
 
-- **174 backend tests**: severity rules and dedup (`test_domain`, with thresholds and edge cases in `test_domain_edges`), the store's dedup and KPIs (`test_store`), LLM-outage fallbacks and fake mode (`test_fallbacks`), fact extraction and the reply guard (`test_triage`), the agent's question order, guidance, caller merging, dispatch and callbacks (`test_agent`), SMS, relay and dispatch translation (`test_channels`), the REST and WebSocket API (`test_app`), broadcast and CAP (`test_broadcast`), team matching, capacity, ETA and no double booking (`test_allocate`), the SitRep and hotspot clustering (`test_sitrep_hotspots`), the surge simulator and the noise drill scoring, and the rescuer interpreter (`test_interpreter`: both directions, names and numbers kept, the guard fallback, the speaking lock and barge-in, language validation and the `/ws/interpret` protocol end to end with fakes).
+- **175 backend tests**: severity rules and dedup (`test_domain`, with thresholds and edge cases in `test_domain_edges`), the store's dedup and KPIs (`test_store`), LLM-outage fallbacks and fake mode (`test_fallbacks`), fact extraction and the reply guard (`test_triage`), the agent's question order, guidance, caller merging, dispatch and callbacks (`test_agent`), SMS, relay and dispatch translation (`test_channels`), the REST and WebSocket API (`test_app`), broadcast and CAP (`test_broadcast`), team matching, capacity, ETA and no double booking (`test_allocate`), the SitRep and hotspot clustering (`test_sitrep_hotspots`), the surge simulator and the noise drill scoring, and the rescuer interpreter (`test_interpreter`: both directions, names and numbers kept, the guard fallback, the speaking lock and barge-in, language validation and the `/ws/interpret` protocol end to end with fakes).
 - **102 voice-core tests**: the Gnani protocol and offline clients (Prisma stream and REST, Timbre REST and stream, voice cloning), the request gate and 429 retries, the call session (barge-in, echo guard, reconnects, fallback lines, listen-only agents), turn-based STT, audio and the LLM adapter.
 
 ---

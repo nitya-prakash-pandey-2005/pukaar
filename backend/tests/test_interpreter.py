@@ -302,3 +302,18 @@ def test_ws_cancel_frees_the_floor_and_long_clips_are_capped(client):
 async def _record(got, wav):
     got.append(wav)
     return "", None
+
+
+def test_ws_only_the_floor_holder_can_end_or_cancel_a_turn(client):
+    with client.websocket_connect("/ws/interpret") as ws:
+        ws.send_json({"type": "start"})
+        ws.receive_json()
+        ws.send_json({"type": "talk", "role": "rescuer"})
+        ws.receive_json()
+        ws.send_bytes(SECOND)
+        for msg in ({"type": "cancel", "role": "caller"}, {"type": "cancel"}, {"type": "done"},
+                    {"type": "done", "role": "caller"}):
+            ws.send_json(msg)  # all ignored: the rescuer's clip is kept
+        ws.send_json({"type": "done", "role": "rescuer"})
+        assert ws.receive_json() == {"type": "interpreting", "role": "rescuer"}
+        assert _until(ws, "turn")["original"] == RESCUER_HI

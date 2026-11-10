@@ -525,7 +525,7 @@ def create_app(settings: Settings | None = None, *, session_factory=None, intel_
                             buf.clear()
                         await send(res)
                     elif kind == "done":
-                        if interp.speaking != role:
+                        if role is None or interp.speaking != role:  # only the floor holder ends its own turn
                             continue
                         clip, too_short = bytes(buf), len(buf) < hz * 2 // 4  # under 0.25 s: a mis-tap
                         buf.clear()
@@ -538,7 +538,7 @@ def create_app(settings: Settings | None = None, *, session_factory=None, intel_
                         work.add(t)
                         t.add_done_callback(work.discard)
                     elif kind == "cancel":
-                        if not any(not t.done() for t in work):
+                        if role is not None and interp.speaking == role and not any(not t.done() for t in work):
                             interp.release(role)
                             buf.clear()
                             await send({"type": "floor_free"})
