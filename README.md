@@ -6,6 +6,8 @@
 
 Pukaar answers overflow emergency calls in the caller's own language, keeps them calm, asks the questions a rescuer needs, and puts every caller on a live rescue map. A human confirms every dispatch.
 
+**Live demo: *[link]*** · **[One-page pitch](PITCH.md)** · [Run it locally](#run-it)
+
 ![Gnani Prisma v3.0](https://img.shields.io/badge/Gnani-Prisma%20v3.0%20STT-7c3aed)
 ![Gnani Timbre v3.0](https://img.shields.io/badge/Gnani-Timbre%20v3.0%20TTS-db2777)
 ![Tests](https://img.shields.io/badge/tests-150%20passing-16a34a)
@@ -262,6 +264,7 @@ uv run python -m uvicorn pukaar.app:create_app --factory --host 127.0.0.1 --port
 ```
 
 Frontend dev server: `cd frontend && npm run dev` (http://localhost:5192, proxies to 8766).
+Static demo (no backend, replays the recorded live run; what the Vercel link serves): `cd frontend && npm run build:demo`, see [`docs/DEPLOY-VERCEL.md`](docs/DEPLOY-VERCEL.md).
 Noise drill: `uv run python scripts/run_drill.py --n 6` (spends Gnani credits; TTS is cached).
 Before a demo, delete `cache/pukaar.db`: new calls within 300 m and 3 hours merge into old test incidents (dedup working as designed). Use earphones so Pukaar does not hear itself.
 
@@ -282,6 +285,8 @@ uv run python -m pytest -q        # 150 passed
 - [`docs/01-gnani-api-reference.md`](docs/01-gnani-api-reference.md): what we learned about the Gnani APIs
 - [`docs/review-cl-2026-11-10.md`](docs/review-cl-2026-11-10.md): final review findings and the live checklist
 - [`docs/06-demo-and-post.md`](docs/06-demo-and-post.md): demo script
+- [`docs/DEPLOY-VERCEL.md`](docs/DEPLOY-VERCEL.md): the static demo on Vercel and how to refresh its recorded data
+- [`PITCH.md`](PITCH.md): one-page pitch
 
 ---
 
