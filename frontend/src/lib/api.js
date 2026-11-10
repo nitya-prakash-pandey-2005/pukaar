@@ -8,7 +8,11 @@ export async function getJSON(path) {
 
 export async function postJSON(path, body = {}) {
   const r = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-  if (!r.ok) throw new Error(`${path} → ${r.status}`);
+  if (!r.ok) {
+    // the server's own reason ("a surge is already running") reads better in a toast than a status code
+    const detail = await r.json().then((j) => (typeof j?.detail === "string" ? j.detail : null)).catch(() => null);
+    throw new Error(detail || `${path} → ${r.status}`);
+  }
   return r.json();
 }
 

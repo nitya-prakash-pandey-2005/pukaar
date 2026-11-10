@@ -2,7 +2,7 @@
   "name": "pukaar-web",
   "private": true,
   "type": "module",
-  "scripts": { "dev": "vite", "build": "vite build", "preview": "vite preview" },
+  "scripts": { "dev": "vite", "build": "vite build", "build:demo": "vite build --mode demo", "dev:demo": "vite --mode demo", "preview": "vite preview" },
   "dependencies": {
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

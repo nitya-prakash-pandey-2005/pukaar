@@ -4,6 +4,7 @@ import { Badge, Card, Hud, Seg, hueOf, toast } from "../ui";
 import { DISCLAIMER, LEVEL_TONE, jitter, mmss } from "../lib/labels";
 import { useNow } from "../state/useCall";
 import { postJSON } from "../lib/api";
+import { DEMO } from "../demo/demo";
 
 const NOISE_OPTIONS = [
   { value: "off", label: "Off" },
@@ -111,8 +112,9 @@ export default function CallerPhone({ call, places, placeName, setPlaceName, noi
       ) : (
         <div className="stack" style={{ gap: 8 }}>
           <button className="btn primary lg block" onClick={startCall}>
-            <PhoneCall size={18} /> Call Pukaar
+            <PhoneCall size={18} /> {DEMO ? "Play a recorded call" : "Call Pukaar"}
           </button>
+          {DEMO && <span className="pill-src">Replays a real Tamil call from the live run, with the caller's audio and Pukaar's greeting. Pukaar's replies were streamed, so they appear as captions. No microphone needed.</span>}
           <button className="btn ghost block" onClick={() => call.missedCall(gps())}>
             <PhoneMissed size={16} /> No balance? Give a missed call
           </button>

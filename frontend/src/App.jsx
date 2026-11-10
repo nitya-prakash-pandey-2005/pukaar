@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { PhoneCall, Radar } from "lucide-react";
+import { ExternalLink, History, PhoneCall, Radar } from "lucide-react";
 import { useRoute } from "./lib/router";
 import AppShell from "./shell/AppShell";
 import { Badge, PageHead, Toasts } from "./ui";
@@ -8,16 +8,32 @@ import { useCall } from "./state/useCall";
 import { useControl } from "./state/useControl";
 import CallerPhone from "./components/CallerPhone";
 import ControlRoom from "./components/ControlRoom";
+import { DEMO, REPO_URL } from "./demo/demo";
 
 const NAV = [{ group: "Helpline", items: [{ to: "/app", label: "Live helpline", short: "Live", icon: PhoneCall, exact: true }] }];
 const TITLES = [["/app", "Pukaar control room", "Flood night in Chennai · Gnani Prisma + Timbre"]];
 
 function HealthPill({ health }) {
+  if (DEMO) return <Badge tone="cyan" dot>Recorded run · 10 Nov</Badge>;
   if (!health) return <Badge tone="muted" dot>Server offline</Badge>;
   if (health.fake) return <Badge tone="amber" dot>Fake mode: no API keys</Badge>;
   if (!health.gnani_key || !health.llm_key) return <Badge tone="rose" dot>API keys missing</Badge>;
   if (!health.fillers_ready) return <Badge tone="cyan" dot>Warming up voices…</Badge>;
   return <Badge tone="green" dot>Gnani live · {health.llm_provider}</Badge>;
+}
+
+// Static demo only: says plainly what the visitor is looking at, and where the live version is
+function DemoBanner() {
+  return (
+    <div className="demo-banner" role="note">
+      <History size={16} className="flex-none" />
+      <span>
+        <b>Interactive demo:</b> replays a real run recorded on Gnani's live servers on 10 Nov 2026 (synthetic callers).
+        Run it locally with your own keys for live calls.
+      </span>
+      <a href={REPO_URL} target="_blank" rel="noreferrer">GitHub <ExternalLink size={13} /></a>
+    </div>
+  );
 }
 
 export default function App() {
@@ -53,6 +69,7 @@ export default function App() {
         topRight={<HealthPill health={health} />}
         footer={<div className="pill-src">Built on Gnani AI: Prisma v3.0 (STT) · Timbre v3.0 (TTS) · Evon v3.3 (LLM, when hosted)</div>}
       >
+        {DEMO && <DemoBanner />}
         <PageHead
           kicker="Pukaar · पुकार"
           title="Every flood call answered, in the caller's language."

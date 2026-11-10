@@ -4,6 +4,7 @@ import { createPcmPlayer, startMic } from "@voice/index.js";
 import { openCall } from "../net/callSocket";
 import { getJSON, postJSON } from "../lib/api";
 import { toast } from "../ui";
+import { DEMO } from "../demo/demo";
 
 const RATE = 8000; // phone-quality audio both ways (Prisma is trained on 8 kHz calls)
 
@@ -96,6 +97,7 @@ export function useCall() {
         });
       },
     });
+    if (DEMO) return; // the demo replays a recorded call: no microphone permission
     try {
       refs.current.mic = await startMic({ targetRate: RATE, onFrame: (ab) => refs.current.call?.sendAudio(ab) });
     } catch (e) {

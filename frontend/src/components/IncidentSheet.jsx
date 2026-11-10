@@ -3,6 +3,7 @@ import { CheckCircle2, Send } from "lucide-react";
 import { Badge, Sheet, toast } from "../ui";
 import { getJSON, postJSON } from "../lib/api";
 import { HAZARD_LABEL, LEVEL_TONE, TEAMS, ago } from "../lib/labels";
+import { DEMO } from "../demo/demo";
 
 const FACT_ROWS = [
   ["Hazard", (f) => HAZARD_LABEL[f.hazard]],
@@ -62,7 +63,7 @@ function DispatchForm({ inc }) {
     setBusy(true);
     try {
       await postJSON(`/api/incidents/${inc.id}/dispatch`, { team, note, eta: eta.trim() || null });
-      toast(`${team} dispatched. The caller hears it in their language.`, "ok");
+      toast(`${team} dispatched. ${DEMO ? "In the live app, the caller now hears it in their language." : "The caller hears it in their language."}`, "ok");
     } catch (e) {
       toast(`Dispatch failed: ${e.message}`, "warn");
     }
