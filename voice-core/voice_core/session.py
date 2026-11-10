@@ -448,7 +448,8 @@ class VoiceAgentSession:
             async for sentence in self._reply_stream():
                 said.append(sentence)
                 self._said(sentence)
-                async for chunk in self._tts(sentence):
+                # a fixed line the agent pre-rendered (e.g. a hand-off) plays instantly; anything else is synthesised
+                async for chunk in self._cached_or_tts(sentence):
                     if not self._reply_audio_started:
                         self._reply_audio_started = True
                         if self._filler_task and not self._filler_task.done():
