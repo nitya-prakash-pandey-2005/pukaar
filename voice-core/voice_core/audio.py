@@ -7,7 +7,7 @@ import wave
 from functools import lru_cache
 
 import numpy as np
-from scipy.signal import butter, resample_poly, sosfilt
+from scipy.signal import butter, resample_poly, sosfilt, sosfilt_zi
 
 
 def pcm16_to_float(b: bytes) -> np.ndarray:
@@ -35,6 +35,22 @@ def _band_sos(hz: int):
 def telephone_band(x: np.ndarray, hz: int) -> np.ndarray:
     """300-3400 Hz band-pass, like a phone line."""
     return sosfilt(_band_sos(int(hz)), np.asarray(x, dtype=np.float32)).astype(np.float32)
+
+
+class BandPass:
+    """telephone_band for a stream of frames: keeps the filter state between calls, so 64 ms browser frames do
+    not each restart from silence (that made a click train at the frame rate)."""
+
+    def __init__(self, hz: int):
+        self.sos = _band_sos(int(hz))
+        self.zi = sosfilt_zi(self.sos) * 0.0
+
+    def __call__(self, x: np.ndarray) -> np.ndarray:
+        x = np.asarray(x, dtype=np.float32)
+        if not len(x):
+            return x
+        y, self.zi = sosfilt(self.sos, x, zi=self.zi)
+        return y.astype(np.float32)
 
 
 def _rms(x: np.ndarray) -> float:

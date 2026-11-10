@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 import re
+import time
 from typing import AsyncIterator
 
 from openai import AsyncOpenAI
@@ -51,9 +53,17 @@ def parse_json_loose(text: str) -> dict:
 
 class LLM:
     """purpose="dialogue" uses settings.llm_provider; purpose="intel" uses settings.intel_llm_provider.
-    Evon silently falls back to Groq when EVON_BASE_URL is not configured."""
+    Evon silently falls back to Groq when EVON_BASE_URL is not configured.
 
-    def __init__(self, settings: Settings, provider: str | None = None, purpose: str = "dialogue"):
+    Realtime callers should pass max_retries=0 and first_token_timeout (seconds): the SDK otherwise retries a
+    429 after its Retry-After (up to minutes of dead air), and stream() raises asyncio.TimeoutError when no text
+    arrives in time so the caller can say a fallback line instead."""
+
+    # process-wide outcome of the most recent call, for /api/health: {"ok", "error", "provider", "model", "at"}
+    last_status: dict = {}
+
+    def __init__(self, settings: Settings, provider: str | None = None, purpose: str = "dialogue", *,
+                 max_retries: int = 1, first_token_timeout: float | None = None, timeout: float = 30.0):
         p = provider or (settings.intel_llm_provider if purpose == "intel" else settings.llm_provider)
         if p == "evon" and not settings.evon_base_url:
             p = "groq"
@@ -64,12 +74,16 @@ class LLM:
         else:
             self._base, self._key, self.model = GROQ_BASE_URL, settings.groq_api_key, settings.groq_model
             self._extra = {}
+        self.max_retries = max_retries
+        self.first_token_timeout = first_token_timeout
+        self.timeout = timeout
         self._client: AsyncOpenAI | None = None
 
     @property
     def client(self) -> AsyncOpenAI:
         if self._client is None:
-            self._client = AsyncOpenAI(base_url=self._base, api_key=self._key or "missing", timeout=30.0, max_retries=1)
+            self._client = AsyncOpenAI(base_url=self._base, api_key=self._key or "missing", timeout=self.timeout,
+                                       max_retries=self.max_retries)
         return self._client
 
     def _kwargs(self, temperature: float, max_tokens: int, json_mode: bool) -> dict:
@@ -82,22 +96,62 @@ class LLM:
             kw["extra_body"] = self._extra
         return kw
 
+    def _note(self, error: BaseException | None) -> None:
+        LLM.last_status = {"ok": error is None, "error": None if error is None else repr(error)[:300],
+                           "provider": self.provider, "model": self.model, "at": time.time()}
+
     async def complete(self, messages: list[dict], *, temperature: float = 0.8, max_tokens: int = 220,
                        json_mode: bool = False) -> str:
-        r = await self.client.chat.completions.create(messages=messages, **self._kwargs(temperature, max_tokens, json_mode))
+        try:
+            r = await self.client.chat.completions.create(messages=messages,
+                                                          **self._kwargs(temperature, max_tokens, json_mode))
+        except Exception as e:
+            self._note(e)
+            raise
+        self._note(None)
         return _THINK_RE.sub("", r.choices[0].message.content or "").strip()
 
     async def stream(self, messages: list[dict], *, temperature: float = 0.8, max_tokens: int = 220) -> AsyncIterator[str]:
-        resp = await self.client.chat.completions.create(
+        budget = self.first_token_timeout
+        loop = asyncio.get_running_loop()
+        deadline = loop.time() + budget if budget else None
+        create = self.client.chat.completions.create(
             messages=messages, stream=True, **self._kwargs(temperature, max_tokens, False)
         )
-        in_think, pending = False, ""
-        async for chunk in resp:
+        try:
+            resp = await (asyncio.wait_for(create, budget) if budget else create)
+        except Exception as e:
+            self._note(e)
+            raise
+        it = resp.__aiter__()
+        in_think, pending, first = False, "", True
+        while True:
+            try:
+                if deadline is not None:  # until the first text (or <think>) delta arrives
+                    chunk = await asyncio.wait_for(it.__anext__(), max(0.001, deadline - loop.time()))
+                else:
+                    chunk = await it.__anext__()
+            except StopAsyncIteration:
+                break
+            except asyncio.TimeoutError as e:
+                self._note(e)
+                try:
+                    await resp.close()
+                except Exception:
+                    pass
+                raise
+            except Exception as e:
+                self._note(e)
+                raise
             if not chunk.choices:
                 continue
             delta = chunk.choices[0].delta.content or ""
             if not delta:
                 continue
+            deadline = None
+            if first:
+                first = False
+                self._note(None)
             pending += delta
             out = ""
             while pending:

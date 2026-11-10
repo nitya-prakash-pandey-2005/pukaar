@@ -54,3 +54,34 @@ def test_telephone_band_removes_low_hum():
     hum = np.sin(2 * np.pi * 50 * t).astype(np.float32)
     out = telephone_band(hum, 8000)
     assert np.sqrt(np.mean(out[2000:] ** 2)) < 0.05
+
+
+def test_band_pass_keeps_state_across_frames():
+    import numpy as np
+
+    from voice_core.audio import BandPass, telephone_band
+
+    sr = 8000
+    t = np.arange(sr * 2) / sr
+    x = (0.1 * np.sin(2 * np.pi * 440 * t) + 0.05 * np.sin(2 * np.pi * 1700 * t)).astype(np.float32)
+    whole = telephone_band(x, sr)
+    bp = BandPass(sr)
+    framed = np.concatenate([bp(x[i:i + 512]) for i in range(0, len(x), 512)])
+    assert np.max(np.abs(framed - whole)) < 1e-4
+
+
+def test_session_noise_path_has_no_frame_clicks():
+    import numpy as np
+
+    from voice_core.audio import float_to_pcm16, pcm16_to_float, telephone_band
+    from voice_core.config import Settings
+    from voice_core.session import VoiceAgentSession
+
+    sr = 8000
+    t = np.arange(sr) / sr
+    x = (0.2 * np.sin(2 * np.pi * 300 * t)).astype(np.float32)
+    sess = VoiceAgentSession(object(), send_json=None, send_audio=None, settings=Settings(sample_rate=sr))
+    sess.snr_db = 20.0
+    out = np.concatenate([pcm16_to_float(sess._add_noise(float_to_pcm16(x[i:i + 512]))) for i in range(0, len(x), 512)])
+    ref = telephone_band(pcm16_to_float(float_to_pcm16(x)), sr)
+    assert np.max(np.abs(out - ref)) < 1e-3

@@ -6,6 +6,7 @@ import json
 
 import httpx
 
+from . import gate
 from .errors import GnaniError
 from .stt_stream import SttEvent
 
@@ -28,16 +29,20 @@ async def transcribe_rest(
         data["keyterms"] = json.dumps(list(keyterms), ensure_ascii=False)
     files = {"audio_file": ("clip.wav", wav, "audio/wav")}
     headers = {"X-API-Key-ID": api_key}
-    own = client is None
-    client = client or httpx.AsyncClient(timeout=timeout)
-    try:
-        r = await client.post(STT_REST_URL, headers=headers, data=data, files=files)
-    finally:
-        if own:
-            await client.aclose()
-    if r.status_code != 200:
-        raise GnaniError(r.status_code, r.text[:500])
-    d = r.json()
+
+    async def post() -> dict:
+        own = client is None
+        c = client or httpx.AsyncClient(timeout=timeout)
+        try:
+            r = await c.post(STT_REST_URL, headers=headers, data=data, files=files)
+        finally:
+            if own:
+                await c.aclose()
+        if r.status_code != 200:
+            raise GnaniError(r.status_code, r.text[:500])
+        return r.json()
+
+    d = await gate.gnani_call(post)
     lat = d.get("end_to_end_latency")
     return SttEvent(
         type="transcript",

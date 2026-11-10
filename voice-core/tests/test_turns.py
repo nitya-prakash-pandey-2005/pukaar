@@ -57,3 +57,30 @@ async def test_tts_waits_for_turn_based_stt_lock():
     await s.wait_idle()
     assert len(audio) == 2
     await s.hangup()
+
+
+def test_is_echo_ignores_spelling_variants_and_spans_lines():
+    from voice_core.turns import is_echo
+
+    agent = ["हाँ बेटा… <coughs> एक मिनट…", "हाँ बेटा…", "<coughs> रुको ज़रा…", "अभी चश्मा ढूँढ के बताती हूँ।"]
+    assert is_echo("हां बेटा रुको जरा अभी चश्मा ढूंढ के बताती हूं", agent)  # anusvara / no nukta, 3 lines
+    assert is_echo("रुको जरा अभी चश्मा", agent)
+    for scammer in ["मैडम आपके नाम पे एफआईआर है", "आप अभी पैसे भेजिए वरना गिरफ्तार होंगी", "मैं सीबीआई से बोल रहा हूं",
+                    "अभी के अभी पैसे भेजो मैडम", "rathore.cbi@okaxis पे भेजिए"]:
+        assert not is_echo(scammer, agent), scammer
+
+
+def test_short_agent_line_inside_a_long_transcript_is_not_echo():
+    from voice_core.turns import is_echo
+
+    assert not is_echo("अच्छा मैडम आपका आधार नंबर बताइए", ["अच्छा।"])
+    assert not is_echo("haan madam aapka account block hai", ["haan?"])
+    assert is_echo("haan beta ek minute ruko zara", ["haan beta ek minute"])  # agent line + a little extra
+
+
+def test_short_echo_of_an_earlier_line_in_the_window():
+    from voice_core.turns import is_echo
+
+    window = ["हाँ बेटा…", "<coughs> रुको ज़रा…", "अभी चश्मा ढूँढ के बताती हूँ।"]  # one reply, split into sentences
+    assert is_echo("हां बेटा", window)
+    assert not is_echo("हाँ हाँ", ["हाँ हाँ, सुन रही हूँ…", "अच्छा बेटा, बताओ।"])

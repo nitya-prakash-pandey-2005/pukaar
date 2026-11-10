@@ -21,7 +21,7 @@ def client(tmp_path):
     def factory(store, send_json, send_audio, gps, call_id=None):
         agent = PukaarAgent(llm=FakeLLM(["பயப்படாதீங்க."]), intel_llm=FakeLLM([FACTS]), store=store,
                             places=load_gazetteer(), kb=load_guidance(), gps=gps, call_id=call_id)
-        stt = FakeStt([ev("connected"), ev("transcript", "Velachery la irukom, thanni chest varaikkum", "ta-IN")])
+        stt = FakeStt([ev("connected"), ev("transcript", "Velachery la irukom, thanni chest varaikkum", "ta-IN")], gap=0.05)
         sess = VoiceAgentSession(agent, send_json=send_json, send_audio=send_audio, settings=settings,
                                  stt_factory=lambda: stt, tts_fn=fake_tts, rng=random.Random(0))
         return sess, agent

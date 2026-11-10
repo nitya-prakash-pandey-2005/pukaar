@@ -138,3 +138,31 @@ async def test_tts_stream_raises_on_error(monkeypatch):
     monkeypatch.setattr(tts_mod, "_ws_connect", lambda *a, **k: Ctx())
     with pytest.raises(tts_mod.TtsError):
         _ = [c async for c in tts_mod.tts_stream("KEY", "hello", voice="X")]
+
+
+async def test_tts_stream_stall_raises_tts_error_and_frees_the_gate(monkeypatch):
+    import asyncio
+
+    from voice_core.gnani import gate
+
+    class StallWS:
+        async def send(self, m):
+            pass
+
+        async def recv(self):
+            await asyncio.sleep(30)
+
+    class Ctx:
+        async def __aenter__(self):
+            return StallWS()
+
+        async def __aexit__(self, *a):
+            return False
+
+    monkeypatch.setattr(tts_mod, "_ws_connect", lambda *a, **k: Ctx())
+    monkeypatch.setattr(tts_mod, "RECV_TIMEOUT", 0.05)
+    with pytest.raises(tts_mod.TtsError):
+        _ = [c async for c in tts_mod.tts_stream("KEY", "hello", voice="X")]
+    async with asyncio.timeout(1):  # the gate slot was released
+        async with gate.gnani_slot():
+            pass

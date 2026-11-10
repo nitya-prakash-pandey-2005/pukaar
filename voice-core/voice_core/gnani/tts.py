@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import asyncio
 import base64
 import hashlib
 import json
+import logging
 import re
 from pathlib import Path
 from typing import AsyncIterator
@@ -12,11 +14,13 @@ from typing import AsyncIterator
 import httpx
 import websockets
 
+from . import gate
 from .errors import GnaniError
 
 TTS_REST_URL = "https://api.vachana.ai/api/v1/tts/inference"
 TTS_WS_URL = "wss://api.vachana.ai/api/v1/tts"
 VC_EMBED_URL = "https://api.vachana.ai/api/v1/tts/voice-clone/embeddings"
+RECV_TIMEOUT = 8.0  # seconds between Timbre stream messages before we give up (frees the gate, runs the fallback)
 
 AUDIO_TAGS = (
     "laugh", "giggle", "sigh", "exhales", "sniffles", "yawns", "coughs",
@@ -25,6 +29,7 @@ AUDIO_TAGS = (
 _TAG_RE = re.compile(r"\s*<(?:" + "|".join(re.escape(t) for t in AUDIO_TAGS) + r")>\s*")
 
 _ws_connect = websockets.connect  # patched in tests
+log = logging.getLogger(__name__)
 
 
 class TtsError(Exception):
@@ -72,6 +77,10 @@ async def tts_rest(api_key: str, text: str, *, timeout: float = 60.0, **body_kwa
 
 
 async def _post_tts(api_key: str, body: dict, timeout: float) -> bytes:
+    return await gate.gnani_call(_post_tts_once, api_key, body, timeout)
+
+
+async def _post_tts_once(api_key: str, body: dict, timeout: float) -> bytes:
     headers = {"X-API-Key-ID": api_key, "Content-Type": "application/json"}
     async with httpx.AsyncClient(timeout=timeout) as c:
         r = await c.post(TTS_REST_URL, headers=headers, json=body)
@@ -82,14 +91,36 @@ async def _post_tts(api_key: str, body: dict, timeout: float) -> bytes:
 
 
 async def tts_stream(api_key: str, text: str, **body_kwargs) -> AsyncIterator[bytes]:
-    """Streams PCM chunks from Timbre's WebSocket. Chunks are kept 2-byte aligned."""
+    """Streams PCM chunks from Timbre's WebSocket. Chunks are kept 2-byte aligned.
+
+    Holds the Gnani gate while streaming; a rate limit before the first chunk is retried with backoff."""
     body = build_tts_body(text, **body_kwargs)
+    delays = gate.RETRY_DELAYS
+    for attempt in range(len(delays) + 1):
+        started = False
+        try:
+            async with gate.gnani_slot():
+                async for chunk in _tts_stream_once(api_key, body):
+                    started = True
+                    yield chunk
+            return
+        except Exception as e:
+            if started or attempt == len(delays) or not gate.is_rate_limit(e):
+                raise
+            log.info("TTS stream busy (%r); retry %d in %.1fs", e, attempt + 1, delays[attempt])
+        await asyncio.sleep(delays[attempt])
+
+
+async def _tts_stream_once(api_key: str, body: dict) -> AsyncIterator[bytes]:
     headers = {"X-API-Key-ID": api_key, "Content-Type": "application/json"}
     carry = b""
     async with _ws_connect(TTS_WS_URL, additional_headers=headers, max_size=None, open_timeout=15) as ws:
         await ws.send(json.dumps(body, ensure_ascii=False))
         while True:
-            msg = await ws.recv()
+            try:
+                msg = await asyncio.wait_for(ws.recv(), RECV_TIMEOUT)
+            except asyncio.TimeoutError:
+                raise TtsError(f"TTS stream stalled (no message for {RECV_TIMEOUT:.0f} s)") from None
             if isinstance(msg, (bytes, bytearray)):
                 data = carry + bytes(msg)
             else:
@@ -124,6 +155,10 @@ def normalise_embedding(resp: dict) -> dict:
 
 
 async def create_voice_embedding(api_key: str, wav: bytes, *, timeout: float = 90.0) -> dict:
+    return await gate.gnani_call(_create_voice_embedding_once, api_key, wav, timeout)
+
+
+async def _create_voice_embedding_once(api_key: str, wav: bytes, timeout: float) -> dict:
     headers = {"X-API-Key-ID": api_key}
     files = {"audio_file": ("voice.wav", wav, "audio/wav")}
     async with httpx.AsyncClient(timeout=timeout) as c:
