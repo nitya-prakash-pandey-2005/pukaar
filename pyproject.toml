@@ -22,3 +22,24 @@ pukaar = { workspace = true }
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 testpaths = ["voice-core/tests", "backend/tests"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 130
+extend-exclude = ["frontend", "cache", "docs"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = [
+  "E501",   # long lines: the code favours one readable line over wrapped prompts and regexes
+  "E731",   # small lambdas are used deliberately as local helpers
+  "E741",   # `l` for a language code in short comprehensions
+  "B008",   # FastAPI-style defaults
+  "UP035",  # typing.AsyncIterator etc. are fine on 3.12
+]
+
+[tool.ruff.lint.isort]
+# voice_core is the shared engine (a separate workspace package): grouped with the third-party imports
+known-third-party = ["voice_core"]
+known-first-party = ["pukaar"]
+split-on-trailing-comma = false  # keep the compact one-line import lists the code uses

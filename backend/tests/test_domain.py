@@ -1,9 +1,7 @@
 import pytest
 
 from pukaar.data import load_gazetteer
-from pukaar.domain import (
-    KEYTERMS, Facts, Incident, haversine_m, locate, merge_facts, next_slot, score, should_merge,
-)
+from pukaar.domain import KEYTERMS, Facts, Incident, haversine_m, locate, merge_facts, next_slot, score, should_merge
 
 
 @pytest.fixture
