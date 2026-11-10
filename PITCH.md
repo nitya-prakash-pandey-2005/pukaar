@@ -1,6 +1,6 @@
 # Pukaar · पुकार · புகார்: when every line is busy, Pukaar picks up
 
-**Team:** Nitya Prakash Pandey & Dilavesh Kanz Nidooli · Built on Gnani **Prisma v3.0** (speech-to-text) and **Timbre v3.0** (text-to-speech) · Live demo: *[link]* · Code: [github.com/nitya-prakash-pandey-2005/pukaar](https://github.com/nitya-prakash-pandey-2005/pukaar)
+**Team:** Nitya Prakash Pandey & Dilavesh Kanz Nidooli · Built on Gnani **Prisma v3.0** (speech-to-text) and **Timbre v3.0** (text-to-speech) · **Live demo:** *[live demo link]* · **Video:** *[video link]* · Code: [github.com/nitya-prakash-pandey-2005/pukaar](https://github.com/nitya-prakash-pandey-2005/pukaar)
 
 ## Problem
 
@@ -27,7 +27,7 @@ An overflow emergency line that answers when no human can.
 
 ## How it is different
 
-Bengaluru's Namma 112 "VANKI" (2026) translates for human call-takers. Telangana's AI-ERSS (2026) filters duplicates and ranks severity for them. To our knowledge, no public deployment has an AI voice agent that itself answers overflow disaster calls in code-mixed Tamil, Hindi and English, triages with explainable rules, guards against false reassurance and emits CAP 1.2 alerts.
+Bengaluru's Namma 112 "VANKI" (2026) translates for human call-takers. Telangana's AI-ERSS (2026) filters duplicates and ranks severity for them. To our knowledge, as of November 2026, no public deployment has an AI voice agent that itself answers overflow disaster calls in code-mixed Tamil, Hindi and English, triages with explainable rules, guards against false reassurance and emits CAP 1.2 alerts.
 
 ## Honesty notes
 
