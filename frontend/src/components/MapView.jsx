@@ -18,14 +18,20 @@ function pinIcon(inc, selected) {
   });
 }
 
-export default function MapView({ incidents, selectedId, onSelect }) {
+// soft circle per area of need (screen pixels, so it reads at every zoom): size grows with people, colour = the
+// worst severity there; real hotspots (2+ incidents within 500 m) are stronger and outlined
+const areaRadius = (c) => (c.count >= 2 ? Math.min(60, 26 + 2.5 * c.people) : Math.min(36, 16 + 2 * c.people));
+
+export default function MapView({ incidents, selectedId, onSelect, hotspots = [] }) {
   const el = useRef(null);
   const map = useRef(null);
   const layer = useRef(null);
+  const areas = useRef(null);
 
   useEffect(() => {
     map.current = L.map(el.current, { zoomControl: true }).setView(CENTRE, 11);
     L.tileLayer(TILES, { attribution: ATTRIBUTION, maxZoom: 19 }).addTo(map.current);
+    areas.current = L.layerGroup().addTo(map.current);
     layer.current = L.layerGroup().addTo(map.current);
     // the map may start in a hidden tab (zero size); re-measure whenever it becomes visible or resizes
     const ro = new ResizeObserver(() => map.current.invalidateSize());
@@ -43,6 +49,19 @@ export default function MapView({ incidents, selectedId, onSelect }) {
         .addTo(layer.current);
     }
   }, [incidents, selectedId, onSelect]);
+
+  useEffect(() => {
+    areas.current.clearLayers();
+    for (const c of hotspots) {
+      const color = levelColor(c.max_level);
+      const hot = c.count >= 2;
+      L.circleMarker([c.lat, c.lon], { radius: areaRadius(c), color, weight: hot ? 1.5 : 0, dashArray: hot ? "4 4" : null,
+        fillColor: color, fillOpacity: hot ? 0.28 : 0.14, interactive: hot })
+        .bindTooltip(hot ? `Hotspot · ${c.count} incidents · ${c.people} people · worst ${c.max_level}` : "")
+        .on("click", () => hot && onSelect(c.incident_ids[0]))
+        .addTo(areas.current);
+    }
+  }, [hotspots, onSelect]);
 
   useEffect(() => {
     const inc = incidents.find((i) => i.id === selectedId);

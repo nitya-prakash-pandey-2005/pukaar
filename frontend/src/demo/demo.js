@@ -213,11 +213,39 @@ async function post(path, body) {
   return live("this action");
 }
 
+// Decision-support snapshots were computed from the recorded incidents; after a dispatcher acts in this browser,
+// a team now on a job is busy (as allocate.live_status computes it) and a handled incident leaves the plan.
+function busyNow() {
+  return new Set([...room.incidents.values()].filter((i) => i.status === "dispatched" && i.dispatch).map((i) => i.dispatch.team));
+}
+const ADJUST = [
+  [/^\/api\/teams$/, (ts) => { const b = busyNow(); return ts.map((t) => ({ ...t, status: t.roster_status === "busy" || b.has(t.name) ? "busy" : "available" })); }],
+  [/^\/api\/incidents\/[\w-]+\/recommend$/, (r) => {
+    const b = busyNow();
+    const recommendations = r.recommendations.filter((x) => !b.has(x.team));
+    return { ...r, recommendations, teams_free: Math.max(0, r.teams_free - (r.recommendations.length - recommendations.length)) };
+  }],
+  [/^\/api\/plan$/, (p) => {
+    const b = busyNow();
+    const waiting = (id) => room.incidents.get(id)?.status === "new";
+    return { ...p, assignments: p.assignments.filter((a) => waiting(a.incident_id) && !b.has(a.team)),
+      unassigned: p.unassigned.filter((u) => waiting(u.incident_id)), teams_free: p.teams_free.filter((t) => !b.has(t)) };
+  }],
+];
+
+async function demoGet(path) {
+  const r = await realFetch(`/demo${path}.json`);
+  const adjust = r.ok && ADJUST.find(([re]) => re.test(path))?.[1];
+  if (!adjust) return r;
+  await initRoom();
+  return json(adjust(await r.json()));
+}
+
 function demoFetch(input, init = {}) {
   const url = new URL(typeof input === "string" ? input : input.url, window.location.href);
   if (url.origin !== window.location.origin || !url.pathname.startsWith("/api/")) return realFetch(input, init);
   const method = (init.method || (typeof input === "string" ? "GET" : input.method) || "GET").toUpperCase();
-  if (method === "GET") return realFetch(`/demo${url.pathname}.json`);
+  if (method === "GET") return demoGet(url.pathname);
   let body = {};
   try { body = init.body ? JSON.parse(init.body) : {}; } catch { /* empty body */ }
   return post(url.pathname, body);

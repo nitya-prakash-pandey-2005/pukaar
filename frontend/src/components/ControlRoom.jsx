@@ -1,12 +1,15 @@
 import { useCallback, useState } from "react";
 import { ListOrdered, Map as MapIcon, Waves } from "lucide-react";
 import { Badge, Card, Stat, toast } from "../ui";
-import { postJSON } from "../lib/api";
+import { postJSON, useApi } from "../lib/api";
 import { HAZARD_LABEL, LEVEL_TONE, ago } from "../lib/labels";
 import MapView from "./MapView";
 import IncidentSheet from "./IncidentSheet";
 import DrillCard from "./DrillCard";
 import BroadcastCard from "./BroadcastCard";
+import PlanCard from "./PlanCard";
+import HotspotsCard from "./HotspotsCard";
+import SitRepButton from "./SitRep";
 
 function Kpis({ k }) {
   return (
@@ -21,8 +24,12 @@ function Kpis({ k }) {
 
 export default function ControlRoom({ control, guidance }) {
   const [selectedId, setSelectedId] = useState(null);
-  const select = useCallback((id) => setSelectedId(id), []);
+  const [preset, setPreset] = useState(null); // a planned team for the incident being reviewed (fills the form only)
+  const select = useCallback((id) => { setSelectedId(id); setPreset(null); }, []);
+  const review = useCallback((id, p) => { setSelectedId(id); setPreset(p && { ...p, incident_id: id, n: Date.now() }); }, []);
   const { incidents, kpis, liveCalls, online } = control;
+  const version = incidents.map((i) => `${i.id}:${i.status}:${i.updated_at}`).join(",");
+  const hot = useApi("/api/hotspots", [version]).data;
   const selected = incidents.find((i) => i.id === selectedId) || null;
   const surge = () => postJSON("/api/surge", { n: 20 })
     .then(() => toast("Flood-night surge: 20 synthetic callers incoming", "info"))
@@ -33,10 +40,11 @@ export default function ControlRoom({ control, guidance }) {
       <Kpis k={kpis} />
       <Card title="Rescue map" icon={MapIcon} right={
         <div className="row" style={{ gap: 8 }}>
+          <SitRepButton />
           <button className="btn sm ghost" onClick={surge} title="Synthetic text callers through the real triage. Uses the LLM only, no Gnani credits."><Waves size={14} /> Simulate surge</button>
           <Badge tone={online ? "green" : "rose"} dot>{online ? "Live" : "Reconnecting…"}</Badge>
         </div>}>
-        <MapView incidents={incidents} selectedId={selectedId} onSelect={select} />
+        <MapView incidents={incidents} selectedId={selectedId} onSelect={select} hotspots={hot?.clusters} />
         <p className="pill-src" style={{ marginTop: 8 }}>Surge callers are simulated text calls with synthetic data. Live calls use Gnani Prisma and Timbre.</p>
       </Card>
       <Card title="Queue by severity" icon={ListOrdered} right={<span className="small muted">{liveCalls.length} live call{liveCalls.length === 1 ? "" : "s"}</span>}>
@@ -64,9 +72,13 @@ export default function ControlRoom({ control, guidance }) {
           ))}
         </div>
       </Card>
+      <div className="grid g2 cr-pair">
+        <PlanCard onReview={review} />
+        <HotspotsCard data={hot} onSelect={select} />
+      </div>
       <BroadcastCard />
       <DrillCard />
-      <IncidentSheet inc={selected} guidance={guidance} onClose={() => setSelectedId(null)} />
+      <IncidentSheet inc={selected} guidance={guidance} preset={preset} onClose={() => setSelectedId(null)} />
     </div>
   );
 }
