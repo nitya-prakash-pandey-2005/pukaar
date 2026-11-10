@@ -93,6 +93,13 @@ def test_busy_teams_are_never_recommended_and_dispatch_makes_a_team_busy():
     assert live_status([boat], [done])[0].status == "available"  # free again once the incident is resolved
 
 
+def test_no_clear_need_gets_only_a_general_rescue_crew():
+    inc = incident(hazard="flood", water_level="none", on_roof=True)  # dry roof: no boat, nothing medical
+    recs = recommend(inc, [team("b", "boat"), team("m", "medical"), team("f", "fire")])
+    assert [(r["type"], r["fit"]) for r in recs] == [("fire", "general rescue crew")]
+    assert recommend(incident(lat=13.0, lon=80.2), [team("m", "medical")]) == []  # missed call, no facts yet
+
+
 def test_unlocated_incident_still_ranked_but_without_eta():
     recs = recommend(incident(lat=None, lon=None, hazard="fire"), [team("f", "fire")])
     assert recs[0]["eta_min"] is None and "location unknown, no ETA" in recs[0]["reasons"]

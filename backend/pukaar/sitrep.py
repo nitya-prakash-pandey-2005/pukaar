@@ -36,7 +36,8 @@ def sitrep(incidents: list[Incident], calls: int, now: float, district: str = "C
     hot = sorted(by_place.items(), key=lambda kv: (-len(kv[1]), -max(x.severity.score for x in kv[1]), kv[0]))
     timeline = []
     for i in incidents:
-        who = f"{i.facts.people_count} people" if i.facts.people_count else "people count unknown"
+        n = i.facts.people_count
+        who = "people count unknown" if not n else f"{n} {'person' if n == 1 else 'people'}"
         timeline.append({"t": i.created_at, "time": _clock(i.created_at),
                          "text": f"{i.severity.level.title()} {(i.facts.hazard or 'report').replace('_', ' ')} at "
                                  f"{_place(i)} ({who})"})

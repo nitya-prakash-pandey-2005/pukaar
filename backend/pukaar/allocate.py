@@ -71,7 +71,8 @@ def needs(inc: Incident) -> dict[str, list[str]]:
     if fire:
         why.append(f.hazard.replace("_", " "))
     if medical:
-        why.append(", ".join(f.injuries + f.medical_needs) or "medical help asked")
+        why.append(", ".join(["injured" if x == "other" else x for x in f.injuries] + f.medical_needs)
+                   or "medical help asked")
     primary, secondary = [], []
     if fire:
         primary.append("fire")
@@ -104,9 +105,7 @@ def recommend(inc: Incident, teams, top: int | None = None) -> list[dict]:
         if t.type in need["primary"]:
             match, fit = 50, "matches"
         elif t.type in need["secondary"]:
-            match, fit = 25, "also useful"
-        elif not need["primary"]:
-            match, fit = 10, "general crew"
+            match, fit = 25, "also useful" if need["primary"] else "general rescue crew"
         else:
             continue  # wrong kind of team for this emergency
         reasons.append(TYPE_LABEL[t.type])
