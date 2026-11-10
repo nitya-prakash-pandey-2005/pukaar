@@ -119,8 +119,11 @@ def recommend(inc: Incident, teams, top: int | None = None) -> list[dict]:
             eta = eta_minutes(km, t.speed_kmh)
             time_pts = round(35 * max(0.0, 1 - eta / 60))
             reasons += [f"{km:.1f} km", f"~{eta} min"]
-        reasons.append(f"fits {people} {'person' if people == 1 else 'people'}" if t.capacity >= people
-                       else f"carries {t.capacity} of {people}, more trips needed")
+        if f.people_count is None:  # scored as one person, but never claimed to fit "everyone"
+            reasons.append(f"carries {t.capacity}, people count unknown")
+        else:
+            reasons.append(f"fits {people} {'person' if people == 1 else 'people'}" if t.capacity >= people
+                           else f"carries {t.capacity} of {people}, more trips needed")
         reasons += need["why"]
         out.append({"team_id": t.id, "team": t.name, "type": t.type, "base": t.base, "fit": fit,
                     "distance_km": None if km is None else round(km, 1), "eta_min": eta,

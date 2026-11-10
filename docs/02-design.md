@@ -97,3 +97,13 @@ The LLM receives at most 2 candidate entries (filtered by hazard and water level
 - Leaflet (plain, not react-leaflet) is the only extra UI dependency. A map is unavoidable and the ui-kit has none.
 - The gazetteer is built once from OpenStreetMap Nominatim (1 request per second, generic User-Agent) and committed as JSON, so it works offline.
 - Triage uses `LLM(settings, purpose="intel")`, so Evon can take it over when hosted.
+
+## 11. Decision support (added 10 Nov)
+
+The dispatcher still decides; Pukaar only ranks and explains, with the same "rules, not the LLM" principle as severity.
+
+- **Roster:** 10 synthetic teams in `backend/data/teams.json` (boats, fire & rescue, ambulances, a medical team), each at a gazetteer locality with a capacity and speed. A team is busy if the roster says so or it is on an open dispatched incident; it is free again once that incident is resolved.
+- **Recommend** (`allocate.recommend`, score out of 100): need match 50 (boat for waist-deep or deeper water, or people trapped or on a roof in water; ambulance or medical team for injuries or medical needs; fire & rescue for fire, collapse and landslide, and as the general crew when the facts call for no specific team), capacity 15 (partial if the team must make more trips), ETA 35 (straight line × 1.3 at the team's speed + 5 min to leave; 0 points at 60 min). Ambulances and medical teams are excluded in waist-deep or deeper water. Every suggestion lists its reasons.
+- **Plan** (`allocate.plan`): greedy over waiting incidents, highest severity then oldest, each taking its best free team; no team twice. Unlocated incidents and those with no suitable free team go to a "needs you" list. Greedy is deliberate: it is predictable and easy to explain; an optimal assignment could give a less severe incident a nearer boat, which a dispatcher would have to second-guess.
+- **Hotspots** (`hotspots.clusters`): single-linkage clustering of open, located incidents within 500 m.
+- **SitRep** (`sitrep.sitrep`): counts only, nothing estimated; vulnerable and trapped figures count households, not people.

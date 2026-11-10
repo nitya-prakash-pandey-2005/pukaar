@@ -402,10 +402,10 @@ See [`docs/DEPLOY-VERCEL.md`](docs/DEPLOY-VERCEL.md) for Vercel. Run `npm run bu
 ## Tests
 
 ```bash
-uv run python -m pytest -q        # 175 passed
+uv run python -m pytest -q        # 176 passed
 ```
 
-- **113 backend tests**: severity rules and dedup (`test_domain`), fact extraction and the reply guard (`test_triage`), the agent's question order, guidance, caller merging, dispatch and callbacks (`test_agent`), SMS, relay and dispatch translation (`test_channels`), the REST and WebSocket API (`test_app`), broadcast and CAP (`test_broadcast`), team matching, capacity, ETA and no double booking (`test_allocate`), the SitRep and hotspot clustering (`test_sitrep_hotspots`), the surge simulator and the noise drill scoring.
+- **114 backend tests**: severity rules and dedup (`test_domain`), fact extraction and the reply guard (`test_triage`), the agent's question order, guidance, caller merging, dispatch and callbacks (`test_agent`), SMS, relay and dispatch translation (`test_channels`), the REST and WebSocket API (`test_app`), broadcast and CAP (`test_broadcast`), team matching, capacity, ETA and no double booking (`test_allocate`), the SitRep and hotspot clustering (`test_sitrep_hotspots`), the surge simulator and the noise drill scoring.
 - **62 voice-core tests**: the Gnani protocol (Prisma headers, Timbre bodies), the request gate and 429 retries, the call session (barge-in, echo guard, reconnects), turn detection, audio and the LLM adapter.
 
 ---

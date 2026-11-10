@@ -72,6 +72,12 @@ def test_capacity_prefers_the_team_that_fits_everyone():
     assert "carries 4 of 6, more trips needed" in recs[1]["reasons"]
 
 
+def test_unknown_people_count_is_said_not_guessed():
+    recs = recommend(incident(hazard="flood", water_level="chest"), [team("b", "boat", capacity=6)])
+    assert "carries 6, people count unknown" in recs[0]["reasons"]
+    assert not any(r.startswith("fits") for r in recs[0]["reasons"])
+
+
 def test_eta_math_and_nearer_team_first():
     assert eta_minutes(0, 12) == MOBILISE_MIN
     assert eta_minutes(10, 30) == round(MOBILISE_MIN + 10 * ROUTE_FACTOR / 30 * 60) == 31
