@@ -8,7 +8,7 @@ import "../landing.css";
 import { DEMO } from "../demo/demo";
 
 // Links the lead can change after deployment
-export const VIDEO_URL = "https://github.com/nitya-prakash-pandey-2005/pukaar#readme";
+export const VIDEO_URL = "https://drive.google.com/drive/folders/1byHuJr_KoofV7NTVx1sCutXupmnX0D_S?usp=sharing"; // all three demo videos (Google Drive)
 export const REPO_URL = "https://github.com/nitya-prakash-pandey-2005/pukaar";
 export const PUKAAR_URL = "https://pukaar-snowy.vercel.app/";
 export const DADI_URL = "https://dadi-vs-scammers.vercel.app/";
