@@ -2,7 +2,7 @@
 
 # Pukaar · पुकार · புகார்
 
-**The flood helpline that never sends a caller to a busy tone.**
+**When every line is busy, Pukaar picks up.**
 
 Pukaar answers overflow emergency calls in the caller's own language, keeps them calm, asks the questions a rescuer needs, and puts every caller on a live rescue map. A human confirms every dispatch.
 
@@ -73,7 +73,7 @@ The **flood-night surge** button replays 24 synthetic callers in four languages 
 
 ### 4. No voice? Send a text
 
-Weak network, a speech-impaired caller, a jammed line: one SMS or WhatsApp message goes through the same triage and lands on the same map. Pukaar texts back the next question it needs answered.
+Weak network, a speech-impaired caller, a jammed line: one text message goes through the same triage and lands on the same map, and Pukaar texts back the next question it needs answered. The `/api/sms` endpoint is where an SMS or WhatsApp gateway would post; in the demo, the caller phone's SMS box sends it.
 
 <p>
 <img src="docs/screenshots/product/desktop-sms-typed.png" alt="A Tamil SMS typed on the caller phone" width="405">
@@ -198,9 +198,9 @@ Triage accuracy was flat from clean audio to 0 dB: locality, vulnerable people a
 ## How it works
 
 ```mermaid
-flowchart LR
+flowchart TB
     caller(["Caller<br/>browser mic, 8 kHz"]) -->|"/ws/call"| prisma["Gnani Prisma v3.0<br/>indic-auto, codemix, keyterms"]
-    sms(["SMS / WhatsApp"]) -->|"/api/sms"| extract
+    sms(["SMS / WhatsApp text"]) -->|"/api/sms"| extract
     prisma --> extract["LLM fact extraction<br/>Groq qwen3.8-27b"]
     extract --> rules["Severity rule table<br/>0-100, drivers"]
     extract --> locate["Locate<br/>GPS + gazetteer landmarks"]
