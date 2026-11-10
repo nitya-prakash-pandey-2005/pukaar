@@ -132,7 +132,7 @@ function Hero() {
           <div className="lp-float">
             <Shot name="desktop-overview" eager alt="Pukaar control room: the caller phone, live KPIs and the rescue map with severity-coloured pins" className="lp-hero-shot" />
             <div className="lp-float-card lp-fc-1" aria-hidden="true"><Siren size={15} /><span><b>Critical 90</b> · Velachery · 4 callers merged</span></div>
-            <div className="lp-float-card lp-fc-2" aria-hidden="true"><Languages size={15} /><span lang="ta">தண்ணீர் மார்பு வரை வந்துடுச்சு</span></div>
+            <div className="lp-float-card lp-fc-2" aria-hidden="true"><Languages size={15} /><span lang="ta">அவங்களுக்கு insulin வேணும்.</span></div>
           </div>
         </div>
       </div>
@@ -234,9 +234,9 @@ function Features() {
             {g.img && <div className="lp-card-img"><img src={`/landing/${g.img}.webp`} alt={g.alt} loading="lazy" decoding="async" width={g.tall ? 520 : 1280} height={g.tall ? 1125 : 800} /></div>}
             {g.interp && (
               <div className="lp-interp" aria-label="Example exchange">
-                <div className="lp-bubble r"><small>Rescuer · Hindi</small><span lang="hi">हम मंदिर के गेट पर हैं। छत पर कितने लोग हैं?</span></div>
-                <div className="lp-bubble c"><small>Caller hears · Tamil</small><span lang="ta">நாங்கள் கோவில் வாசலில் இருக்கிறோம். கூரையில் எத்தனை பேர் இருக்கிறீர்கள்?</span></div>
-                <div className="lp-interp-note">Machine interpretation · one side at a time</div>
+                <div className="lp-bubble r"><small>Rescuer · Hindi</small><span lang="hi">हम नाव लेकर आ रहे हैं। आपके घर के पास कौन सी बड़ी इमारत है?</span></div>
+                <div className="lp-bubble c"><small>Caller hears · Tamil</small><span lang="ta">நாம் படகை எடுத்து வந்து கொண்டிருக்கிறோம். உங்கள் வீட்டருகில் எந்த பெரிய கட்டிடம் உள்ளது?</span></div>
+                <div className="lp-interp-note">Recorded live, 10 Nov · 2.3 s release to audio</div>
               </div>
             )}
           </article>
