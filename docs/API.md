@@ -107,7 +107,7 @@ Dispatch, resolve, SMS and missed-call also push `incident` and `kpis` events to
 |---|---|---|
 | `POST /api/sms` | `{"text": "Saidapet bridge ke paas hum 3 log hain, paani kamar tak", "gps": [13.02, 80.22]}` (`gps` optional) | `{"incident": Incident, "reply": "..."}`. SMS or WhatsApp intake for people who cannot talk: the text goes through the same triage and guard as a call; `reply` is the guarded reply SMS in the texter's language. The same 4+ word text again within 3 hours returns the same incident and reply with no new LLM call. Text is capped at 1000 characters. |
 | `POST /api/missed-call` | `{"gps": [12.98, 80.22]}` (optional) | `{"call_id", "incident"}`. The caller spends nothing: a pin appears at once (`channel: "missed_call"`), and the call back reuses `call_id` (see `callback_for` below). |
-| `POST /api/surge` | `{"n": 20, "fresh": false}` | `{"started": n, "mode": "replay" | "generate"}`. Flood-night load demo: replays a recorded set of synthetic text callers (no LLM calls), or with `fresh: true` generates new ones through the real triage. `n` is clamped to 1..40. 409 while one runs. Fake mode always replays the committed recording. |
+| `POST /api/surge` | `{"n": 20, "fresh": false}` | `{"started": n, "mode": "replay"}` or `"mode": "generate"`. Flood-night load demo: replays a recorded set of synthetic text callers (no LLM calls), or with `fresh: true` generates new ones through the real triage. `n` is clamped to 1..40. 409 while one runs. Fake mode always replays the committed recording. |
 
 ### Callbacks
 
