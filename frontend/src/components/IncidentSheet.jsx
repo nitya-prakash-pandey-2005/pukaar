@@ -163,7 +163,7 @@ export default function IncidentSheet({ inc, guidance, onClose, preset: planned 
               </div>
             ) : (
               <div className="stack" style={{ gap: 12 }}>
-                <RecommendedTeams inc={inc} onPick={(r) => setPreset({ team: r.team, eta: r.eta, n: Date.now() })} />
+                {inc.status === "new" && <RecommendedTeams inc={inc} onPick={(r) => setPreset({ team: r.team, eta: r.eta, n: Date.now() })} />}
                 <DispatchForm key={inc.id} inc={inc} preset={preset} />
               </div>
             )}

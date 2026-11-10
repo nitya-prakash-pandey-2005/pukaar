@@ -184,7 +184,11 @@ h4 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing
   body.printing-sitrep > *:not(.sitrep-overlay) { display: none !important; }
   body.printing-sitrep { background: #fff !important; }
   .sitrep-overlay { position: static; padding: 0; background: none; overflow: visible; }
-  .sitrep-paper { box-shadow: none; padding: 0; max-width: none; }
+  .sitrep-paper { box-shadow: none; padding: 0; max-width: none; font-size: 12.5px; }
+  .sitrep-paper h2 { margin-top: 12px; }
+  .sitrep-paper td, .sitrep-paper th { padding: 3px 4px; }
+  .sr-tiles b { font-size: 22px; }
+  .sr-timeline li { padding: 2px 0; }
   .no-print { display: none !important; }
 }
 .plan-list .li .t, .plan-list .li .s { white-space: normal; overflow-wrap: anywhere; }
