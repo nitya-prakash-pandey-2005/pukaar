@@ -10,6 +10,7 @@ from datetime import datetime, timedelta, timezone
 
 from voice_core.types import Turn
 
+from .agent import TTS_LANGS
 from .data import Guidance, Place
 from .domain import MERGE_WINDOW_S, Facts, Incident, locate, next_slot, resolve_locality
 from .guard import adds_nothing, fallback, guard_reply
@@ -37,6 +38,8 @@ async def sms_intake(text: str, gps: tuple[float, float] | None, llm, store: Sto
         return old, said[-1] if said else fallback(lang)
     turn = Turn("caller", text, 0.0, lang)
     f = resolve_locality(await extract_facts(llm, [turn], Facts()), [text], places, gps)
+    if lang == "en-IN" and f.caller_language in TTS_LANGS:  # most SMS are romanised Hindi/Tamil ("paani aa gaya")
+        lang = f.caller_language
     cid = store.create_call(lang)
     store.add_turn(cid, turn)
     loc = locate(f, places, gps)

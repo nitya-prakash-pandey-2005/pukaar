@@ -83,3 +83,11 @@ async def test_same_sms_twice_is_one_incident_and_no_new_tokens(tmp_path):
     llm.replies = [json.dumps({"locality": "Velachery", "hazard": "flood"}), "சரி."]
     c, _ = await sms_intake(SMS, None, llm, store, load_gazetteer(), load_guidance())
     assert c.id != a.id
+
+
+async def test_romanised_sms_is_answered_in_the_language_the_llm_heard(tmp_path):
+    store = Store(tmp_path / "p.db")
+    llm = FakeLLM([json.dumps({"hazard": "flood", "locality": "Saidapet", "caller_language": "hi-IN"}), "Ghabraiye mat."])
+    inc, _ = await sms_intake("Saidapet mein paani ghar ke andar aa gaya, 3 log hain", None, llm, store,
+                              load_gazetteer(), load_guidance())
+    assert store.call_lang(inc.call_ids[0]) == "hi-IN" and "Reply in Hindi" in llm.calls[1][0]["content"]
