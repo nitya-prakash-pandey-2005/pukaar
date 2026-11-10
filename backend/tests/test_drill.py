@@ -76,8 +76,9 @@ def test_locality_scoring_tolerates_spelling():
 
 
 async def test_rescore_uses_llm_only():
-    from pukaar.drill import rescore
     from voice_core.testing import FakeLLM
+
+    from pukaar.drill import rescore
     rows = [{"case": 0, "lang": "ta-IN", "snr": None, "ref": "Velachery la thanni", "hyp": "Velacheri la thanni", "cer": 0.05},
             {"case": 0, "lang": "ta-IN", "snr": 0, "ref": "Velachery la thanni", "hyp": "", "cer": 1.0}]
     llm = FakeLLM(['{"locality": "Velachery"}', '{"locality": "Velacheri"}', '{}'])

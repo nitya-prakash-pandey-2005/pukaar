@@ -98,6 +98,7 @@ def test_guidance_and_callback_audio_fake(tmp_path, monkeypatch):
 def test_surge_fake_mode_replays_the_committed_recording(tmp_path, monkeypatch):
     # the fake LLM only knows the 4 facts of the scripted call, so generating gave empty pins and minutes of retries
     import time
+
     from pukaar.data import DATA
     monkeypatch.setenv("PUKAAR_FAKE", "1")
     first = json.loads((DATA / "surge_demo.json").read_text(encoding="utf-8"))[0]

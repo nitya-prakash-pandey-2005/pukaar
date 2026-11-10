@@ -78,7 +78,7 @@ class ScriptedStt:
             try:
                 await asyncio.wait_for(self._closed.wait(), timeout=self.every)
                 break
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 pass
             yield SttEvent("speech_start")
             await asyncio.sleep(0.8)
