@@ -5,6 +5,8 @@ import { getJSON, postJSON } from "../lib/api";
 import { HAZARD_LABEL, LEVEL_TONE, TEAMS, ago } from "../lib/labels";
 import { DEMO } from "../demo/demo";
 
+const LOC_SOURCE = { gps: "phone location", landmark: "spoken landmark", both: "phone location + landmark" };
+
 const FACT_ROWS = [
   ["Hazard", (f) => HAZARD_LABEL[f.hazard]],
   ["Locality", (f) => f.locality],
@@ -123,7 +125,7 @@ export default function IncidentSheet({ inc, guidance, onClose }) {
                 return v || v === 0 ? [<dt key={`${k}t`}>{k}</dt>, <dd key={`${k}d`}>{v}</dd>] : null;
               })}
               <dt>Location</dt>
-              <dd>{inc.lat == null ? "Unknown" : `${inc.lat.toFixed(4)}, ${inc.lon.toFixed(4)} · ${inc.loc_source} · ${Math.round(inc.loc_confidence * 100)}%`}</dd>
+              <dd>{inc.lat == null ? "Unknown" : `${inc.lat.toFixed(4)}, ${inc.lon.toFixed(4)} · ${LOC_SOURCE[inc.loc_source] || inc.loc_source} · ${Math.round(inc.loc_confidence * 100)}% sure`}</dd>
             </dl>
           </section>
 
