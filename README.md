@@ -116,6 +116,8 @@ Each turn: the clip goes to Prisma with **one locale** (the speaker's), **one sh
 
 The translation is checked like everything Pukaar says: it may not add a time promise, a number or a "you are safe" that the speaker did not say (`guard.adds_nothing`), and it may not drop a number the speaker did say. If it fails, the listener hears the speaker's own words and both captions say why. The page is labelled **machine interpretation**.
 
+Live check (10 Nov, synthetic voices, [`docs/test-log.md`](docs/test-log.md)): Hindi → Tamil and Tamil → Hindi, with the landmark, the floor and the head count kept; the translated audio was ready **1.6–2.3 s** after the speaker released the button (Timbre rendering the whole clip is the largest part). The static demo replays this exchange with its real audio.
+
 ## Screens
 
 All from the live run of 10 Nov 2026 (real Gnani + Groq, synthetic callers). Desktop at 1440 px, phone at 390 px.
